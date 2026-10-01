@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- Firebase SDK (compat pour simplicité) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -69,7 +68,6 @@
     transition: background 0.4s ease, color 0.4s ease;
   }
 
-  /* ===== ÉCRAN DE LOGIN ===== */
   #loginScreen {
     position: fixed;
     inset: 0;
@@ -153,7 +151,6 @@
   }
 
   .btn-google:active { transform: translateY(0); }
-
   .btn-google svg { width: 22px; height: 22px; }
 
   .login-note {
@@ -163,7 +160,6 @@
     line-height: 1.5;
   }
 
-  /* ===== HEADER ===== */
   header {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -233,10 +229,7 @@
 
   .btn-icon { padding: 10px 14px; font-size: 1.1rem; }
 
-  /* ===== AVATAR UTILISATEUR ===== */
-  .user-menu {
-    position: relative;
-  }
+  .user-menu { position: relative; }
 
   .user-avatar {
     width: 38px;
@@ -317,7 +310,6 @@
     color: #ef4444;
   }
 
-  /* ===== CARTE ===== */
   #map {
     position: absolute;
     top: 64px; left: 0; right: 0; bottom: 0;
@@ -331,7 +323,6 @@
     to   { opacity: 1; }
   }
 
-  /* Sync indicator (bandeau en haut) */
   .sync-indicator {
     position: fixed;
     top: 76px;
@@ -373,7 +364,6 @@
     box-shadow: 0 0 6px #22c55e;
   }
 
-  /* ===== SIDEBAR ===== */
   #sidebar {
     position: fixed;
     top: 64px; right: 0; bottom: 0;
@@ -515,7 +505,6 @@
     to   { opacity: 1; }
   }
 
-  /* ===== MODAL ===== */
   .modal-overlay {
     position: fixed;
     inset: 0;
@@ -628,7 +617,6 @@
     box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
   }
 
-  /* ===== PHOTO ===== */
   .photo-upload-zone {
     border: 2px dashed var(--border-hover);
     border-radius: 12px;
@@ -707,7 +695,6 @@
     transform: scale(1.1) rotate(90deg);
   }
 
-  /* ===== RECHERCHE ===== */
   .search-wrapper { position: relative; }
   .search-input-wrapper { position: relative; }
   .search-input-wrapper input { padding-left: 42px; }
@@ -812,7 +799,6 @@
     font-style: italic;
   }
 
-  /* ===== POSITION ===== */
   .location-box {
     display: flex;
     align-items: center;
@@ -869,7 +855,6 @@
 
   .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
 
-  /* ===== MARQUEURS ===== */
   .custom-marker {
     background: linear-gradient(135deg, #f97316, #ea580c);
     width: 32px; height: 32px;
@@ -950,7 +935,6 @@
     100% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4); }
   }
 
-  /* ===== POPUP ===== */
   .leaflet-popup-content-wrapper {
     background: var(--bg-modal);
     color: var(--text-primary);
@@ -1011,7 +995,6 @@
     padding-top: 8px;
   }
 
-  /* ===== LIGHTBOX ===== */
   .lightbox {
     position: fixed;
     inset: 0;
@@ -1067,7 +1050,6 @@
     transform: rotate(90deg) scale(1.1);
   }
 
-  /* ===== BOUTON RECENTRER ===== */
   .leaflet-control-recenter {
     background: var(--bg-modal);
     border: 1px solid var(--border-hover);
@@ -1118,7 +1100,6 @@
     transform: scale(1.08);
   }
 
-  /* ===== RÉGLAGES ===== */
   .settings-panel {
     position: fixed;
     top: 76px;
@@ -1322,7 +1303,6 @@
     font-style: italic;
   }
 
-  /* ===== TOAST ===== */
   .toast {
     position: fixed;
     bottom: 30px;
@@ -1397,7 +1377,6 @@
   }
   @keyframes spin2 { to { transform: rotate(360deg); } }
 
-  /* Loader cloud */
   .cloud-loader {
     display: inline-block;
     width: 14px; height: 14px;
@@ -1420,7 +1399,6 @@
 </head>
 <body>
 
-<!-- ===== ÉCRAN DE LOGIN ===== -->
 <div id="loginScreen">
   <div class="login-card">
     <span class="login-globe">🌍</span>
@@ -1444,7 +1422,6 @@
   </div>
 </div>
 
-<!-- ===== APPPRINCIPAL ===== -->
 <div id="app" style="display: none;">
 
   <header>
@@ -1472,7 +1449,6 @@
     </div>
   </header>
 
-  <!-- Indicateur de sync -->
   <div class="sync-indicator" id="syncIndicator">
     <span class="sync-dot"></span>
     <span id="syncText">Synchronisation...</span>
@@ -1643,7 +1619,7 @@
 
 <script>
 /* =========================================================
-   🔥 FIREBASE CONFIGURATION
+   🔥 FIREBASE
    ========================================================= */
 
 const firebaseConfig = {
@@ -1659,7 +1635,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Activer la persistance offline (les notes restent visibles hors ligne)
 db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
   console.warn('Persistance offline non activée:', err.code);
 });
@@ -1668,7 +1643,7 @@ db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
    ÉTAT GLOBAL
    ========================================================= */
 
-const DEFAULT_API_KEY = 'cb1_46hv_1_3e581bba618cb8d324d5d1e5';
+const DEFAULT_API_KEY = 'cb1_46hv_2_a67b786d87acd873218060a0';
 const DEFAULT_STYLE   = 'dark';
 const DEFAULT_THEME   = 'dark';
 
@@ -1701,7 +1676,7 @@ let userLocationCircle = null;
 let tempMarker = null;
 
 /* =========================================================
-   🔐 AUTHENTIFICATION
+   🔐 AUTH
    ========================================================= */
 
 function signInWithGoogle() {
@@ -1720,16 +1695,13 @@ function signInWithGoogle() {
 
 function signOut() {
   if (!confirm('Se déconnecter ?')) return;
-
   if (unsubscribeNotes) {
     unsubscribeNotes();
     unsubscribeNotes = null;
   }
-
   auth.signOut().catch((err) => console.error(err));
 }
 
-// Écouter les changements d'état d'authentification
 auth.onAuthStateChanged((user) => {
   if (user) {
     currentUser = user;
@@ -1754,19 +1726,17 @@ function showApp() {
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('app').style.display = 'block';
 
-  // Afficher l'avatar et les infos
   document.getElementById('userAvatar').src = currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
   document.getElementById('userName').textContent = currentUser.displayName || 'Utilisateur';
   document.getElementById('userEmail').textContent = currentUser.email || '';
 
-  // Initialiser la carte SEULEMENT si pas déjà fait
   if (!map) {
     initMap();
   }
 }
 
 /* =========================================================
-   ☁️ FIRESTORE — CHARGEMENT DES NOTES
+   ☁️ FIRESTORE
    ========================================================= */
 
 function loadUserNotes() {
@@ -1779,10 +1749,7 @@ function loadUserNotes() {
     .onSnapshot(
       (snapshot) => {
         notes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        // Trier par date décroissante
         notes.sort((a, b) => b.createdAt - a.createdAt);
-
         renderAllMarkers();
         showSyncIndicator('Synchronisé', true);
       },
@@ -1806,7 +1773,7 @@ function showSyncIndicator(text, synced) {
 }
 
 /* =========================================================
-   🗺️ INITIALISATION CARTE
+   🗺️ CARTE
    ========================================================= */
 
 function buildTileURL(styleKey) {
@@ -1842,7 +1809,6 @@ function initMap() {
   L.control.zoom({ position: 'bottomright' }).addTo(map);
   applyTileLayer();
 
-  // Bouton recentrer
   const RecenterControl = L.Control.extend({
     options: { position: 'bottomright' },
     onAdd: function () {
@@ -1860,7 +1826,6 @@ function initMap() {
   });
   map.addControl(new RecenterControl());
 
-  // Clic sur la carte
   map.on('click', (e) => {
     pendingLatLng = { lat: e.latlng.lat, lng: e.latlng.lng };
     pendingSource = 'manual';
@@ -1873,10 +1838,6 @@ function applyTileLayer() {
   if (tileLayer) map.removeLayer(tileLayer);
   tileLayer = L.tileLayer(buildTileURL(mapStyle), getTileOptions(mapStyle)).addTo(map);
 }
-
-/* =========================================================
-   🎯 BOUTON RECENTRER
-   ========================================================= */
 
 function recenterToMyLocation(btn) {
   if (!navigator.geolocation) {
@@ -2136,7 +2097,6 @@ async function handlePhotoFile(file) {
   }
   try {
     showToast('⏳ Compression de la photo...', 'info');
-    // 700px max + qualité 0.7 = plus léger pour Firestore
     const compressedDataUrl = await compressImage(file, 700, 0.7);
     pendingPhoto = compressedDataUrl;
     photoPreview.src = compressedDataUrl;
@@ -2293,7 +2253,6 @@ function exportNotes() {
     exportedAt: new Date().toISOString(),
     notesCount: notes.length,
     notes: notes.map(n => {
-      // Retirer userId du fichier exporté
       const { userId, ...rest } = n;
       return rest;
     })
@@ -2379,7 +2338,7 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
 });
 
 /* =========================================================
-   MODAL AJOUT
+   MODAL
    ========================================================= */
 
 function chooseIcon(el) {
@@ -2645,7 +2604,7 @@ function clearSearchButton() {
 }
 
 /* =========================================================
-   💾 SAUVEGARDE DANS FIRESTORE
+   💾 SAUVEGARDE
    ========================================================= */
 
 async function saveNote() {
@@ -2674,9 +2633,12 @@ async function saveNote() {
       photo: pendingPhoto
     });
 
+    const lat = pendingLatLng.lat;
+    const lng = pendingLatLng.lng;
+
     closeAddModal();
     showToast('☁️ Souvenir enregistré dans le cloud !', 'success');
-    map.flyTo([pendingLatLng.lat, pendingLatLng.lng], 15, { duration: 1.2 });
+    map.flyTo([lat, lng], 15, { duration: 1.2 });
   } catch (err) {
     console.error('Erreur sauvegarde:', err);
     showToast('❌ Erreur de sauvegarde', 'error');
@@ -2705,10 +2667,6 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-/* =========================================================
-   RACCOURCIS CLAVIER
-   ========================================================= */
-
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (document.getElementById('lightbox').classList.contains('open')) closeLightbox();
@@ -2718,15 +2676,9 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-/* =========================================================
-   INITIALISATION UI
-   ========================================================= */
-
-// Appliquer thème + styles au chargement
 updateThemeChoices();
 updateStyleChoices();
 
-// Le hint disparaît après 8s (une fois connecté)
 setTimeout(() => {
   const hint = document.getElementById('hint');
   if (hint) hint.style.opacity = '0';
