@@ -77,7 +77,6 @@
     justify-content: center;
     z-index: 10000;
     padding: 20px;
-    animation: fadeIn 0.5s ease;
   }
 
   #loginScreen.hidden { display: none; }
@@ -140,7 +139,7 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.25s;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
@@ -150,7 +149,6 @@
     background: #f8fafc;
   }
 
-  .btn-google:active { transform: translateY(0); }
   .btn-google:disabled { opacity: 0.6; cursor: wait; }
   .btn-google svg { width: 22px; height: 22px; }
 
@@ -167,14 +165,12 @@
     height: 64px;
     background: var(--bg-header);
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
     z-index: 1000;
-    transition: background 0.4s ease, border-color 0.4s ease;
   }
 
   .logo {
@@ -203,7 +199,7 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.25s;
   }
 
   .btn-primary {
@@ -214,9 +210,7 @@
   .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(249, 115, 22, 0.5);
-    filter: brightness(1.08);
   }
-  .btn-primary:active { transform: translateY(0); }
 
   .btn-ghost {
     background: rgba(148, 163, 184, 0.15);
@@ -282,8 +276,8 @@
     min-width: 240px;
     box-shadow: var(--shadow-lg);
     display: none;
-    animation: dropdownEnter 0.2s ease;
     z-index: 10;
+    animation: dropdownEnter 0.2s ease;
   }
 
   .user-dropdown.open { display: block; }
@@ -304,11 +298,6 @@
     font-size: 0.9rem;
     color: var(--text-primary);
     margin-bottom: 2px;
-  }
-
-  .user-email {
-    font-size: 0.75rem;
-    color: var(--text-faint);
   }
 
   .user-username {
@@ -356,12 +345,6 @@
     top: 64px; left: 0; right: 0; bottom: 0;
     z-index: 1;
     background: var(--bg-tertiary);
-    animation: mapFadeIn 0.8s ease;
-  }
-
-  @keyframes mapFadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
   }
 
   .sync-indicator {
@@ -377,7 +360,7 @@
     color: var(--text-secondary);
     box-shadow: var(--shadow-md);
     z-index: 999;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.35s;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -417,12 +400,6 @@
     gap: 4px;
     box-shadow: var(--shadow-lg);
     z-index: 500;
-    animation: slideUpFilter 0.4s ease;
-  }
-
-  @keyframes slideUpFilter {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
   }
 
   .filter-btn {
@@ -441,11 +418,7 @@
     gap: 5px;
   }
 
-  .filter-btn:hover {
-    background: rgba(148, 163, 184, 0.15);
-    color: var(--text-primary);
-  }
-
+  .filter-btn:hover { background: rgba(148, 163, 184, 0.15); color: var(--text-primary); }
   .filter-btn.active {
     background: linear-gradient(135deg, #f97316, #ea580c);
     color: white;
@@ -461,9 +434,7 @@
     text-align: center;
   }
 
-  .filter-btn.active .count {
-    background: rgba(255, 255, 255, 0.35);
-  }
+  .filter-btn.active .count { background: rgba(255, 255, 255, 0.35); }
 
   @media (max-width: 768px) {
     .map-filter {
@@ -481,10 +452,9 @@
     width: 340px;
     background: var(--bg-overlay);
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     border-left: 1px solid var(--border-color);
     transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.35s;
     z-index: 999;
     display: flex;
     flex-direction: column;
@@ -508,7 +478,6 @@
     cursor: pointer;
     padding: 0;
     line-height: 1;
-    transition: color 0.2s, transform 0.3s;
   }
   .close-sidebar:hover { color: #ef4444; transform: rotate(90deg); }
 
@@ -520,15 +489,9 @@
     border-radius: 12px;
     margin-bottom: 10px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s;
     position: relative;
     overflow: hidden;
-    animation: noteCardEnter 0.35s ease backwards;
-  }
-
-  @keyframes noteCardEnter {
-    from { opacity: 0; transform: translateX(20px); }
-    to   { opacity: 1; transform: translateX(0); }
   }
 
   .note-card::before {
@@ -539,7 +502,6 @@
     background: linear-gradient(180deg, #f97316, #ea580c);
     opacity: 0;
     transition: opacity 0.3s;
-    z-index: 1;
   }
 
   .note-card.friend-note::before {
@@ -549,7 +511,7 @@
   .note-card:hover {
     background: var(--bg-card-hover);
     border-color: rgba(249, 115, 22, 0.5);
-    transform: translateY(-3px) scale(1.01);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-md);
   }
   .note-card:hover::before { opacity: 1; }
@@ -575,7 +537,6 @@
   }
 
   .note-card.friend-note .place { color: #3b82f6; }
-
   .note-card .place .category-icon { font-size: 1.1rem; }
 
   .note-card .text {
@@ -620,7 +581,6 @@
     cursor: pointer;
     padding: 2px 6px;
     border-radius: 6px;
-    transition: all 0.2s;
   }
   .delete-note:hover {
     color: #ef4444;
@@ -633,12 +593,6 @@
     padding: 40px 20px;
     color: var(--text-faint);
     font-size: 0.9rem;
-    animation: fadeIn 0.6s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
   }
 
   .modal-overlay {
@@ -646,22 +600,13 @@
     inset: 0;
     background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 2000;
     padding: 20px;
   }
-  .modal-overlay.open {
-    display: flex;
-    animation: overlayFadeIn 0.25s ease;
-  }
-
-  @keyframes overlayFadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
+  .modal-overlay.open { display: flex; }
 
   .modal {
     background: var(--bg-modal);
@@ -714,7 +659,7 @@
     font-family: inherit;
     font-size: 0.95rem;
     outline: none;
-    transition: all 0.25s ease;
+    transition: all 0.25s;
   }
   input:focus, textarea:focus, select:focus {
     border-color: #f97316;
@@ -739,18 +684,16 @@
     background: var(--bg-input);
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    user-select: none;
+    transition: all 0.25s;
   }
   .icon-choice:hover {
     border-color: rgba(249, 115, 22, 0.6);
-    transform: translateY(-2px) scale(1.05);
+    transform: translateY(-2px);
   }
   .icon-choice.active {
     border-color: #f97316;
     background: rgba(249, 115, 22, 0.15);
     transform: scale(1.08);
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
   }
 
   .photo-upload-zone {
@@ -759,7 +702,7 @@
     padding: 20px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
     background: var(--bg-input);
   }
   .photo-upload-zone:hover {
@@ -782,14 +725,8 @@
     margin-top: 10px;
     border-radius: 12px;
     overflow: hidden;
-    animation: photoPreviewIn 0.35s ease;
   }
   .photo-preview-wrapper.visible { display: block; }
-
-  @keyframes photoPreviewIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to   { opacity: 1; transform: scale(1); }
-  }
 
   .photo-preview {
     width: 100%;
@@ -814,12 +751,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.25s;
     backdrop-filter: blur(8px);
-  }
-  .photo-remove:hover {
-    background: rgba(239, 68, 68, 0.9);
-    transform: scale(1.1) rotate(90deg);
   }
 
   .search-wrapper { position: relative; }
@@ -849,12 +781,6 @@
     padding: 4px 8px;
     border-radius: 6px;
     display: none;
-    transition: all 0.2s;
-  }
-  .search-clear:hover {
-    color: #ef4444;
-    background: rgba(239, 68, 68, 0.15);
-    transform: translateY(-50%) rotate(90deg);
   }
   .search-clear.visible { display: block; }
 
@@ -889,41 +815,22 @@
     box-shadow: var(--shadow-lg);
     display: none;
   }
-  .autocomplete-list.open {
-    display: block;
-    animation: dropdownEnter 0.2s ease;
-  }
+  .autocomplete-list.open { display: block; }
 
   .autocomplete-item {
     padding: 11px 14px;
     cursor: pointer;
     border-bottom: 1px solid var(--border-subtle);
-    transition: background 0.15s;
     font-size: 0.88rem;
   }
-  .autocomplete-item:last-child { border-bottom: none; }
-  .autocomplete-item:hover,
-  .autocomplete-item.active { background: rgba(249, 115, 22, 0.15); }
-
-  .autocomplete-item .name {
-    color: var(--text-primary);
-    font-weight: 600;
-    margin-bottom: 2px;
-  }
+  .autocomplete-item:hover { background: rgba(249, 115, 22, 0.15); }
+  .autocomplete-item .name { color: var(--text-primary); font-weight: 600; margin-bottom: 2px; }
   .autocomplete-item .details {
     color: var(--text-muted);
     font-size: 0.78rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .autocomplete-empty {
-    padding: 14px;
-    text-align: center;
-    color: var(--text-faint);
-    font-size: 0.85rem;
-    font-style: italic;
   }
 
   .location-box {
@@ -936,7 +843,6 @@
     border-radius: 10px;
     font-size: 0.82rem;
     color: var(--text-muted);
-    transition: all 0.3s ease;
   }
   .location-box.gps {
     border-color: rgba(34, 197, 94, 0.6);
@@ -963,8 +869,6 @@
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 0.78rem;
     font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .btn-gps-inline {
@@ -974,11 +878,8 @@
     padding: 8px 10px;
     border-radius: 8px;
     white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
     flex-shrink: 0;
   }
-  .btn-gps-inline:hover { box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5); transform: translateY(-1px); }
-  .btn-gps-inline:disabled { opacity: 0.6; cursor: wait; }
 
   .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
 
@@ -993,19 +894,10 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
   }
-  .custom-marker:hover {
-    transform: rotate(-45deg) scale(1.2);
-    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.7);
-  }
-  .custom-marker::after {
-    content: "📍";
-    transform: rotate(45deg);
-    font-size: 14px;
-  }
-
+  .custom-marker:hover { transform: rotate(-45deg) scale(1.2); }
+  .custom-marker::after { content: "📍"; transform: rotate(45deg); font-size: 14px; }
   .custom-marker.has-icon::after { display: none; }
 
   .custom-marker.has-photo::before {
@@ -1018,26 +910,11 @@
     background: #3b82f6;
     border: 2px solid white;
     border-radius: 50%;
-    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
-    z-index: 2;
   }
 
   .custom-marker.friend-marker {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
-  }
-  .custom-marker.friend-marker:hover {
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.7);
-  }
-
-  .marker-pop {
-    animation: markerPopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes markerPopIn {
-    0%   { transform: rotate(-45deg) scale(0); }
-    60%  { transform: rotate(-45deg) scale(1.25); }
-    100% { transform: rotate(-45deg) scale(1); }
   }
 
   .user-location-marker {
@@ -1045,14 +922,13 @@
     background: #22c55e;
     border-radius: 50%;
     border: 3px solid white;
-    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35);
     animation: pulse 2s infinite;
   }
 
   @keyframes pulse {
-    0%   { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4); }
-    50%  { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0.15), 0 4px 12px rgba(0, 0, 0, 0.4); }
-    100% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4); }
+    0%, 100% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35); }
+    50%      { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0.15); }
   }
 
   .temp-marker {
@@ -1060,14 +936,7 @@
     background: #3b82f6;
     border-radius: 50%;
     border: 3px solid white;
-    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4);
-    animation: pulseBlue 1.5s infinite;
-  }
-
-  @keyframes pulseBlue {
-    0%   { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4); }
-    50%  { box-shadow: 0 0 0 14px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.4); }
-    100% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4); }
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3);
   }
 
   .leaflet-popup-content-wrapper {
@@ -1080,16 +949,7 @@
     overflow: hidden;
   }
   .leaflet-popup-tip { background: var(--bg-modal); }
-  .leaflet-popup-content {
-    margin: 0;
-    font-family: inherit;
-    animation: popupContentIn 0.3s ease;
-  }
-
-  @keyframes popupContentIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  .leaflet-popup-content { margin: 0; }
 
   .popup-photo {
     width: 100%;
@@ -1098,9 +958,7 @@
     object-fit: cover;
     display: block;
     cursor: pointer;
-    transition: transform 0.3s ease;
   }
-  .popup-photo:hover { transform: scale(1.03); }
 
   .popup-body { padding: 14px 16px; }
 
@@ -1115,7 +973,6 @@
   }
 
   .popup-place.friend-place { color: #3b82f6; }
-
   .popup-place .category-icon { font-size: 1.2rem; }
 
   .popup-text {
@@ -1135,7 +992,9 @@
     font-size: 0.78rem;
     color: #3b82f6;
     font-weight: 600;
+    cursor: pointer;
   }
+  .popup-author:hover { text-decoration: underline; }
 
   .popup-author img {
     width: 22px;
@@ -1154,13 +1013,7 @@
     margin-top: 8px;
   }
 
-  .popup-footer.no-author { margin-top: 0; }
-
-  .popup-meta {
-    font-size: 0.72rem;
-    color: var(--text-faint);
-    flex: 1;
-  }
+  .popup-meta { font-size: 0.72rem; color: var(--text-faint); flex: 1; }
 
   .popup-delete-btn {
     background: rgba(239, 68, 68, 0.12);
@@ -1175,15 +1028,11 @@
     align-items: center;
     gap: 5px;
     transition: all 0.25s;
-    white-space: nowrap;
   }
 
   .popup-delete-btn:hover {
     background: rgba(239, 68, 68, 0.9);
     color: white;
-    border-color: #ef4444;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
   }
 
   .lightbox {
@@ -1196,26 +1045,14 @@
     justify-content: center;
     z-index: 5000;
     padding: 40px;
-    animation: lightboxIn 0.3s ease;
   }
   .lightbox.open { display: flex; }
-
-  @keyframes lightboxIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
 
   .lightbox img {
     max-width: 100%;
     max-height: 100%;
     border-radius: 12px;
     box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
-    animation: lightboxImgIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes lightboxImgIn {
-    from { opacity: 0; transform: scale(0.85); }
-    to   { opacity: 1; transform: scale(1); }
   }
 
   .lightbox-close {
@@ -1233,13 +1070,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.25s;
-    backdrop-filter: blur(8px);
   }
-  .lightbox-close:hover {
-    background: rgba(239, 68, 68, 0.8);
-    transform: rotate(90deg) scale(1.1);
-  }
+  .lightbox-close:hover { background: rgba(239, 68, 68, 0.8); transform: rotate(90deg); }
 
   .leaflet-control-recenter {
     background: var(--bg-modal);
@@ -1254,41 +1086,7 @@
     font-size: 1.2rem;
     color: var(--text-primary);
     box-shadow: var(--shadow-md);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     margin-bottom: 10px;
-    user-select: none;
-  }
-  .leaflet-control-recenter:hover {
-    background: var(--bg-secondary);
-    border-color: rgba(34, 197, 94, 0.6);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
-  }
-  .leaflet-control-recenter.locating {
-    border-color: rgba(34, 197, 94, 0.8);
-    background: rgba(34, 197, 94, 0.15);
-    animation: recenterPulse 1s infinite;
-  }
-  .leaflet-control-recenter.error {
-    border-color: rgba(239, 68, 68, 0.8);
-    background: rgba(239, 68, 68, 0.15);
-  }
-
-  @keyframes recenterPulse {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.15); }
-    100% { transform: scale(1); }
-  }
-
-  .leaflet-control-zoom a {
-    background: var(--bg-modal) !important;
-    color: var(--text-primary) !important;
-    border: 1px solid var(--border-hover) !important;
-    transition: all 0.2s !important;
-  }
-  .leaflet-control-zoom a:hover {
-    background: var(--bg-secondary) !important;
-    transform: scale(1.08);
   }
 
   .settings-panel {
@@ -1306,15 +1104,7 @@
     z-index: 1500;
     display: none;
   }
-  .settings-panel.open {
-    display: block;
-    animation: settingsPanelIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes settingsPanelIn {
-    from { opacity: 0; transform: translateY(-12px) scale(0.96); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
+  .settings-panel.open { display: block; }
 
   .settings-panel h3 {
     font-size: 1rem;
@@ -1330,11 +1120,8 @@
     border: none;
     color: var(--text-muted);
     font-size: 1.3rem;
-    padding: 0;
     cursor: pointer;
-    transition: transform 0.3s;
   }
-  .settings-panel h3 button:hover { transform: rotate(90deg); color: #ef4444; }
 
   .settings-panel label {
     font-size: 0.75rem;
@@ -1356,26 +1143,16 @@
     background: var(--bg-input);
     cursor: pointer;
     text-align: center;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 0.72rem;
     font-weight: 600;
     color: var(--text-secondary);
-  }
-  .theme-choice:hover {
-    border-color: rgba(249, 115, 22, 0.5);
-    transform: translateY(-2px);
   }
   .theme-choice.active {
     border-color: #f97316;
     background: rgba(249, 115, 22, 0.15);
     color: #f97316;
-    transform: scale(1.03);
   }
-  .theme-choice .emoji {
-    display: block;
-    font-size: 1.4rem;
-    margin-bottom: 4px;
-  }
+  .theme-choice .emoji { display: block; font-size: 1.4rem; margin-bottom: 4px; }
 
   .settings-actions {
     display: flex;
@@ -1395,23 +1172,15 @@
     font-size: 0.85rem;
     color: var(--text-secondary);
     margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
   }
 
   .backup-section .description {
     font-size: 0.72rem;
     color: var(--text-faint);
     margin-bottom: 12px;
-    line-height: 1.4;
   }
 
-  .backup-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
+  .backup-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
   .btn-backup {
     padding: 10px 12px;
@@ -1422,31 +1191,16 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: all 0.25s;
-    white-space: nowrap;
   }
 
   .btn-export {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
-    border: none;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   }
-  .btn-export:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
-  }
-
   .btn-import {
     background: linear-gradient(135deg, #8b5cf6, #7c3aed);
     color: white;
-    border: none;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
     cursor: pointer;
-  }
-  .btn-import:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
   }
 
   .notes-count-info {
@@ -1457,67 +1211,133 @@
     font-style: italic;
   }
 
-  .username-section {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 16px;
+  /* 👤 PROFIL */
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 20px;
+    position: relative;
   }
 
-  .username-section h4 {
+  .profile-avatar-wrapper {
+    position: relative;
+    margin-bottom: 12px;
+  }
+
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(249, 115, 22, 0.6);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .profile-avatar-edit {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    border: 3px solid var(--bg-modal);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .profile-avatar-edit:hover { transform: scale(1.1); }
+
+  .profile-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .profile-username {
+    font-size: 0.9rem;
+    color: #f97316;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .profile-bio {
     font-size: 0.85rem;
-    color: #3b82f6;
-    margin-bottom: 6px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.4;
+    max-width: 380px;
+    padding: 0 10px;
+  }
+
+  .profile-location {
     display: flex;
     align-items: center;
     gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-faint);
+    margin-top: 8px;
   }
 
-  .username-section p {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-bottom: 10px;
-    line-height: 1.4;
-  }
-
-  .username-input-row {
+  .profile-meta {
     display: flex;
-    gap: 6px;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-subtle);
+    width: 100%;
   }
 
-  .username-input-row input {
-    flex: 1;
-    font-size: 0.85rem;
-    padding: 8px 12px;
+  .profile-stat {
+    text-align: center;
   }
 
-  .username-input-row button {
-    padding: 8px 14px;
-    font-size: 0.78rem;
-    white-space: nowrap;
+  .profile-stat .value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f97316;
   }
 
+  .profile-stat .label {
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* 👥 CARDS AMIS */
   .friend-card {
     background: var(--bg-input);
     border: 1px solid var(--border-subtle);
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 8px;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    transition: all 0.2s;
+    gap: 14px;
+    transition: all 0.25s;
+    cursor: pointer;
   }
 
   .friend-card:hover {
     background: var(--bg-card-hover);
-    border-color: rgba(59, 130, 246, 0.4);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
   }
 
   .friend-avatar {
-    width: 42px;
-    height: 42px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid rgba(59, 130, 246, 0.5);
@@ -1531,7 +1351,7 @@
 
   .friend-name {
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-primary);
     margin-bottom: 2px;
     overflow: hidden;
@@ -1540,15 +1360,15 @@
   }
 
   .friend-username {
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     color: #3b82f6;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
   }
 
-  .friend-email {
-    font-size: 0.7rem;
-    color: var(--text-faint);
+  .friend-bio-preview {
+    font-size: 0.75rem;
+    color: var(--text-muted);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1574,7 +1394,6 @@
   .friend-btn:hover {
     background: rgba(59, 130, 246, 0.9);
     color: white;
-    transform: translateY(-1px);
   }
   .friend-btn.accept {
     background: rgba(34, 197, 94, 0.15);
@@ -1614,7 +1433,6 @@
     padding: 8px 6px;
     border-radius: 7px;
     cursor: pointer;
-    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1647,6 +1465,58 @@
     max-width: 520px;
   }
 
+  .section-title {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .info-banner {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .info-banner .icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .btn-full {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-full.edit-profile {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    margin-bottom: 16px;
+  }
+  .btn-full.edit-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  }
+
   .toast {
     position: fixed;
     bottom: 30px;
@@ -1660,7 +1530,7 @@
     font-size: 0.9rem;
     font-weight: 500;
     box-shadow: var(--shadow-lg);
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.35s;
     z-index: 3000;
     max-width: 90%;
     text-align: center;
@@ -1701,12 +1571,6 @@
     transition: opacity 0.5s;
     text-align: center;
     max-width: 90%;
-    animation: hintFloat 3s ease-in-out infinite;
-  }
-
-  @keyframes hintFloat {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50%      { transform: translateX(-50%) translateY(-3px); }
   }
 
   .spinner {
@@ -1738,7 +1602,6 @@
     background: rgba(148, 163, 184, 0.3);
     border-radius: 4px;
   }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
 </style>
 </head>
 <body>
@@ -1786,11 +1649,13 @@
         <div class="user-dropdown" id="userDropdown">
           <div class="user-info">
             <div class="user-name" id="userName">—</div>
-            <div class="user-email" id="userEmail">—</div>
-            <div class="user-username" id="userUsernameDisplay" onclick="copyUsername()">
+            <div class="user-username" onclick="copyUsername()">
               @<span id="userUsername">—</span> <span style="font-size: 0.65rem;">📋</span>
             </div>
           </div>
+          <button class="dropdown-item" onclick="openMyProfile()">
+            👤 Mon profil
+          </button>
           <button class="dropdown-item" onclick="openFriendsModal()">
             👥 Mes amis
           </button>
@@ -1842,9 +1707,7 @@
 
     <div class="backup-section">
       <h4>💾 Sauvegarde</h4>
-      <p class="description">
-        Exporte tes notes dans un fichier ou restaure-les depuis une sauvegarde.
-      </p>
+      <p class="description">Exporte tes notes dans un fichier.</p>
 
       <div class="backup-buttons">
         <button class="btn-backup btn-export" onclick="exportNotes()">💾 Exporter</button>
@@ -1867,14 +1730,15 @@
       <button class="close-sidebar" onclick="toggleSidebar()">×</button>
     </div>
     <div class="notes-list" id="notesList">
-      <div class="empty-state">Aucun souvenir pour l'instant.<br>Cliquez sur la carte pour commencer ✨</div>
+      <div class="empty-state">Aucun souvenir pour l'instant.</div>
     </div>
   </aside>
 
+  <!-- MODAL AJOUT NOTE -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <h2>📍 Nouveau souvenir</h2>
-      <p class="subtitle">Cherche un lieu par son nom, clique sur la carte, ou utilise ton GPS.</p>
+      <p class="subtitle">Cherche un lieu, clique sur la carte, ou utilise ton GPS.</p>
 
       <div class="form-group">
         <label>Catégorie</label>
@@ -1899,7 +1763,7 @@
         <div class="search-wrapper">
           <div class="search-input-wrapper">
             <span class="search-icon">🔎</span>
-            <input type="text" id="searchInput" placeholder="Ex: Tour Eiffel, Tokyo, Bali..." autocomplete="off" />
+            <input type="text" id="searchInput" placeholder="Ex: Paris, Tokyo..." autocomplete="off" />
             <div class="search-spinner" id="searchSpinner"></div>
             <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
           </div>
@@ -1923,7 +1787,7 @@
 
       <div class="form-group">
         <label for="noteText">Votre anecdote</label>
-        <textarea id="noteText" placeholder="Ex: On est venus ici à 3h du matin après avoir raté le dernier métro 😂"></textarea>
+        <textarea id="noteText" placeholder="Raconte ton souvenir..."></textarea>
       </div>
 
       <div class="form-group">
@@ -1931,14 +1795,13 @@
         <div class="photo-upload-zone" id="photoUploadZone" onclick="document.getElementById('photoInput').click()">
           <span class="photo-upload-icon">📷</span>
           <div class="photo-upload-text">
-            <b>Clique</b> pour ajouter une photo<br>
-            ou glisse-dépose ici
+            <b>Clique</b> pour ajouter une photo
           </div>
         </div>
         <input type="file" id="photoInput" accept="image/*" style="display: none;" />
         <div class="photo-preview-wrapper" id="photoPreviewWrapper">
           <img class="photo-preview" id="photoPreview" alt="Aperçu" />
-          <button class="photo-remove" onclick="removePhoto(event)" title="Supprimer la photo">×</button>
+          <button class="photo-remove" onclick="removePhoto(event)">×</button>
         </div>
       </div>
 
@@ -1949,27 +1812,29 @@
     </div>
   </div>
 
+  <!-- MODAL AMIS -->
   <div class="modal-overlay" id="friendsModalOverlay">
     <div class="modal modal-friends">
       <h2>👥 Mes amis</h2>
-      <p class="subtitle">Ajoute des amis pour voir leurs souvenirs sur ta carte.</p>
+      <p class="subtitle">Ajoute des amis avec leur pseudo.</p>
 
-      <div class="username-section" id="usernameSection">
-        <h4>👤 Ton pseudo</h4>
-        <p>Choisis un pseudo unique pour que tes amis puissent t'ajouter.</p>
-        <div class="username-input-row">
-          <input type="text" id="usernameInput" placeholder="ex: matheo_paris" maxlength="20" />
-          <button class="btn-primary" onclick="saveUsername()">💾 Enregistrer</button>
+      <button class="btn-full edit-profile" onclick="openEditProfile()">
+        ✏️ Modifier mon profil
+      </button>
+
+      <div class="info-banner">
+        <span class="icon">🔒</span>
+        <div>
+          <b>Vie privée respectée :</b> tes amis voient uniquement ton pseudo, ta photo et ta bio. <b>Jamais ton email</b>.
         </div>
       </div>
 
-      <div class="username-section" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05)); border-color: rgba(34, 197, 94, 0.3);">
-        <h4 style="color: #22c55e;">➕ Ajouter un ami</h4>
-        <p>Entre le pseudo de ton ami pour lui envoyer une demande.</p>
-        <div class="username-input-row">
-          <input type="text" id="friendUsernameInput" placeholder="ex: marie_voyage" maxlength="20" />
-          <button class="btn-primary" style="background: linear-gradient(135deg, #22c55e, #16a34a);" onclick="sendFriendRequest()">📨 Envoyer</button>
-        </div>
+      <div class="section-title">
+        <span>➕ Ajouter un ami</span>
+      </div>
+      <div style="display: flex; gap: 6px; margin-bottom: 16px;">
+        <input type="text" id="friendUsernameInput" placeholder="pseudo de ton ami" maxlength="20" style="flex: 1;" />
+        <button class="btn-primary" style="background: linear-gradient(135deg, #22c55e, #16a34a);" onclick="sendFriendRequest()">📨</button>
       </div>
 
       <div class="friends-tabs">
@@ -1988,6 +1853,80 @@
 
       <div class="modal-actions">
         <button class="btn-ghost" onclick="closeFriendsModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ÉDITION PROFIL -->
+  <div class="modal-overlay" id="editProfileModalOverlay">
+    <div class="modal">
+      <h2>✏️ Modifier mon profil</h2>
+      <p class="subtitle">Personnalise ton profil. Ton email ne sera jamais partagé.</p>
+
+      <div class="profile-header">
+        <div class="profile-avatar-wrapper">
+          <img class="profile-avatar" id="editProfileAvatar" src="" alt="Avatar" />
+          <button class="profile-avatar-edit" onclick="document.getElementById('profilePhotoInput').click()">📷</button>
+        </div>
+        <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;" />
+      </div>
+
+      <div class="form-group">
+        <label for="editUsername">Pseudo unique</label>
+        <input type="text" id="editUsername" placeholder="ex: matheo_paris" maxlength="20" />
+        <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px;">
+          Ton pseudo permet à tes amis de t'ajouter.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editBio">Bio</label>
+        <textarea id="editBio" placeholder="Ex: Voyageur passionné ✈️ J'adore les plages et les bons restos 🍕" maxlength="150" style="min-height: 70px;"></textarea>
+        <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px; text-align: right;">
+          <span id="bioCounter">0</span> / 150
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editLocation">Localisation (optionnel)</label>
+        <input type="text" id="editLocation" placeholder="Ex: Paris, France" maxlength="50" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeEditProfile()">Annuler</button>
+        <button class="btn-primary" id="saveProfileBtn" onclick="saveProfile()">💾 Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VOIR PROFIL (AMI ou MOI) -->
+  <div class="modal-overlay" id="viewProfileModalOverlay">
+    <div class="modal modal-friends">
+      <div class="profile-header">
+        <div class="profile-avatar-wrapper">
+          <img class="profile-avatar" id="viewProfileAvatar" src="" alt="Avatar" />
+        </div>
+        <div class="profile-name" id="viewProfileName">—</div>
+        <div class="profile-username" id="viewProfileUsername">—</div>
+        <div class="profile-bio" id="viewProfileBio"></div>
+        <div class="profile-location" id="viewProfileLocation" style="display: none;">
+          📍 <span id="viewProfileLocationText"></span>
+        </div>
+
+        <div class="profile-meta">
+          <div class="profile-stat">
+            <div class="value" id="viewProfileNotes">0</div>
+            <div class="label">Souvenirs</div>
+          </div>
+          <div class="profile-stat">
+            <div class="value" id="viewProfileFriends">0</div>
+            <div class="label">Amis</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeViewProfile()">Fermer</button>
       </div>
     </div>
   </div>
@@ -2044,6 +1983,7 @@ let allNotes = [];
 let myNotes = [];
 let friendNotes = [];
 let mapFilter = 'all';
+let pendingProfilePhoto = null;
 
 let unsubscribeProfile = null;
 let unsubscribeNotes = null;
@@ -2077,26 +2017,20 @@ function signInWithGoogle() {
   const btn = document.getElementById('googleBtn');
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = '⏳ Connexion en cours...';
+    btn.innerHTML = '⏳ Connexion...';
   }
 
   if (isMobileDevice()) {
     auth.signInWithRedirect(provider).catch((error) => {
       console.error('Erreur:', error);
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = 'Se connecter avec Google';
-      }
+      if (btn) btn.disabled = false;
     });
   } else {
     auth.signInWithPopup(provider).catch((error) => {
       console.error('Erreur:', error);
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = 'Se connecter avec Google';
-      }
+      if (btn) btn.disabled = false;
       if (error.code === 'auth/popup-blocked') alert('Autorise les popups.');
-      else if (error.code === 'auth/unauthorized-domain') alert('Domaine non autorisé dans Firebase.');
+      else if (error.code === 'auth/unauthorized-domain') alert('Domaine non autorisé.');
     });
   }
 }
@@ -2164,29 +2098,18 @@ function showApp() {
 
   document.getElementById('userAvatar').src = currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
   document.getElementById('userName').textContent = currentUser.displayName || 'Utilisateur';
-  document.getElementById('userEmail').textContent = currentUser.email || '';
 
-  if (!map) {
-    initMap();
-  }
+  if (!map) initMap();
 }
-
-/* =========================================================
-   🎬 FONCTION showSyncIndicator (MANQUAIT !)
-   ========================================================= */
 
 function showSyncIndicator(text, synced) {
   const el = document.getElementById('syncIndicator');
   const txt = document.getElementById('syncText');
   if (!el || !txt) return;
-  
   txt.textContent = text;
   el.classList.toggle('synced', synced);
   el.classList.add('show');
-
-  if (synced) {
-    setTimeout(() => el.classList.remove('show'), 1500);
-  }
+  if (synced) setTimeout(() => el.classList.remove('show'), 1500);
 }
 
 /* =========================================================
@@ -2204,6 +2127,8 @@ async function ensureUserProfile() {
         email: currentUser.email || '',
         photoURL: currentUser.photoURL || '',
         username: '',
+        bio: '',
+        location: '',
         friends: [],
         createdAt: Date.now()
       });
@@ -2211,10 +2136,13 @@ async function ensureUserProfile() {
       const data = doc.data();
       const updates = {
         displayName: currentUser.displayName || 'Utilisateur',
-        photoURL: currentUser.photoURL || '',
         email: currentUser.email || ''
       };
+      // Ne pas écraser la photo de profil perso si elle existe
+      if (!data.photoURL) updates.photoURL = currentUser.photoURL || '';
       if (!data.friends) updates.friends = [];
+      if (data.bio === undefined) updates.bio = '';
+      if (data.location === undefined) updates.location = '';
       await userRef.update(updates);
     }
   } catch (err) {
@@ -2230,62 +2158,170 @@ function loadProfile() {
       if (!doc.exists) return;
       myProfile = doc.data();
 
-      const usernameEl = document.getElementById('userUsername');
-      const usernameInput = document.getElementById('usernameInput');
-      const display = document.getElementById('userUsernameDisplay');
+      // Mettre à jour l'avatar du header avec la photo perso si elle existe
+      const avatarSrc = myProfile.photoURL || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
+      document.getElementById('userAvatar').src = avatarSrc;
 
-      if (myProfile.username) {
-        usernameEl.textContent = myProfile.username;
-        usernameInput.value = myProfile.username;
-        display.style.display = 'flex';
-      } else {
-        usernameEl.textContent = '(à définir)';
-        display.style.display = 'flex';
-      }
+      document.getElementById('userName').textContent = myProfile.displayName || 'Utilisateur';
+      document.getElementById('userUsername').textContent = myProfile.username || '(à définir)';
     });
-}
-
-async function saveUsername() {
-  const input = document.getElementById('usernameInput');
-  const username = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
-
-  if (username.length < 3) {
-    showToast('⚠️ Pseudo trop court (min 3 caractères)', 'error');
-    return;
-  }
-  if (username.length > 20) {
-    showToast('⚠️ Pseudo trop long (max 20 caractères)', 'error');
-    return;
-  }
-
-  try {
-    const existing = await db.collection('users')
-      .where('username', '==', username)
-      .limit(1)
-      .get({ source: 'server' });
-
-    if (!existing.empty && existing.docs[0].id !== currentUser.uid) {
-      showToast('⚠️ Ce pseudo est déjà pris', 'error');
-      return;
-    }
-
-    await db.collection('users').doc(currentUser.uid).update({ username });
-    showToast(`✅ Pseudo enregistré : @${username}`, 'success');
-  } catch (err) {
-    console.error('Erreur pseudo:', err);
-    showToast('❌ Erreur lors de l\'enregistrement', 'error');
-  }
 }
 
 function copyUsername() {
   if (!myProfile || !myProfile.username) {
     showToast('⚠️ Définis d\'abord ton pseudo', 'info');
-    openFriendsModal();
+    openEditProfile();
     return;
   }
   navigator.clipboard.writeText(myProfile.username).then(() => {
     showToast(`📋 Pseudo @${myProfile.username} copié !`, 'success');
   });
+}
+
+/* ÉDITION PROFIL */
+function openMyProfile() {
+  if (!myProfile) return;
+  showViewProfile(myProfile, true);
+}
+
+function openEditProfile() {
+  if (!myProfile) return;
+
+  document.getElementById('editUsername').value = myProfile.username || '';
+  document.getElementById('editBio').value = myProfile.bio || '';
+  document.getElementById('editLocation').value = myProfile.location || '';
+  document.getElementById('editProfileAvatar').src = myProfile.photoURL || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
+  document.getElementById('bioCounter').textContent = (myProfile.bio || '').length;
+  pendingProfilePhoto = null;
+
+  document.getElementById('editProfileModalOverlay').classList.add('open');
+}
+
+function closeEditProfile() {
+  document.getElementById('editProfileModalOverlay').classList.remove('open');
+  pendingProfilePhoto = null;
+}
+
+// Compteur de bio
+document.getElementById('editBio').addEventListener('input', (e) => {
+  document.getElementById('bioCounter').textContent = e.target.value.length;
+});
+
+// Upload photo profil
+document.getElementById('profilePhotoInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('⚠️ Photo trop lourde (max 5 Mo)', 'error');
+    return;
+  }
+
+  try {
+    showToast('⏳ Compression...', 'info');
+    const compressed = await compressImage(file, 300, 0.8);
+    pendingProfilePhoto = compressed;
+    document.getElementById('editProfileAvatar').src = compressed;
+    showToast('✅ Photo prête !', 'success');
+  } catch (err) {
+    console.error(err);
+    showToast('❌ Erreur photo', 'error');
+  }
+});
+
+async function saveProfile() {
+  const username = document.getElementById('editUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+  const bio = document.getElementById('editBio').value.trim();
+  const location = document.getElementById('editLocation').value.trim();
+
+  if (username.length < 3) {
+    showToast('⚠️ Pseudo trop court (min 3 caractères)', 'error');
+    return;
+  }
+
+  const saveBtn = document.getElementById('saveProfileBtn');
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<span class="cloud-loader"></span>Enregistrement...';
+
+  try {
+    // Vérifier si le pseudo est déjà pris
+    if (username !== myProfile.username) {
+      const existing = await db.collection('users')
+        .where('username', '==', username)
+        .limit(1)
+        .get({ source: 'server' });
+
+      if (!existing.empty && existing.docs[0].id !== currentUser.uid) {
+        showToast('⚠️ Ce pseudo est déjà pris', 'error');
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '💾 Enregistrer';
+        return;
+      }
+    }
+
+    const updates = {
+      username,
+      bio,
+      location
+    };
+
+    if (pendingProfilePhoto) {
+      updates.photoURL = pendingProfilePhoto;
+    }
+
+    await db.collection('users').doc(currentUser.uid).update(updates);
+
+    showToast('✅ Profil enregistré !', 'success');
+    closeEditProfile();
+  } catch (err) {
+    console.error('Erreur sauvegarde profil:', err);
+    showToast('❌ Erreur: ' + err.message, 'error');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = '💾 Enregistrer';
+  }
+}
+
+/* VOIR PROFIL */
+function showViewProfile(profile, isMe = false) {
+  const avatar = profile.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
+  document.getElementById('viewProfileAvatar').src = avatar;
+  document.getElementById('viewProfileName').textContent = profile.displayName || 'Utilisateur';
+  document.getElementById('viewProfileUsername').textContent = profile.username ? '@' + profile.username : '';
+
+  const bioEl = document.getElementById('viewProfileBio');
+  if (profile.bio && profile.bio.trim()) {
+    bioEl.textContent = profile.bio;
+    bioEl.style.display = 'block';
+  } else {
+    bioEl.textContent = isMe ? 'Ajoute une bio pour te présenter 🌟' : 'Aucune bio';
+    bioEl.style.display = 'block';
+    bioEl.style.fontStyle = 'italic';
+  }
+
+  const locEl = document.getElementById('viewProfileLocation');
+  if (profile.location && profile.location.trim()) {
+    document.getElementById('viewProfileLocationText').textContent = profile.location;
+    locEl.style.display = 'flex';
+  } else {
+    locEl.style.display = 'none';
+  }
+
+  // Stats : nombre de souvenirs
+  const profileUid = profile.uid || currentUser.uid;
+  const notesCount = allNotes.filter(n => n.userId === profileUid).length;
+  document.getElementById('viewProfileNotes').textContent = notesCount;
+
+  // Nombre d'amis
+  const friendsCount = (profile.friends || []).length;
+  document.getElementById('viewProfileFriends').textContent = friendsCount;
+
+  document.getElementById('viewProfileModalOverlay').classList.add('open');
+}
+
+function closeViewProfile() {
+  document.getElementById('viewProfileModalOverlay').classList.remove('open');
 }
 
 /* =========================================================
@@ -2303,7 +2339,6 @@ function loadIncomingRequests() {
       (snapshot) => {
         const fromServer = snapshot.docs.filter(doc => !doc.metadata.fromCache);
         const docsToUse = fromServer.length > 0 ? fromServer : snapshot.docs;
-        
         incomingRequests = docsToUse.map(doc => ({ id: doc.id, ...doc.data() }));
         updateFriendBadge();
         renderFriendsContent();
@@ -2336,10 +2371,7 @@ function loadFriends() {
       myFriends = newFriends;
 
       await loadFriendsProfiles();
-      
-      if (changed) {
-        loadAllNotes();
-      }
+      if (changed) loadAllNotes();
     });
 }
 
@@ -2360,35 +2392,27 @@ async function loadFriendsProfiles() {
 
 async function refreshFriendsData() {
   if (!currentUser) return;
-  
   try {
     const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
     if (userDoc.exists) {
       const data = userDoc.data();
       const newFriends = data.friends || [];
-      
       const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
       myFriends = newFriends;
-      
       await loadFriendsProfiles();
-      
-      if (changed) {
-        loadAllNotes();
-      }
+      if (changed) loadAllNotes();
     }
 
     const requestsSnapshot = await db.collection('friendRequests')
       .where('to', '==', currentUser.uid)
       .where('status', '==', 'pending')
       .get({ source: 'server' });
-    
     incomingRequests = requestsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
+
     const sentSnapshot = await db.collection('friendRequests')
       .where('from', '==', currentUser.uid)
       .where('status', '==', 'pending')
       .get({ source: 'server' });
-    
     outgoingRequests = sentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
     updateFriendBadge();
@@ -2406,7 +2430,6 @@ async function sendFriendRequest() {
     showToast('⚠️ Pseudo invalide', 'error');
     return;
   }
-
   if (myProfile && username === myProfile.username) {
     showToast('⚠️ Tu ne peux pas t\'ajouter toi-même !', 'error');
     return;
@@ -2423,8 +2446,7 @@ async function sendFriendRequest() {
       return;
     }
 
-    const targetDoc = usersSnapshot.docs[0];
-    const targetUid = targetDoc.id;
+    const targetUid = usersSnapshot.docs[0].id;
 
     if (myFriends.includes(targetUid)) {
       showToast('ℹ️ Vous êtes déjà amis', 'info');
@@ -2455,7 +2477,7 @@ async function sendFriendRequest() {
     showToast(`📨 Demande envoyée à @${username} !`, 'success');
   } catch (err) {
     console.error('Erreur demande:', err);
-    showToast('❌ Erreur lors de l\'envoi', 'error');
+    showToast('❌ Erreur: ' + err.message, 'error');
   }
 }
 
@@ -2463,7 +2485,6 @@ async function acceptFriendRequest(requestId) {
   try {
     const reqDoc = await db.collection('friendRequests').doc(requestId).get();
     if (!reqDoc.exists) return;
-
     const req = reqDoc.data();
 
     const myRef = db.collection('users').doc(currentUser.uid);
@@ -2479,7 +2500,6 @@ async function acceptFriendRequest(requestId) {
       myFriendsList.push(req.from);
       await myRef.update({ friends: myFriendsList });
     }
-
     if (!theirFriendsList.includes(currentUser.uid)) {
       theirFriendsList.push(currentUser.uid);
       await theirRef.update({ friends: theirFriendsList });
@@ -2493,8 +2513,6 @@ async function acceptFriendRequest(requestId) {
     incomingRequests = incomingRequests.filter(r => r.id !== requestId);
     updateFriendBadge();
     renderFriendsContent();
-
-    // Rafraîchir pour être sûr
     setTimeout(refreshFriendsData, 500);
 
     showToast('✅ Ami ajouté !', 'success');
@@ -2507,18 +2525,12 @@ async function acceptFriendRequest(requestId) {
 async function declineFriendRequest(requestId) {
   if (!confirm('Refuser cette demande ?')) return;
   try {
-    await db.collection('friendRequests').doc(requestId).update({
-      status: 'declined'
-    });
-
+    await db.collection('friendRequests').doc(requestId).update({ status: 'declined' });
     incomingRequests = incomingRequests.filter(r => r.id !== requestId);
     updateFriendBadge();
     renderFriendsContent();
-
     showToast('Demande refusée', 'info');
-  } catch (err) {
-    console.error('Erreur refus:', err);
-  }
+  } catch (err) { console.error('Erreur refus:', err); }
 }
 
 async function removeFriend(friendUid) {
@@ -2540,9 +2552,7 @@ async function removeFriend(friendUid) {
     await theirRef.update({ friends: theirFriendsList });
 
     const requests = await db.collection('friendRequests')
-      .where('status', '==', 'accepted')
-      .get();
-    
+      .where('status', '==', 'accepted').get();
     const batch = db.batch();
     requests.forEach(doc => {
       const d = doc.data();
@@ -2584,7 +2594,6 @@ function switchFriendsTab(tab) {
 function updateFriendBadge() {
   const badge = document.getElementById('friendBadge');
   const count = incomingRequests.length;
-
   if (count > 0) {
     badge.textContent = count;
     badge.style.display = 'block';
@@ -2626,12 +2635,7 @@ function renderFriendsContent(tab = null) {
 
   if (tab === 'friends') {
     if (myFriends.length === 0) {
-      content.innerHTML = `
-        <div class="empty-state">
-          👥 Aucun ami pour l'instant.<br>
-          Ajoute-en avec leur pseudo !
-        </div>
-      `;
+      content.innerHTML = `<div class="empty-state">👥 Aucun ami pour l'instant.<br>Ajoute-en avec leur pseudo !</div>`;
       return;
     }
 
@@ -2641,16 +2645,16 @@ function renderFriendsContent(tab = null) {
       const avatar = profile.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
       const name = profile.displayName || 'Utilisateur';
       const username = profile.username ? '@' + profile.username : '';
-      const email = profile.email || '';
+      const bio = profile.bio || 'Aucune bio';
       return `
-        <div class="friend-card">
+        <div class="friend-card" onclick="viewFriendProfile('${uid}')">
           <img class="friend-avatar" src="${avatar}" alt="${escapeHtml(name)}" />
           <div class="friend-info">
             <div class="friend-name">${escapeHtml(name)}</div>
             ${username ? `<div class="friend-username">${escapeHtml(username)}</div>` : ''}
-            <div class="friend-email">${escapeHtml(email)}</div>
+            <div class="friend-bio-preview">${escapeHtml(bio)}</div>
           </div>
-          <div class="friend-actions">
+          <div class="friend-actions" onclick="event.stopPropagation()">
             <button class="friend-btn danger" onclick="removeFriend('${uid}')" title="Retirer">🗑️</button>
           </div>
         </div>
@@ -2659,22 +2663,18 @@ function renderFriendsContent(tab = null) {
 
   } else if (tab === 'requests') {
     if (incomingRequests.length === 0) {
-      content.innerHTML = `
-        <div class="empty-state">
-          📨 Aucune demande d'ami en attente.
-        </div>
-      `;
+      content.innerHTML = `<div class="empty-state">📨 Aucune demande d'ami en attente.</div>`;
       return;
     }
 
     content.innerHTML = incomingRequests.map(req => {
       const username = req.fromUsername || '?';
       return `
-        <div class="friend-card">
+        <div class="friend-card" style="cursor: default;">
           <div class="friend-avatar" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(59,130,246,0.15);">👤</div>
           <div class="friend-info">
             <div class="friend-name">@${escapeHtml(username)}</div>
-            <div class="friend-email">Veut être ton ami</div>
+            <div class="friend-bio-preview">Veut être ton ami</div>
           </div>
           <div class="friend-actions">
             <button class="friend-btn accept" onclick="acceptFriendRequest('${req.id}')">✓ Accepter</button>
@@ -2686,22 +2686,18 @@ function renderFriendsContent(tab = null) {
 
   } else if (tab === 'sent') {
     if (outgoingRequests.length === 0) {
-      content.innerHTML = `
-        <div class="empty-state">
-          📤 Aucune demande envoyée en attente.
-        </div>
-      `;
+      content.innerHTML = `<div class="empty-state">📤 Aucune demande envoyée en attente.</div>`;
       return;
     }
 
     content.innerHTML = outgoingRequests.map(req => {
       const username = req.toUsername || '?';
       return `
-        <div class="friend-card">
+        <div class="friend-card" style="cursor: default;">
           <div class="friend-avatar" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(249,115,22,0.15);">⏳</div>
           <div class="friend-info">
             <div class="friend-name">@${escapeHtml(username)}</div>
-            <div class="friend-email">En attente de réponse…</div>
+            <div class="friend-bio-preview">En attente de réponse…</div>
           </div>
           <div class="friend-actions">
             <button class="friend-btn danger" onclick="cancelFriendRequest('${req.id}')">Annuler</button>
@@ -2712,6 +2708,12 @@ function renderFriendsContent(tab = null) {
   }
 }
 
+function viewFriendProfile(uid) {
+  const profile = friendsProfiles[uid];
+  if (!profile) return;
+  showViewProfile(profile, false);
+}
+
 async function cancelFriendRequest(requestId) {
   if (!confirm('Annuler cette demande ?')) return;
   try {
@@ -2719,9 +2721,7 @@ async function cancelFriendRequest(requestId) {
     outgoingRequests = outgoingRequests.filter(r => r.id !== requestId);
     renderFriendsContent();
     showToast('Demande annulée', 'info');
-  } catch (err) {
-    console.error('Erreur:', err);
-  }
+  } catch (err) { console.error('Erreur:', err); }
 }
 
 /* =========================================================
@@ -2739,13 +2739,10 @@ function loadAllNotes() {
     .onSnapshot(
       (snapshot) => {
         const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
         const allowed = new Set([currentUser.uid, ...myFriends]);
         allNotes = all.filter(n => allowed.has(n.userId));
-
         myNotes = allNotes.filter(n => n.userId === currentUser.uid);
         friendNotes = allNotes.filter(n => n.userId !== currentUser.uid);
-
         renderAllMarkers();
         updateFilters();
         showSyncIndicator('Synchronisé', true);
@@ -2770,10 +2767,7 @@ function initMap() {
     maxBounds: [[-85, -180], [85, 180]],
     maxBoundsViscosity: 1.0,
     worldCopyJump: true,
-    zoomControl: false,
-    zoomAnimation: true,
-    fadeAnimation: true,
-    markerZoomAnimation: true
+    zoomControl: false
   });
 
   L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -2790,7 +2784,6 @@ function initMap() {
       container.innerHTML = '🎯';
       container.title = 'Recentrer sur ma position';
       L.DomEvent.disableClickPropagation(container);
-      L.DomEvent.disableScrollPropagation(container);
       L.DomEvent.on(container, 'click', function (e) {
         L.DomEvent.stopPropagation(e);
         recenterToMyLocation(container);
@@ -2810,10 +2803,8 @@ function initMap() {
 function recenterToMyLocation(btn) {
   if (!navigator.geolocation) {
     showToast('❌ Géolocalisation non supportée', 'error');
-    flashBtnError(btn);
     return;
   }
-  btn.classList.add('locating');
   btn.innerHTML = '<span class="spinner"></span>';
 
   navigator.geolocation.getCurrentPosition(
@@ -2835,28 +2826,18 @@ function recenterToMyLocation(btn) {
         weight: 1
       }).addTo(map);
 
-      map.flyTo([lat, lng], 15, { duration: 1.8, easeLinearity: 0.25 });
+      map.flyTo([lat, lng], 15, { duration: 1.8 });
       showToast(`🎯 Recentré sur toi (±${Math.round(accuracy)}m)`, 'success');
-      btn.classList.remove('locating');
       btn.innerHTML = '🎯';
     },
     (error) => {
-      btn.classList.remove('locating');
       btn.innerHTML = '🎯';
       let msg = '❌ Impossible de te localiser.';
       if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.';
-      else if (error.code === error.POSITION_UNAVAILABLE) msg = '📡 Position indisponible.';
-      else if (error.code === error.TIMEOUT) msg = '⏱️ Délai dépassé.';
       showToast(msg, 'error');
-      flashBtnError(btn);
     },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
   );
-}
-
-function flashBtnError(btn) {
-  btn.classList.add('error');
-  setTimeout(() => btn.classList.remove('error'), 1500);
 }
 
 /* =========================================================
@@ -2869,7 +2850,7 @@ function createMarkerIcon(note) {
   const hasPhoto = !!(note && note.photo);
   const isFriend = note.userId !== currentUser.uid;
 
-  const classes = ['custom-marker', 'marker-pop'];
+  const classes = ['custom-marker'];
   if (hasCustom) classes.push('has-icon');
   if (hasPhoto) classes.push('has-photo');
   if (isFriend) classes.push('friend-marker');
@@ -2920,9 +2901,7 @@ function buildPopupContent(note) {
 
   let photoHtml = '';
   if (note.photo) {
-    photoHtml = `
-      <img class="popup-photo" src="${note.photo}" alt="Photo" onclick="openLightbox('${note.id}', event)" />
-    `;
+    photoHtml = `<img class="popup-photo" src="${note.photo}" alt="Photo" onclick="openLightbox('${note.id}', event)" />`;
   }
 
   let authorHtml = '';
@@ -2936,7 +2915,7 @@ function buildPopupContent(note) {
       : 'https://www.gravatar.com/avatar/?d=mp';
 
     authorHtml = `
-      <div class="popup-author">
+      <div class="popup-author" onclick="viewFriendProfile('${note.userId}')">
         <img src="${authorAvatar}" alt="${escapeHtml(authorName)}" />
         <span>${escapeHtml(authorName)}</span>
       </div>
@@ -2944,7 +2923,7 @@ function buildPopupContent(note) {
   }
 
   const deleteBtn = isMine
-    ? `<button class="popup-delete-btn" onclick="deleteNoteFromPopup('${note.id}', event)" title="Supprimer">🗑️ Supprimer</button>`
+    ? `<button class="popup-delete-btn" onclick="deleteNoteFromPopup('${note.id}', event)">🗑️ Supprimer</button>`
     : '';
 
   return `
@@ -2956,7 +2935,7 @@ function buildPopupContent(note) {
       </div>
       <div class="popup-text">${escapeHtml(note.text)}</div>
       ${authorHtml}
-      <div class="popup-footer ${isMine ? '' : 'no-author'}">
+      <div class="popup-footer">
         <span class="popup-meta">${date}</span>
         ${deleteBtn}
       </div>
@@ -2990,10 +2969,8 @@ function renderSidebar() {
     return;
   }
 
-  list.innerHTML = notesToShow.map((note, i) => {
-    const date = new Date(note.createdAt).toLocaleDateString('fr-FR', {
-      day: 'numeric', month: 'short'
-    });
+  list.innerHTML = notesToShow.map((note) => {
+    const date = new Date(note.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
     const icon = note.icon || '📍';
     const isMine = note.userId === currentUser.uid;
 
@@ -3019,11 +2996,11 @@ function renderSidebar() {
     }
 
     const deleteBtn = isMine
-      ? `<button class="delete-note" onclick="deleteNote('${note.id}', event)" title="Supprimer">🗑️</button>`
+      ? `<button class="delete-note" onclick="deleteNote('${note.id}', event)">🗑️</button>`
       : '';
 
     return `
-      <div class="note-card ${isMine ? '' : 'friend-note'}" style="animation-delay: ${Math.min(i * 0.04, 0.4)}s">
+      <div class="note-card ${isMine ? '' : 'friend-note'}">
         ${photoHtml}
         <div class="note-body">
           <div onclick="focusNote('${note.id}')">
@@ -3059,23 +3036,17 @@ async function deleteNote(id, event) {
   try {
     await db.collection('notes').doc(id).delete();
     showToast('🗑️ Souvenir supprimé', 'error');
-  } catch (err) {
-    console.error('Erreur:', err);
-    showToast('❌ Erreur de suppression', 'error');
-  }
+  } catch (err) { showToast('❌ Erreur', 'error'); }
 }
 
 async function deleteNoteFromPopup(id, event) {
   if (event) event.stopPropagation();
-  if (!confirm('Supprimer ce souvenir ? Cette action est définitive.')) return;
+  if (!confirm('Supprimer ce souvenir ? Action définitive.')) return;
   try {
     await db.collection('notes').doc(id).delete();
     map.closePopup();
     showToast('🗑️ Souvenir supprimé', 'error');
-  } catch (err) {
-    console.error('Erreur:', err);
-    showToast('❌ Erreur de suppression', 'error');
-  }
+  } catch (err) { showToast('❌ Erreur', 'error'); }
 }
 
 function toggleSidebar() {
@@ -3100,9 +3071,7 @@ function updateFilters() {
   document.getElementById('countFriends').textContent = friendNotes.length;
 
   const friendsBtn = document.querySelector('.filter-btn[data-filter="friends"]');
-  if (friendsBtn) {
-    friendsBtn.style.display = myFriends.length > 0 ? 'flex' : 'none';
-  }
+  if (friendsBtn) friendsBtn.style.display = myFriends.length > 0 ? 'flex' : 'none';
 }
 
 /* =========================================================
@@ -3141,18 +3110,13 @@ photoUploadZone.addEventListener('dragover', (e) => {
   e.preventDefault();
   photoUploadZone.classList.add('dragover');
 });
-photoUploadZone.addEventListener('dragleave', () => {
-  photoUploadZone.classList.remove('dragover');
-});
+photoUploadZone.addEventListener('dragleave', () => photoUploadZone.classList.remove('dragover'));
 photoUploadZone.addEventListener('drop', (e) => {
   e.preventDefault();
   photoUploadZone.classList.remove('dragover');
   const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) {
-    handlePhotoFile(file);
-  } else {
-    showToast('⚠️ Image requise', 'error');
-  }
+  if (file && file.type.startsWith('image/')) handlePhotoFile(file);
+  else showToast('⚠️ Image requise', 'error');
 });
 
 async function handlePhotoFile(file) {
@@ -3258,7 +3222,7 @@ function resetSettings() {
   localStorage.setItem('worldnotes_theme', uiTheme);
   document.documentElement.setAttribute('data-theme', uiTheme);
   updateThemeChoices();
-  showToast('🔄 Réglages réinitialisés', 'success');
+  showToast('🔄 Réinitialisé', 'success');
 }
 
 /* =========================================================
@@ -3282,7 +3246,7 @@ function exportNotes() {
   }
   const exportData = {
     app: 'World Notes',
-    version: 6,
+    version: 7,
     exportedAt: new Date().toISOString(),
     notesCount: myNotes.length,
     notes: myNotes.map(n => {
@@ -3359,7 +3323,7 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
     });
 
     await batch.commit();
-    showToast(`✅ ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} importé${validNotes.length > 1 ? 's' : ''} !`, 'success');
+    showToast(`✅ ${validNotes.length} importé${validNotes.length > 1 ? 's' : ''} !`, 'success');
   } catch (err) {
     console.error('Erreur import:', err);
     showToast('❌ Fichier invalide', 'error');
@@ -3402,10 +3366,7 @@ function closeAddModal() {
   document.querySelectorAll('.icon-choice').forEach(c => {
     c.classList.toggle('active', c.dataset.icon === '📍');
   });
-  if (tempMarker) {
-    map.removeLayer(tempMarker);
-    tempMarker = null;
-  }
+  if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
   const btn = document.getElementById('gpsBtn');
   btn.disabled = false;
   btn.innerHTML = '🎯 Ma position';
@@ -3422,21 +3383,14 @@ function updateLocationBox() {
     return;
   }
   const coordStr = `${pendingLatLng.lat.toFixed(5)}, ${pendingLatLng.lng.toFixed(5)}`;
-  if (pendingSource === 'gps') {
-    box.classList.add('gps'); icon.textContent = '🎯'; coords.textContent = coordStr;
-  } else if (pendingSource === 'search') {
-    box.classList.add('search'); icon.textContent = '🔎'; coords.textContent = coordStr;
-  } else {
-    box.classList.add('manual'); icon.textContent = '📌'; coords.textContent = coordStr;
-  }
+  if (pendingSource === 'gps') { box.classList.add('gps'); icon.textContent = '🎯'; coords.textContent = coordStr; }
+  else if (pendingSource === 'search') { box.classList.add('search'); icon.textContent = '🔎'; coords.textContent = coordStr; }
+  else { box.classList.add('manual'); icon.textContent = '📌'; coords.textContent = coordStr; }
 }
 
 function useMyLocation() {
   const btn = document.getElementById('gpsBtn');
-  if (!navigator.geolocation) {
-    showToast('❌ Géolocalisation non supportée', 'error');
-    return;
-  }
+  if (!navigator.geolocation) { showToast('❌ Géolocalisation non supportée', 'error'); return; }
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>...';
 
@@ -3446,17 +3400,10 @@ function useMyLocation() {
       if (userLocationMarker) map.removeLayer(userLocationMarker);
       if (userLocationCircle) map.removeLayer(userLocationCircle);
 
-      userLocationMarker = L.marker([lat, lng], {
-        icon: createUserLocationIcon(),
-        zIndexOffset: 1000
-      }).addTo(map).bindPopup('🎯 Tu es ici !');
-
+      userLocationMarker = L.marker([lat, lng], { icon: createUserLocationIcon(), zIndexOffset: 1000 })
+        .addTo(map).bindPopup('🎯 Tu es ici !');
       userLocationCircle = L.circle([lat, lng], {
-        radius: accuracy,
-        color: '#22c55e',
-        fillColor: '#22c55e',
-        fillOpacity: 0.15,
-        weight: 1
+        radius: accuracy, color: '#22c55e', fillColor: '#22c55e', fillOpacity: 0.15, weight: 1
       }).addTo(map);
 
       map.flyTo([lat, lng], 16, { duration: 1.5 });
@@ -3473,8 +3420,6 @@ function useMyLocation() {
       btn.innerHTML = '🎯 Ma position';
       let msg = '❌ Impossible de te localiser.';
       if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.';
-      else if (error.code === error.POSITION_UNAVAILABLE) msg = '📡 Position indisponible.';
-      else if (error.code === error.TIMEOUT) msg = '⏱️ Délai dépassé.';
       showToast(msg, 'error');
     },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -3516,9 +3461,7 @@ searchInput.addEventListener('keydown', (e) => {
     e.preventDefault();
     if (activeIndex >= 0 && items[activeIndex]) items[activeIndex].click();
     else if (items.length > 0) items[0].click();
-  } else if (e.key === 'Escape') {
-    closeAutocomplete();
-  }
+  } else if (e.key === 'Escape') closeAutocomplete();
 });
 
 function updateActiveItem(items) {
@@ -3544,7 +3487,7 @@ async function performSearch(query) {
     renderAutocomplete(data);
   } catch (err) {
     console.error(err);
-    autocompleteList.innerHTML = `<div class="autocomplete-empty">❌ Erreur.</div>`;
+    autocompleteList.innerHTML = `<div class="autocomplete-item">❌ Erreur.</div>`;
     autocompleteList.classList.add('open');
   } finally {
     searchSpinner.classList.remove('visible');
@@ -3553,7 +3496,7 @@ async function performSearch(query) {
 
 function renderAutocomplete(results) {
   if (results.length === 0) {
-    autocompleteList.innerHTML = `<div class="autocomplete-empty">Aucun lieu trouvé 😕</div>`;
+    autocompleteList.innerHTML = `<div class="autocomplete-item">Aucun lieu trouvé 😕</div>`;
     autocompleteList.classList.add('open');
     return;
   }
@@ -3593,10 +3536,8 @@ function selectSearchResult(result) {
   if (!placeInput.value.trim()) placeInput.value = fullName;
 
   if (tempMarker) map.removeLayer(tempMarker);
-  tempMarker = L.marker([lat, lng], {
-    icon: createTempMarkerIcon(),
-    zIndexOffset: 900
-  }).addTo(map).bindPopup(`🔎 ${escapeHtml(shortName)}`).openPopup();
+  tempMarker = L.marker([lat, lng], { icon: createTempMarkerIcon(), zIndexOffset: 900 })
+    .addTo(map).bindPopup(`🔎 ${escapeHtml(shortName)}`).openPopup();
 
   const bbox = result.boundingbox;
   if (bbox) {
@@ -3653,9 +3594,7 @@ async function saveNote() {
 
     const newNoteRef = await db.collection('notes').add({
       userId: currentUser.uid,
-      place,
-      text,
-      lat, lng,
+      place, text, lat, lng,
       createdAt: now,
       source: pendingSource,
       icon: pendingIcon,
@@ -3665,9 +3604,7 @@ async function saveNote() {
     const newNote = {
       id: newNoteRef.id,
       userId: currentUser.uid,
-      place,
-      text,
-      lat, lng,
+      place, text, lat, lng,
       createdAt: now,
       source: pendingSource,
       icon: pendingIcon,
@@ -3725,6 +3662,8 @@ document.addEventListener('keydown', (e) => {
     if (document.getElementById('lightbox').classList.contains('open')) closeLightbox();
     else if (autocompleteList.classList.contains('open')) closeAutocomplete();
     else if (document.getElementById('settingsPanel').classList.contains('open')) toggleSettings();
+    else if (document.getElementById('editProfileModalOverlay').classList.contains('open')) closeEditProfile();
+    else if (document.getElementById('viewProfileModalOverlay').classList.contains('open')) closeViewProfile();
     else if (document.getElementById('friendsModalOverlay').classList.contains('open')) closeFriendsModal();
     else closeAddModal();
   }
