@@ -2172,6 +2172,24 @@ function showApp() {
 }
 
 /* =========================================================
+   🎬 FONCTION showSyncIndicator (MANQUAIT !)
+   ========================================================= */
+
+function showSyncIndicator(text, synced) {
+  const el = document.getElementById('syncIndicator');
+  const txt = document.getElementById('syncText');
+  if (!el || !txt) return;
+  
+  txt.textContent = text;
+  el.classList.toggle('synced', synced);
+  el.classList.add('show');
+
+  if (synced) {
+    setTimeout(() => el.classList.remove('show'), 1500);
+  }
+}
+
+/* =========================================================
    👤 PROFIL
    ========================================================= */
 
@@ -2340,21 +2358,15 @@ async function loadFriendsProfiles() {
   renderFriendsContent();
 }
 
-/**
- * 🔄 Rafraîchit TOUTES les données depuis le serveur
- * (Utilisé à l'ouverture du modal pour forcer la fraîcheur)
- */
 async function refreshFriendsData() {
   if (!currentUser) return;
   
   try {
-    // Relire le profil depuis le serveur
     const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
     if (userDoc.exists) {
       const data = userDoc.data();
       const newFriends = data.friends || [];
       
-      // Si la liste a changé, recharger les profils + notes
       const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
       myFriends = newFriends;
       
@@ -2365,7 +2377,6 @@ async function refreshFriendsData() {
       }
     }
 
-    // Récupérer les demandes reçues fraîches
     const requestsSnapshot = await db.collection('friendRequests')
       .where('to', '==', currentUser.uid)
       .where('status', '==', 'pending')
@@ -2373,7 +2384,6 @@ async function refreshFriendsData() {
     
     incomingRequests = requestsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
-    // Pareil pour les demandes envoyées
     const sentSnapshot = await db.collection('friendRequests')
       .where('from', '==', currentUser.uid)
       .where('status', '==', 'pending')
@@ -2465,7 +2475,6 @@ async function acceptFriendRequest(requestId) {
     const myFriendsList = myDoc.data().friends || [];
     const theirFriendsList = theirDoc.data().friends || [];
 
-    // ✅ Ajouter mutuellement dans les 2 profils
     if (!myFriendsList.includes(req.from)) {
       myFriendsList.push(req.from);
       await myRef.update({ friends: myFriendsList });
@@ -2481,15 +2490,17 @@ async function acceptFriendRequest(requestId) {
       acceptedAt: Date.now()
     });
 
-    // ✅ Retirer de la liste locale
     incomingRequests = incomingRequests.filter(r => r.id !== requestId);
     updateFriendBadge();
     renderFriendsContent();
 
+    // Rafraîchir pour être sûr
+    setTimeout(refreshFriendsData, 500);
+
     showToast('✅ Ami ajouté !', 'success');
   } catch (err) {
     console.error('Erreur accept:', err);
-    showToast('❌ Erreur', 'error');
+    showToast('❌ Erreur: ' + err.message, 'error');
   }
 }
 
@@ -2545,7 +2556,7 @@ async function removeFriend(friendUid) {
     showToast('🗑️ Ami retiré', 'info');
   } catch (err) {
     console.error('Erreur suppression ami:', err);
-    showToast('❌ Erreur', 'error');
+    showToast('❌ Erreur: ' + err.message, 'error');
   }
 }
 
@@ -2556,7 +2567,6 @@ async function removeFriend(friendUid) {
 function openFriendsModal() {
   document.getElementById('friendsModalOverlay').classList.add('open');
   renderFriendsContent();
-  // 🔄 Forcer un rafraîchissement depuis le serveur
   refreshFriendsData();
 }
 
