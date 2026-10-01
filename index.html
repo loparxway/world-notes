@@ -91,12 +91,6 @@
     width: 100%;
     text-align: center;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
-    animation: loginIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes loginIn {
-    from { opacity: 0; transform: scale(0.9) translateY(30px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
   }
 
   .login-globe {
@@ -146,7 +140,6 @@
   .btn-google:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-    background: #f8fafc;
   }
 
   .btn-google:disabled { opacity: 0.6; cursor: wait; }
@@ -179,7 +172,6 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    letter-spacing: -0.5px;
     color: var(--text-primary);
   }
 
@@ -238,12 +230,6 @@
     text-align: center;
     line-height: 1.2;
     box-shadow: 0 2px 6px rgba(239, 68, 68, 0.5);
-    animation: badgePulse 2s infinite;
-  }
-
-  @keyframes badgePulse {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.15); }
   }
 
   .user-menu { position: relative; }
@@ -256,13 +242,11 @@
     cursor: pointer;
     object-fit: cover;
     transition: all 0.25s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
   .user-avatar:hover {
     transform: scale(1.08);
     border-color: #f97316;
-    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.5);
   }
 
   .user-dropdown {
@@ -277,15 +261,9 @@
     box-shadow: var(--shadow-lg);
     display: none;
     z-index: 10;
-    animation: dropdownEnter 0.2s ease;
   }
 
   .user-dropdown.open { display: block; }
-
-  @keyframes dropdownEnter {
-    from { opacity: 0; transform: translateY(-8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
 
   .user-info {
     padding: 10px 12px;
@@ -310,8 +288,6 @@
     align-items: center;
     gap: 4px;
   }
-
-  .user-username:hover { text-decoration: underline; }
 
   .dropdown-item {
     display: flex;
@@ -374,17 +350,10 @@
     height: 8px;
     border-radius: 50%;
     background: #f97316;
-    animation: syncPulse 1s infinite;
-  }
-
-  @keyframes syncPulse {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.3; }
   }
 
   .sync-indicator.synced .sync-dot {
     background: #22c55e;
-    animation: none;
     box-shadow: 0 0 6px #22c55e;
   }
 
@@ -411,18 +380,14 @@
     padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 5px;
   }
 
-  .filter-btn:hover { background: rgba(148, 163, 184, 0.15); color: var(--text-primary); }
   .filter-btn.active {
     background: linear-gradient(135deg, #f97316, #ea580c);
     color: white;
-    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
   }
 
   .filter-btn .count {
@@ -433,8 +398,6 @@
     min-width: 18px;
     text-align: center;
   }
-
-  .filter-btn.active .count { background: rgba(255, 255, 255, 0.35); }
 
   @media (max-width: 768px) {
     .map-filter {
@@ -477,9 +440,7 @@
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0;
-    line-height: 1;
   }
-  .close-sidebar:hover { color: #ef4444; transform: rotate(90deg); }
 
   .notes-list { flex: 1; overflow-y: auto; padding: 12px; }
 
@@ -585,7 +546,6 @@
   .delete-note:hover {
     color: #ef4444;
     background: rgba(239, 68, 68, 0.15);
-    transform: scale(1.15);
   }
 
   .empty-state {
@@ -618,12 +578,6 @@
     max-height: 92vh;
     overflow-y: auto;
     box-shadow: var(--shadow-lg);
-    animation: modalBounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes modalBounceIn {
-    from { opacity: 0; transform: scale(0.92) translateY(20px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
   }
 
   .modal h2 {
@@ -661,7 +615,7 @@
     outline: none;
     transition: all 0.25s;
   }
-  input:focus, textarea:focus, select:focus {
+  input:focus, textarea:focus {
     border-color: #f97316;
     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
   }
@@ -686,10 +640,7 @@
     cursor: pointer;
     transition: all 0.25s;
   }
-  .icon-choice:hover {
-    border-color: rgba(249, 115, 22, 0.6);
-    transform: translateY(-2px);
-  }
+  .icon-choice:hover { transform: translateY(-2px); }
   .icon-choice.active {
     border-color: #f97316;
     background: rgba(249, 115, 22, 0.15);
@@ -702,7 +653,6 @@
     padding: 20px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s;
     background: var(--bg-input);
   }
   .photo-upload-zone:hover {
@@ -715,7 +665,6 @@
   .photo-upload-text {
     font-size: 0.85rem;
     color: var(--text-muted);
-    line-height: 1.4;
   }
   .photo-upload-text b { color: #f97316; }
 
@@ -751,7 +700,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(8px);
   }
 
   .search-wrapper { position: relative; }
@@ -763,9 +711,7 @@
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 1rem;
     color: var(--text-muted);
-    pointer-events: none;
   }
 
   .search-clear {
@@ -779,7 +725,6 @@
     font-size: 1.1rem;
     cursor: pointer;
     padding: 4px 8px;
-    border-radius: 6px;
     display: none;
   }
   .search-clear.visible { display: block; }
@@ -896,7 +841,6 @@
     cursor: pointer;
     position: relative;
   }
-  .custom-marker:hover { transform: rotate(-45deg) scale(1.2); }
   .custom-marker::after { content: "📍"; transform: rotate(45deg); font-size: 14px; }
   .custom-marker.has-icon::after { display: none; }
 
@@ -914,7 +858,6 @@
 
   .custom-marker.friend-marker {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
   }
 
   .user-location-marker {
@@ -923,12 +866,6 @@
     border-radius: 50%;
     border: 3px solid white;
     box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35); }
-    50%      { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0.15); }
   }
 
   .temp-marker {
@@ -994,7 +931,6 @@
     font-weight: 600;
     cursor: pointer;
   }
-  .popup-author:hover { text-decoration: underline; }
 
   .popup-author img {
     width: 22px;
@@ -1024,10 +960,6 @@
     padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.25s;
   }
 
   .popup-delete-btn:hover {
@@ -1052,7 +984,6 @@
     max-width: 100%;
     max-height: 100%;
     border-radius: 12px;
-    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
   }
 
   .lightbox-close {
@@ -1067,11 +998,7 @@
     border-radius: 50%;
     cursor: pointer;
     font-size: 1.4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
-  .lightbox-close:hover { background: rgba(239, 68, 68, 0.8); transform: rotate(90deg); }
 
   .leaflet-control-recenter {
     background: var(--bg-modal);
@@ -1314,7 +1241,30 @@
     letter-spacing: 0.5px;
   }
 
-  /* 👥 CARDS AMIS */
+  .btn-full {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-full.edit-profile {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    margin-bottom: 16px;
+  }
+  .btn-full.edit-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  }
+
   .friend-card {
     background: var(--bg-input);
     border: 1px solid var(--border-subtle);
@@ -1344,10 +1294,7 @@
     flex-shrink: 0;
   }
 
-  .friend-info {
-    flex: 1;
-    min-width: 0;
-  }
+  .friend-info { flex: 1; min-width: 0; }
 
   .friend-name {
     font-weight: 700;
@@ -1400,18 +1347,10 @@
     border-color: rgba(34, 197, 94, 0.3);
     color: #22c55e;
   }
-  .friend-btn.accept:hover {
-    background: rgba(34, 197, 94, 0.9);
-    color: white;
-  }
   .friend-btn.danger {
     background: rgba(239, 68, 68, 0.15);
     border-color: rgba(239, 68, 68, 0.3);
     color: #ef4444;
-  }
-  .friend-btn.danger:hover {
-    background: rgba(239, 68, 68, 0.9);
-    color: white;
   }
 
   .friends-tabs {
@@ -1465,16 +1404,6 @@
     max-width: 520px;
   }
 
-  .section-title {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
   .info-banner {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
     border: 1px solid rgba(59, 130, 246, 0.3);
@@ -1491,30 +1420,6 @@
   .info-banner .icon {
     font-size: 1.2rem;
     flex-shrink: 0;
-  }
-
-  .btn-full {
-    width: 100%;
-    padding: 12px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.25s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .btn-full.edit-profile {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
-    margin-bottom: 16px;
-  }
-  .btn-full.edit-profile:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
   }
 
   .toast {
@@ -1656,6 +1561,9 @@
           <button class="dropdown-item" onclick="openMyProfile()">
             👤 Mon profil
           </button>
+          <button class="dropdown-item" onclick="openEditProfileFromMenu()">
+            ✏️ Modifier mon profil
+          </button>
           <button class="dropdown-item" onclick="openFriendsModal()">
             👥 Mes amis
           </button>
@@ -1794,9 +1702,7 @@
         <label>📸 Photo (optionnel)</label>
         <div class="photo-upload-zone" id="photoUploadZone" onclick="document.getElementById('photoInput').click()">
           <span class="photo-upload-icon">📷</span>
-          <div class="photo-upload-text">
-            <b>Clique</b> pour ajouter une photo
-          </div>
+          <div class="photo-upload-text"><b>Clique</b> pour ajouter une photo</div>
         </div>
         <input type="file" id="photoInput" accept="image/*" style="display: none;" />
         <div class="photo-preview-wrapper" id="photoPreviewWrapper">
@@ -1818,7 +1724,7 @@
       <h2>👥 Mes amis</h2>
       <p class="subtitle">Ajoute des amis avec leur pseudo.</p>
 
-      <button class="btn-full edit-profile" onclick="openEditProfile()">
+      <button class="btn-full edit-profile" onclick="openEditProfileFromModal()">
         ✏️ Modifier mon profil
       </button>
 
@@ -1829,9 +1735,7 @@
         </div>
       </div>
 
-      <div class="section-title">
-        <span>➕ Ajouter un ami</span>
-      </div>
+      <label style="margin-top: 10px;">➕ Ajouter un ami</label>
       <div style="display: flex; gap: 6px; margin-bottom: 16px;">
         <input type="text" id="friendUsernameInput" placeholder="pseudo de ton ami" maxlength="20" style="flex: 1;" />
         <button class="btn-primary" style="background: linear-gradient(135deg, #22c55e, #16a34a);" onclick="sendFriendRequest()">📨</button>
@@ -1863,12 +1767,15 @@
       <h2>✏️ Modifier mon profil</h2>
       <p class="subtitle">Personnalise ton profil. Ton email ne sera jamais partagé.</p>
 
-      <div class="profile-header">
+      <div class="profile-header" style="border-bottom: none; padding-bottom: 0;">
         <div class="profile-avatar-wrapper">
           <img class="profile-avatar" id="editProfileAvatar" src="" alt="Avatar" />
           <button class="profile-avatar-edit" onclick="document.getElementById('profilePhotoInput').click()">📷</button>
         </div>
         <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;" />
+        <div style="font-size: 0.72rem; color: var(--text-faint); margin-top: 6px;">
+          Clique sur 📷 pour changer ta photo
+        </div>
       </div>
 
       <div class="form-group">
@@ -1899,7 +1806,7 @@
     </div>
   </div>
 
-  <!-- MODAL VOIR PROFIL (AMI ou MOI) -->
+  <!-- MODAL VOIR PROFIL -->
   <div class="modal-overlay" id="viewProfileModalOverlay">
     <div class="modal modal-friends">
       <div class="profile-header">
@@ -1924,6 +1831,8 @@
           </div>
         </div>
       </div>
+
+      <div id="viewProfileActionButtons"></div>
 
       <div class="modal-actions">
         <button class="btn-ghost" onclick="closeViewProfile()">Fermer</button>
@@ -2138,7 +2047,6 @@ async function ensureUserProfile() {
         displayName: currentUser.displayName || 'Utilisateur',
         email: currentUser.email || ''
       };
-      // Ne pas écraser la photo de profil perso si elle existe
       if (!data.photoURL) updates.photoURL = currentUser.photoURL || '';
       if (!data.friends) updates.friends = [];
       if (data.bio === undefined) updates.bio = '';
@@ -2158,7 +2066,6 @@ function loadProfile() {
       if (!doc.exists) return;
       myProfile = doc.data();
 
-      // Mettre à jour l'avatar du header avec la photo perso si elle existe
       const avatarSrc = myProfile.photoURL || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
       document.getElementById('userAvatar').src = avatarSrc;
 
@@ -2170,7 +2077,7 @@ function loadProfile() {
 function copyUsername() {
   if (!myProfile || !myProfile.username) {
     showToast('⚠️ Définis d\'abord ton pseudo', 'info');
-    openEditProfile();
+    openEditProfileFromMenu();
     return;
   }
   navigator.clipboard.writeText(myProfile.username).then(() => {
@@ -2178,14 +2085,49 @@ function copyUsername() {
   });
 }
 
-/* ÉDITION PROFIL */
+/* =========================================================
+   👤 ACTIONS PROFIL
+   ========================================================= */
+
 function openMyProfile() {
-  if (!myProfile) return;
+  // Fermer le dropdown d'abord
+  document.getElementById('userDropdown').classList.remove('open');
+  
+  if (!myProfile) {
+    showToast('⏳ Chargement du profil...', 'info');
+    setTimeout(() => {
+      if (myProfile) showViewProfile(myProfile, true);
+      else showToast('❌ Profil non disponible', 'error');
+    }, 1000);
+    return;
+  }
+  
   showViewProfile(myProfile, true);
 }
 
+function openEditProfileFromMenu() {
+  document.getElementById('userDropdown').classList.remove('open');
+  openEditProfile();
+}
+
+function openEditProfileFromModal() {
+  document.getElementById('friendsModalOverlay').classList.remove('open');
+  openEditProfile();
+}
+
 function openEditProfile() {
-  if (!myProfile) return;
+  if (!myProfile) {
+    showToast('⏳ Chargement...', 'info');
+    setTimeout(() => {
+      if (myProfile) openEditProfile();
+    }, 1000);
+    return;
+  }
+
+  // Fermer les autres modals
+  document.getElementById('viewProfileModalOverlay').classList.remove('open');
+  document.getElementById('friendsModalOverlay').classList.remove('open');
+  document.getElementById('userDropdown').classList.remove('open');
 
   document.getElementById('editUsername').value = myProfile.username || '';
   document.getElementById('editBio').value = myProfile.bio || '';
@@ -2285,6 +2227,12 @@ async function saveProfile() {
 
 /* VOIR PROFIL */
 function showViewProfile(profile, isMe = false) {
+  const modal = document.getElementById('viewProfileModalOverlay');
+  if (!modal) {
+    console.error('Modal viewProfileModalOverlay introuvable');
+    return;
+  }
+
   const avatar = profile.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
   document.getElementById('viewProfileAvatar').src = avatar;
   document.getElementById('viewProfileName').textContent = profile.displayName || 'Utilisateur';
@@ -2293,10 +2241,9 @@ function showViewProfile(profile, isMe = false) {
   const bioEl = document.getElementById('viewProfileBio');
   if (profile.bio && profile.bio.trim()) {
     bioEl.textContent = profile.bio;
-    bioEl.style.display = 'block';
+    bioEl.style.fontStyle = 'normal';
   } else {
     bioEl.textContent = isMe ? 'Ajoute une bio pour te présenter 🌟' : 'Aucune bio';
-    bioEl.style.display = 'block';
     bioEl.style.fontStyle = 'italic';
   }
 
@@ -2308,16 +2255,27 @@ function showViewProfile(profile, isMe = false) {
     locEl.style.display = 'none';
   }
 
-  // Stats : nombre de souvenirs
+  // Stats
   const profileUid = profile.uid || currentUser.uid;
   const notesCount = allNotes.filter(n => n.userId === profileUid).length;
   document.getElementById('viewProfileNotes').textContent = notesCount;
 
-  // Nombre d'amis
   const friendsCount = (profile.friends || []).length;
   document.getElementById('viewProfileFriends').textContent = friendsCount;
 
-  document.getElementById('viewProfileModalOverlay').classList.add('open');
+  // Boutons d'action selon si c'est moi ou un ami
+  const actionButtons = document.getElementById('viewProfileActionButtons');
+  if (isMe) {
+    actionButtons.innerHTML = `
+      <button class="btn-full edit-profile" onclick="closeViewProfile(); setTimeout(openEditProfile, 200);">
+        ✏️ Modifier mon profil
+      </button>
+    `;
+  } else {
+    actionButtons.innerHTML = '';
+  }
+
+  modal.classList.add('open');
 }
 
 function closeViewProfile() {
@@ -3246,7 +3204,7 @@ function exportNotes() {
   }
   const exportData = {
     app: 'World Notes',
-    version: 7,
+    version: 8,
     exportedAt: new Date().toISOString(),
     notesCount: myNotes.length,
     notes: myNotes.map(n => {
