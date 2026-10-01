@@ -2172,7 +2172,7 @@ function showApp() {
 }
 
 /* =========================================================
-   👤 PROFIL UTILISATEUR
+   👤 PROFIL
    ========================================================= */
 
 async function ensureUserProfile() {
@@ -2271,7 +2271,7 @@ function copyUsername() {
 }
 
 /* =========================================================
-   👥 AMIS — Chargement FORCÉ depuis le serveur
+   👥 AMIS
    ========================================================= */
 
 function loadIncomingRequests() {
@@ -2283,11 +2283,7 @@ function loadIncomingRequests() {
     .onSnapshot(
       { includeMetadataChanges: true },
       (snapshot) => {
-        // ✅ Ignorer les données du cache (métadonnées)
-        // Sur mobile, ça évite d'afficher des demandes déjà acceptées
         const fromServer = snapshot.docs.filter(doc => !doc.metadata.fromCache);
-        
-        // Si pas de données serveur, garder celles en cache pour l'affichage
         const docsToUse = fromServer.length > 0 ? fromServer : snapshot.docs;
         
         incomingRequests = docsToUse.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -2345,22 +2341,31 @@ async function loadFriendsProfiles() {
 }
 
 /**
- * 🔄 Rafraîchit TOUTES les données d'amis depuis le serveur
- * Utilisé quand on ouvre le modal pour forcer la fraîcheur
+ * 🔄 Rafraîchit TOUTES les données depuis le serveur
+ * (Utilisé à l'ouverture du modal pour forcer la fraîcheur)
  */
 async function refreshFriendsData() {
   if (!currentUser) return;
   
   try {
-    // Demander au serveur les dernières données
+    // Relire le profil depuis le serveur
     const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
     if (userDoc.exists) {
       const data = userDoc.data();
-      myFriends = data.friends || [];
+      const newFriends = data.friends || [];
+      
+      // Si la liste a changé, recharger les profils + notes
+      const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
+      myFriends = newFriends;
+      
       await loadFriendsProfiles();
+      
+      if (changed) {
+        loadAllNotes();
+      }
     }
 
-    // Récupérer les demandes de façon fraîche
+    // Récupérer les demandes reçues fraîches
     const requestsSnapshot = await db.collection('friendRequests')
       .where('to', '==', currentUser.uid)
       .where('status', '==', 'pending')
@@ -2460,6 +2465,7 @@ async function acceptFriendRequest(requestId) {
     const myFriendsList = myDoc.data().friends || [];
     const theirFriendsList = theirDoc.data().friends || [];
 
+    // ✅ Ajouter mutuellement dans les 2 profils
     if (!myFriendsList.includes(req.from)) {
       myFriendsList.push(req.from);
       await myRef.update({ friends: myFriendsList });
@@ -2475,7 +2481,7 @@ async function acceptFriendRequest(requestId) {
       acceptedAt: Date.now()
     });
 
-    // ✅ Retirer IMMÉDIATEMENT de la liste locale
+    // ✅ Retirer de la liste locale
     incomingRequests = incomingRequests.filter(r => r.id !== requestId);
     updateFriendBadge();
     renderFriendsContent();
@@ -2494,7 +2500,6 @@ async function declineFriendRequest(requestId) {
       status: 'declined'
     });
 
-    // ✅ Retirer IMMÉDIATEMENT de la liste locale
     incomingRequests = incomingRequests.filter(r => r.id !== requestId);
     updateFriendBadge();
     renderFriendsContent();
@@ -2551,7 +2556,6 @@ async function removeFriend(friendUid) {
 function openFriendsModal() {
   document.getElementById('friendsModalOverlay').classList.add('open');
   renderFriendsContent();
-  
   // 🔄 Forcer un rafraîchissement depuis le serveur
   refreshFriendsData();
 }
@@ -2711,7 +2715,7 @@ async function cancelFriendRequest(requestId) {
 }
 
 /* =========================================================
-   ☁️ NOTES (MOI + AMIS)
+   ☁️ NOTES
    ========================================================= */
 
 function loadAllNotes() {
