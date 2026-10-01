@@ -2,7 +2,7 @@
 <html lang="fr" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>🌍 WORLD NOTES — La carte du monde de tes souvenirs</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -162,8 +162,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 24px;
+    padding: 0 16px;
     z-index: 1000;
+    padding-top: env(safe-area-inset-top, 0);
+    height: calc(64px + env(safe-area-inset-top, 0));
   }
 
   .logo {
@@ -318,14 +320,15 @@
 
   #map {
     position: absolute;
-    top: 64px; left: 0; right: 0; bottom: 0;
+    top: calc(64px + env(safe-area-inset-top, 0));
+    left: 0; right: 0; bottom: 0;
     z-index: 1;
     background: var(--bg-tertiary);
   }
 
   .sync-indicator {
     position: fixed;
-    top: 76px;
+    top: calc(76px + env(safe-area-inset-top, 0));
     left: 50%;
     transform: translateX(-50%) translateY(-100px);
     background: var(--bg-modal);
@@ -399,19 +402,10 @@
     text-align: center;
   }
 
-  @media (max-width: 768px) {
-    .map-filter {
-      left: 12px;
-      bottom: 12px;
-      max-width: calc(100% - 100px);
-      overflow-x: auto;
-    }
-    .filter-btn { padding: 8px 10px; font-size: 0.72rem; }
-  }
-
   #sidebar {
     position: fixed;
-    top: 64px; right: 0; bottom: 0;
+    top: calc(64px + env(safe-area-inset-top, 0));
+    right: 0; bottom: 0;
     width: 340px;
     background: var(--bg-overlay);
     backdrop-filter: blur(16px);
@@ -1018,7 +1012,7 @@
 
   .settings-panel {
     position: fixed;
-    top: 76px;
+    top: calc(76px + env(safe-area-inset-top, 0));
     right: 20px;
     width: 360px;
     max-height: calc(100vh - 96px);
@@ -1138,7 +1132,6 @@
     font-style: italic;
   }
 
-  /* 👤 PROFIL */
   .profile-header {
     display: flex;
     flex-direction: column;
@@ -1447,16 +1440,86 @@
 
   .btn-toggle-notes { display: none; }
 
+  /* 📱 MOBILE */
   @media (max-width: 768px) {
-    #sidebar { width: 100%; }
-    .btn-toggle-notes { display: inline-block; }
-    .logo { font-size: 1.1rem; }
-    .actions button { padding: 9px 12px; font-size: 0.82rem; }
+    header {
+        padding: 0 12px;
+    }
+    
+    .logo {
+        font-size: 1rem;
+        gap: 6px;
+    }
+    .logo span.globe { font-size: 1.3rem; }
     .logo span:not(.globe) { display: none; }
+    
+    .actions {
+        gap: 6px;
+    }
+    
+    .actions button {
+        padding: 8px 10px;
+        font-size: 0.78rem;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-icon {
+        padding: 8px 10px;
+        font-size: 1rem;
+        min-width: 38px;
+    }
+    
+    .user-avatar {
+        width: 34px;
+        height: 34px;
+    }
+    
+    #sidebar { width: 100%; }
+    
+    .btn-toggle-notes { display: inline-block; }
+    
     .modal { padding: 22px; }
     .settings-panel { width: calc(100% - 40px); right: 20px; left: 20px; }
     .icon-picker { grid-template-columns: repeat(4, 1fr); }
     .lightbox { padding: 20px; }
+    
+    /* 🎯 Décaler les boutons Zoom de Leaflet au-dessus du filtre */
+    .leaflet-bottom.leaflet-right {
+        bottom: 80px !important;
+    }
+    
+    .leaflet-bottom.leaflet-left {
+        bottom: 80px !important;
+    }
+    
+    /* Décaler le filtre pour ne pas chevaucher les boutons Leaflet */
+    .map-filter {
+        left: 12px;
+        right: 70px;
+        bottom: 16px;
+        padding: 5px;
+    }
+    
+    .filter-btn {
+        padding: 8px 10px;
+        font-size: 0.72rem;
+        flex-shrink: 0;
+    }
+    
+    .filter-btn .count {
+        min-width: 16px;
+        padding: 1px 5px;
+        font-size: 0.65rem;
+    }
+    
+    /* Décaler l'indicateur de sync */
+    .sync-indicator {
+        font-size: 0.75rem;
+        padding: 6px 14px;
+    }
   }
 
   .hint {
@@ -1642,7 +1705,6 @@
     </div>
   </aside>
 
-  <!-- MODAL AJOUT NOTE -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <h2>📍 Nouveau souvenir</h2>
@@ -1718,7 +1780,6 @@
     </div>
   </div>
 
-  <!-- MODAL AMIS -->
   <div class="modal-overlay" id="friendsModalOverlay">
     <div class="modal modal-friends">
       <h2>👥 Mes amis</h2>
@@ -1761,7 +1822,6 @@
     </div>
   </div>
 
-  <!-- MODAL ÉDITION PROFIL -->
   <div class="modal-overlay" id="editProfileModalOverlay">
     <div class="modal">
       <h2>✏️ Modifier mon profil</h2>
@@ -1788,7 +1848,7 @@
 
       <div class="form-group">
         <label for="editBio">Bio</label>
-        <textarea id="editBio" placeholder="Ex: Voyageur passionné ✈️ J'adore les plages et les bons restos 🍕" maxlength="150" style="min-height: 70px;"></textarea>
+        <textarea id="editBio" placeholder="Ex: Voyageur passionné ✈️" maxlength="150" style="min-height: 70px;"></textarea>
         <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px; text-align: right;">
           <span id="bioCounter">0</span> / 150
         </div>
@@ -1806,7 +1866,6 @@
     </div>
   </div>
 
-  <!-- MODAL VOIR PROFIL -->
   <div class="modal-overlay" id="viewProfileModalOverlay">
     <div class="modal modal-friends">
       <div class="profile-header">
@@ -2090,7 +2149,6 @@ function copyUsername() {
    ========================================================= */
 
 function openMyProfile() {
-  // Fermer le dropdown d'abord
   document.getElementById('userDropdown').classList.remove('open');
   
   if (!myProfile) {
@@ -2124,7 +2182,6 @@ function openEditProfile() {
     return;
   }
 
-  // Fermer les autres modals
   document.getElementById('viewProfileModalOverlay').classList.remove('open');
   document.getElementById('friendsModalOverlay').classList.remove('open');
   document.getElementById('userDropdown').classList.remove('open');
@@ -2144,12 +2201,10 @@ function closeEditProfile() {
   pendingProfilePhoto = null;
 }
 
-// Compteur de bio
 document.getElementById('editBio').addEventListener('input', (e) => {
   document.getElementById('bioCounter').textContent = e.target.value.length;
 });
 
-// Upload photo profil
 document.getElementById('profilePhotoInput').addEventListener('change', async (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -2187,7 +2242,6 @@ async function saveProfile() {
   saveBtn.innerHTML = '<span class="cloud-loader"></span>Enregistrement...';
 
   try {
-    // Vérifier si le pseudo est déjà pris
     if (username !== myProfile.username) {
       const existing = await db.collection('users')
         .where('username', '==', username)
@@ -2202,15 +2256,8 @@ async function saveProfile() {
       }
     }
 
-    const updates = {
-      username,
-      bio,
-      location
-    };
-
-    if (pendingProfilePhoto) {
-      updates.photoURL = pendingProfilePhoto;
-    }
+    const updates = { username, bio, location };
+    if (pendingProfilePhoto) updates.photoURL = pendingProfilePhoto;
 
     await db.collection('users').doc(currentUser.uid).update(updates);
 
@@ -2225,13 +2272,9 @@ async function saveProfile() {
   }
 }
 
-/* VOIR PROFIL */
 function showViewProfile(profile, isMe = false) {
   const modal = document.getElementById('viewProfileModalOverlay');
-  if (!modal) {
-    console.error('Modal viewProfileModalOverlay introuvable');
-    return;
-  }
+  if (!modal) return;
 
   const avatar = profile.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
   document.getElementById('viewProfileAvatar').src = avatar;
@@ -2255,7 +2298,6 @@ function showViewProfile(profile, isMe = false) {
     locEl.style.display = 'none';
   }
 
-  // Stats
   const profileUid = profile.uid || currentUser.uid;
   const notesCount = allNotes.filter(n => n.userId === profileUid).length;
   document.getElementById('viewProfileNotes').textContent = notesCount;
@@ -2263,7 +2305,6 @@ function showViewProfile(profile, isMe = false) {
   const friendsCount = (profile.friends || []).length;
   document.getElementById('viewProfileFriends').textContent = friendsCount;
 
-  // Boutons d'action selon si c'est moi ou un ami
   const actionButtons = document.getElementById('viewProfileActionButtons');
   if (isMe) {
     actionButtons.innerHTML = `
