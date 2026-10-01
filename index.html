@@ -230,7 +230,6 @@
 
   .btn-icon { padding: 10px 14px; font-size: 1.1rem; position: relative; }
 
-  /* Badge notification */
   .badge {
     position: absolute;
     top: 4px;
@@ -406,7 +405,6 @@
     box-shadow: 0 0 6px #22c55e;
   }
 
-  /* Filtre map flottant */
   .map-filter {
     position: fixed;
     bottom: 24px;
@@ -986,7 +984,6 @@
 
   .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
 
-  /* 🎨 Marqueur personnel (orange) */
   .custom-marker {
     background: linear-gradient(135deg, #f97316, #ea580c);
     width: 32px; height: 32px;
@@ -1027,7 +1024,6 @@
     z-index: 2;
   }
 
-  /* 👥 Marqueur ami (bleu) */
   .custom-marker.friend-marker {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
@@ -1160,9 +1156,7 @@
     margin-top: 8px;
   }
 
-  .popup-footer.no-author {
-    margin-top: 0;
-  }
+  .popup-footer.no-author { margin-top: 0; }
 
   .popup-meta {
     font-size: 0.72rem;
@@ -1465,7 +1459,6 @@
     font-style: italic;
   }
 
-  /* 👥 AMIS */
   .username-section {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
     border: 1px solid rgba(59, 130, 246, 0.3);
@@ -1816,7 +1809,6 @@
     <span id="syncText">Synchronisation...</span>
   </div>
 
-  <!-- Filtre carte -->
   <div class="map-filter" id="mapFilter">
     <button class="filter-btn active" data-filter="all" onclick="setMapFilter('all')">
       👥 Tous <span class="count" id="countAll">0</span>
@@ -1881,7 +1873,6 @@
     </div>
   </aside>
 
-  <!-- Modal Ajout -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <h2>📍 Nouveau souvenir</h2>
@@ -1960,13 +1951,11 @@
     </div>
   </div>
 
-  <!-- Modal Amis -->
   <div class="modal-overlay" id="friendsModalOverlay">
     <div class="modal modal-friends">
       <h2>👥 Mes amis</h2>
       <p class="subtitle">Ajoute des amis pour voir leurs souvenirs sur ta carte.</p>
 
-      <!-- Pseudo -->
       <div class="username-section" id="usernameSection">
         <h4>👤 Ton pseudo</h4>
         <p>Choisis un pseudo unique pour que tes amis puissent t'ajouter.</p>
@@ -1976,7 +1965,6 @@
         </div>
       </div>
 
-      <!-- Ajout d'ami -->
       <div class="username-section" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05)); border-color: rgba(34, 197, 94, 0.3);">
         <h4 style="color: #22c55e;">➕ Ajouter un ami</h4>
         <p>Entre le pseudo de ton ami pour lui envoyer une demande.</p>
@@ -1986,7 +1974,6 @@
         </div>
       </div>
 
-      <!-- Tabs -->
       <div class="friends-tabs">
         <button class="friends-tab active" data-tab="friends" onclick="switchFriendsTab('friends')">
           👥 Amis <span class="tab-badge" id="tabFriendsCount" style="display: none;">0</span>
@@ -1999,9 +1986,7 @@
         </button>
       </div>
 
-      <div class="friends-content" id="friendsContent">
-        <!-- Contenu dynamique -->
-      </div>
+      <div class="friends-content" id="friendsContent"></div>
 
       <div class="modal-actions">
         <button class="btn-ghost" onclick="closeFriendsModal()">Fermer</button>
@@ -2036,13 +2021,8 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch((err) => {
-  console.warn('Persistance:', err);
-});
-
-db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-  console.warn('Persistance offline:', err.code);
-});
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch((err) => console.warn('Persistance:', err));
+db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.warn('Persistance offline:', err.code));
 
 /* =========================================================
    ÉTAT GLOBAL
@@ -2056,16 +2036,16 @@ let uiTheme = localStorage.getItem('worldnotes_theme') || DEFAULT_THEME;
 document.documentElement.setAttribute('data-theme', uiTheme);
 
 let currentUser = null;
-let myProfile = null;       // { username, displayName, photoURL, email }
-let myFriends = [];          // UIDs de mes amis
-let friendsProfiles = {};    // { uid: { profile, } }
-let incomingRequests = [];   // demandes reçues
-let outgoingRequests = [];   // demandes envoyées
+let myProfile = null;
+let myFriends = [];
+let friendsProfiles = {};
+let incomingRequests = [];
+let outgoingRequests = [];
 
-let allNotes = [];           // Toutes les notes (miennes + amis)
+let allNotes = [];
 let myNotes = [];
 let friendNotes = [];
-let mapFilter = 'all';       // 'all' | 'mine' | 'friends'
+let mapFilter = 'all';
 
 let unsubscribeProfile = null;
 let unsubscribeNotes = null;
@@ -2152,6 +2132,7 @@ auth.onAuthStateChanged(async (user) => {
     loadProfile();
     loadIncomingRequests();
     loadOutgoingRequests();
+    loadFriends();
     loadAllNotes();
     updateFriendBadge();
   } else {
@@ -2187,7 +2168,9 @@ function showApp() {
   document.getElementById('userName').textContent = currentUser.displayName || 'Utilisateur';
   document.getElementById('userEmail').textContent = currentUser.email || '';
 
-  if (!map) initMap();
+  if (!map) {
+    initMap();
+  }
 }
 
 /* =========================================================
@@ -2200,21 +2183,24 @@ async function ensureUserProfile() {
     const doc = await userRef.get();
 
     if (!doc.exists) {
-      // Premier login : créer le profil
       await userRef.set({
         displayName: currentUser.displayName || 'Utilisateur',
         email: currentUser.email || '',
         photoURL: currentUser.photoURL || '',
-        username: '',  // À définir par l'utilisateur
+        username: '',
+        friends: [],
         createdAt: Date.now()
       });
     } else {
-      // Mettre à jour displayName/photoURL au cas où ils changent
-      await userRef.update({
+      const data = doc.data();
+      const updates = {
         displayName: currentUser.displayName || 'Utilisateur',
         photoURL: currentUser.photoURL || '',
         email: currentUser.email || ''
-      });
+      };
+      // S'assurer que friends existe
+      if (!data.friends) updates.friends = [];
+      await userRef.update(updates);
     }
   } catch (err) {
     console.error('Erreur profil:', err);
@@ -2229,7 +2215,6 @@ function loadProfile() {
       if (!doc.exists) return;
       myProfile = doc.data();
 
-      // Afficher le pseudo
       const usernameEl = document.getElementById('userUsername');
       const usernameInput = document.getElementById('usernameInput');
       const display = document.getElementById('userUsernameDisplay');
@@ -2242,9 +2227,6 @@ function loadProfile() {
         usernameEl.textContent = '(à définir)';
         display.style.display = 'flex';
       }
-
-      // Recharger les profils d'amis
-      if (myFriends.length > 0) await loadFriendsProfiles();
     });
 }
 
@@ -2262,7 +2244,6 @@ async function saveUsername() {
   }
 
   try {
-    // Vérifier si le pseudo est déjà pris
     const existing = await db.collection('users')
       .where('username', '==', username)
       .limit(1)
@@ -2328,10 +2309,18 @@ function loadFriends() {
     .onSnapshot(async (doc) => {
       if (!doc.exists) return;
       const data = doc.data();
-      myFriends = data.friends || [];
+      const newFriends = data.friends || [];
+
+      // Si la liste change, recharger les profils ET les notes
+      const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
+      myFriends = newFriends;
+
       await loadFriendsProfiles();
-      // Recharger les notes (pour inclure les nouvelles notes des amis)
-      loadAllNotes();
+      
+      if (changed) {
+        // Recharger les notes avec la nouvelle liste d'amis
+        loadAllNotes();
+      }
     });
 }
 
@@ -2365,7 +2354,6 @@ async function sendFriendRequest() {
   }
 
   try {
-    // Trouver l'utilisateur par pseudo
     const usersSnapshot = await db.collection('users')
       .where('username', '==', username)
       .limit(1)
@@ -2384,7 +2372,6 @@ async function sendFriendRequest() {
       return;
     }
 
-    // Vérifier s'il y a déjà une demande en attente
     const existing = await db.collection('friendRequests')
       .where('from', '==', currentUser.uid)
       .where('to', '==', targetUid)
@@ -2396,7 +2383,6 @@ async function sendFriendRequest() {
       return;
     }
 
-    // Envoyer la demande
     await db.collection('friendRequests').add({
       from: currentUser.uid,
       to: targetUid,
@@ -2421,7 +2407,6 @@ async function acceptFriendRequest(requestId) {
 
     const req = reqDoc.data();
 
-    // Ajouter mutuellement dans les deux profils
     const myRef = db.collection('users').doc(currentUser.uid);
     const theirRef = db.collection('users').doc(req.from);
 
@@ -2441,7 +2426,6 @@ async function acceptFriendRequest(requestId) {
       await theirRef.update({ friends: theirFriendsList });
     }
 
-    // Marquer la demande comme acceptée
     await db.collection('friendRequests').doc(requestId).update({
       status: 'accepted',
       acceptedAt: Date.now()
@@ -2484,7 +2468,6 @@ async function removeFriend(friendUid) {
     await myRef.update({ friends: myFriendsList });
     await theirRef.update({ friends: theirFriendsList });
 
-    // Supprimer les demandes acceptées entre nous
     const requests = await db.collection('friendRequests')
       .where('status', '==', 'accepted')
       .get();
@@ -2537,7 +2520,6 @@ function updateFriendBadge() {
     badge.style.display = 'none';
   }
 
-  // Badge sur l'onglet "Demandes"
   const tabBadge = document.getElementById('tabRequestsCount');
   if (tabBadge) {
     if (count > 0) {
@@ -2548,7 +2530,6 @@ function updateFriendBadge() {
     }
   }
 
-  // Badge sur l'onglet "Amis"
   const tabFriendsBadge = document.getElementById('tabFriendsCount');
   if (tabFriendsBadge) {
     if (myFriends.length > 0) {
@@ -2567,6 +2548,8 @@ function renderFriendsContent(tab = null) {
   }
 
   const content = document.getElementById('friendsContent');
+  if (!content) return;
+
   updateFriendBadge();
 
   if (tab === 'friends') {
@@ -2674,13 +2657,8 @@ async function cancelFriendRequest(requestId) {
 function loadAllNotes() {
   if (unsubscribeNotes) unsubscribeNotes();
 
-  // Charger toutes les notes auxquelles j'ai accès (mes + celles de mes amis)
-  const allowedUids = [currentUser.uid, ...myFriends];
-
   showSyncIndicator('Chargement des souvenirs...', false);
 
-  // Firestore 'in' query supporte max 10 éléments. On va faire autrement :
-  // On charge toutes les notes et on filtre côté client
   unsubscribeNotes = db.collection('notes')
     .orderBy('createdAt', 'desc')
     .limit(500)
@@ -2688,11 +2666,10 @@ function loadAllNotes() {
       (snapshot) => {
         const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Filtrer : seulement moi et mes amis
-        const allowed = new Set(allowedUids);
+        // ✅ Recalculer la liste autorisée à CHAQUE snapshot (bug fix)
+        const allowed = new Set([currentUser.uid, ...myFriends]);
         allNotes = all.filter(n => allowed.has(n.userId));
 
-        // Séparer mes notes / celles des amis
         myNotes = allNotes.filter(n => n.userId === currentUser.uid);
         friendNotes = allNotes.filter(n => n.userId !== currentUser.uid);
 
@@ -2705,22 +2682,6 @@ function loadAllNotes() {
         showToast('❌ Erreur de chargement', 'error');
       }
     );
-}
-
-function loadFriendsAndNotes() {
-  // Recharger les amis puis les notes
-  const userRef = db.collection('users').doc(currentUser.uid);
-  userRef.onSnapshot((doc) => {
-    if (!doc.exists) return;
-    const data = doc.data();
-    const newFriends = data.friends || [];
-
-    // Si la liste a changé, recharger
-    if (JSON.stringify(newFriends) !== JSON.stringify(myFriends)) {
-      myFriends = newFriends;
-      loadFriendsProfiles().then(() => loadAllNotes());
-    }
-  });
 }
 
 /* =========================================================
@@ -2891,7 +2852,6 @@ function buildPopupContent(note) {
     `;
   }
 
-  // Info auteur pour les notes d'amis
   let authorHtml = '';
   if (!isMine) {
     const authorProfile = friendsProfiles[note.userId];
@@ -2932,11 +2892,9 @@ function buildPopupContent(note) {
 }
 
 function renderAllMarkers() {
-  // Supprimer tous les marqueurs
   Object.values(markers).forEach(m => map.removeLayer(m));
   markers = {};
 
-  // Filtrer selon le filtre actif
   let notesToShow = [];
   if (mapFilter === 'all') notesToShow = allNotes;
   else if (mapFilter === 'mine') notesToShow = myNotes;
@@ -2970,7 +2928,6 @@ function renderSidebar() {
       ? `<img class="note-thumb" src="${note.photo}" alt="Photo" onclick="openLightbox('${note.id}', event)" />`
       : '';
 
-    // Auteur pour les notes d'amis
     let authorHtml = '';
     if (!isMine) {
       const authorProfile = friendsProfiles[note.userId];
@@ -3069,7 +3026,6 @@ function updateFilters() {
   document.getElementById('countMine').textContent = myNotes.length;
   document.getElementById('countFriends').textContent = friendNotes.length;
 
-  // Cacher le filtre "Amis" si on n'a pas d'amis
   const friendsBtn = document.querySelector('.filter-btn[data-filter="friends"]');
   if (friendsBtn) {
     friendsBtn.style.display = myFriends.length > 0 ? 'flex' : 'none';
@@ -3601,7 +3557,7 @@ function clearSearchButton() {
 }
 
 /* =========================================================
-   💾 SAUVEGARDE NOTE
+   💾 SAUVEGARDE NOTE — FIX : affichage immédiat
    ========================================================= */
 
 async function saveNote() {
@@ -3620,21 +3576,53 @@ async function saveNote() {
   try {
     const lat = pendingLatLng.lat;
     const lng = pendingLatLng.lng;
+    const now = Date.now();
 
-    await db.collection('notes').add({
+    // Ajout dans Firestore avec ID auto
+    const newNoteRef = await db.collection('notes').add({
       userId: currentUser.uid,
       place,
       text,
       lat, lng,
-      createdAt: Date.now(),
+      createdAt: now,
       source: pendingSource,
       icon: pendingIcon,
       photo: pendingPhoto
     });
 
+    // ✅ Afficher IMMÉDIATEMENT le marqueur (sans attendre le snapshot)
+    const newNote = {
+      id: newNoteRef.id,
+      userId: currentUser.uid,
+      place,
+      text,
+      lat, lng,
+      createdAt: now,
+      source: pendingSource,
+      icon: pendingIcon,
+      photo: pendingPhoto
+    };
+
+    // Ajouter à la liste locale
+    if (!allNotes.some(n => n.id === newNote.id)) {
+      allNotes.unshift(newNote);
+      myNotes.unshift(newNote);
+    }
+
+    // Forcer le rendu immédiat
+    renderAllMarkers();
+    updateFilters();
+
     closeAddModal();
     showToast('☁️ Souvenir enregistré !', 'success');
     map.flyTo([lat, lng], 15, { duration: 1.2 });
+
+    // Ouvrir la popup du nouveau marqueur
+    setTimeout(() => {
+      const marker = markers[newNote.id];
+      if (marker) marker.openPopup();
+    }, 800);
+
   } catch (err) {
     console.error(err);
     showToast('❌ Erreur de sauvegarde', 'error');
@@ -3673,17 +3661,6 @@ document.addEventListener('keydown', (e) => {
     else closeAddModal();
   }
 });
-
-/* =========================================================
-   INIT
-   ========================================================= */
-
-// Charger les amis + notes après login
-const originalShowApp = showApp;
-showApp = function() {
-  originalShowApp();
-  loadFriendsAndNotes();
-};
 
 updateThemeChoices();
 
