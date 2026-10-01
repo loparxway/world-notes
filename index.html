@@ -1405,7 +1405,7 @@
     <h1>WORLD NOTES</h1>
     <p>La carte du monde de tes souvenirs.<br>Connecte-toi pour commencer.</p>
 
-    <button class="btn-google" onclick="signInWithGoogle()">
+    <button class="btn-google" id="googleBtn" onclick="signInWithGoogle()">
       <svg viewBox="0 0 48 48">
         <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34.2 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
         <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34.2 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
@@ -1676,22 +1676,64 @@ let userLocationCircle = null;
 let tempMarker = null;
 
 /* =========================================================
-   🔐 AUTH
+   🔐 AUTH — Compatible mobile et desktop
    ========================================================= */
+
+// Détecte si on est sur mobile
+function isMobileDevice() {
+  return /iPhone|iPad|iPod|Android|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
 
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
 
-  auth.signInWithPopup(provider).catch((error) => {
-    console.error('Erreur signIn:', error);
-    if (error.code === 'auth/popup-blocked') {
-      alert('Autorise les popups pour te connecter.');
-    } else if (error.code === 'auth/unauthorized-domain') {
-      alert('Ce domaine n\'est pas autorisé dans Firebase.\nAjoute-le dans : Authentication → Settings → Domaines autorisés.');
-    }
-  });
+  const btn = document.getElementById('googleBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+  }
+
+  if (isMobileDevice()) {
+    // Sur mobile → signInWithRedirect (plus fiable)
+    auth.signInWithRedirect(provider).catch((error) => {
+      console.error('Erreur signInWithRedirect:', error);
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+      if (error.code === 'auth/unauthorized-domain') {
+        alert('Ce domaine n\'est pas autorisé dans Firebase.\nAjoute-le dans : Authentication → Settings → Domaines autorisés.');
+      }
+    });
+  } else {
+    // Sur desktop → signInWithPopup
+    auth.signInWithPopup(provider).catch((error) => {
+      console.error('Erreur signInWithPopup:', error);
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+      if (error.code === 'auth/popup-blocked') {
+        alert('Autorise les popups pour te connecter.');
+      } else if (error.code === 'auth/unauthorized-domain') {
+        alert('Ce domaine n\'est pas autorisé dans Firebase.\nAjoute-le dans : Authentication → Settings → Domaines autorisés.');
+      }
+    });
+  }
 }
+
+// 🔄 Gérer le retour après redirection (mobile)
+auth.getRedirectResult().then((result) => {
+  if (result && result.user) {
+    console.log('✅ Connecté après redirection :', result.user.email);
+  }
+}).catch((error) => {
+  console.error('Erreur getRedirectResult:', error);
+  if (error.code === 'auth/unauthorized-domain') {
+    alert('Ce domaine n\'est pas autorisé dans Firebase.\nAjoute-le dans : Authentication → Settings → Domaines autorisés.');
+  }
+});
 
 function signOut() {
   if (!confirm('Se déconnecter ?')) return;
@@ -1720,6 +1762,12 @@ auth.onAuthStateChanged((user) => {
 function showLogin() {
   document.getElementById('loginScreen').classList.remove('hidden');
   document.getElementById('app').style.display = 'none';
+  // Réactiver le bouton Google
+  const btn = document.getElementById('googleBtn');
+  if (btn) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
 }
 
 function showApp() {
@@ -2621,20 +2669,20 @@ async function saveNote() {
   saveBtn.innerHTML = '<span class="cloud-loader"></span>Enregistrement...';
 
   try {
+    const lat = pendingLatLng.lat;
+    const lng = pendingLatLng.lng;
+
     await db.collection('notes').add({
       userId: currentUser.uid,
       place,
       text,
-      lat: pendingLatLng.lat,
-      lng: pendingLatLng.lng,
+      lat: lat,
+      lng: lng,
       createdAt: Date.now(),
       source: pendingSource,
       icon: pendingIcon,
       photo: pendingPhoto
     });
-
-    const lat = pendingLatLng.lat;
-    const lng = pendingLatLng.lng;
 
     closeAddModal();
     showToast('☁️ Souvenir enregistré dans le cloud !', 'success');
