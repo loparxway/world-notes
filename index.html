@@ -574,9 +574,7 @@
     gap: 6px;
   }
 
-  .note-card.friend-note .place {
-    color: #3b82f6;
-  }
+  .note-card.friend-note .place { color: #3b82f6; }
 
   .note-card .place .category-icon { font-size: 1.1rem; }
 
@@ -2180,7 +2178,7 @@ function showApp() {
 async function ensureUserProfile() {
   try {
     const userRef = db.collection('users').doc(currentUser.uid);
-    const doc = await userRef.get();
+    const doc = await userRef.get({ source: 'server' });
 
     if (!doc.exists) {
       await userRef.set({
@@ -2198,7 +2196,6 @@ async function ensureUserProfile() {
         photoURL: currentUser.photoURL || '',
         email: currentUser.email || ''
       };
-      // S'assurer que friends existe
       if (!data.friends) updates.friends = [];
       await userRef.update(updates);
     }
@@ -2247,7 +2244,7 @@ async function saveUsername() {
     const existing = await db.collection('users')
       .where('username', '==', username)
       .limit(1)
-      .get();
+      .get({ source: 'server' });
 
     if (!existing.empty && existing.docs[0].id !== currentUser.uid) {
       showToast('⚠️ Ce pseudo est déjà pris', 'error');
@@ -2274,7 +2271,7 @@ function copyUsername() {
 }
 
 /* =========================================================
-   👥 AMIS
+   👥 AMIS — Chargement FORCÉ depuis le serveur
    ========================================================= */
 
 function loadIncomingRequests() {
@@ -2283,11 +2280,21 @@ function loadIncomingRequests() {
   unsubscribeIncoming = db.collection('friendRequests')
     .where('to', '==', currentUser.uid)
     .where('status', '==', 'pending')
-    .onSnapshot((snapshot) => {
-      incomingRequests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      updateFriendBadge();
-      renderFriendsContent();
-    });
+    .onSnapshot(
+      { includeMetadataChanges: true },
+      (snapshot) => {
+        // ✅ Ignorer les données du cache (métadonnées)
+        // Sur mobile, ça évite d'afficher des demandes déjà acceptées
+        const fromServer = snapshot.docs.filter(doc => !doc.metadata.fromCache);
+        
+        // Si pas de données serveur, garder celles en cache pour l'affichage
+        const docsToUse = fromServer.length > 0 ? fromServer : snapshot.docs;
+        
+        incomingRequests = docsToUse.map(doc => ({ id: doc.id, ...doc.data() }));
+        updateFriendBadge();
+        renderFriendsContent();
+      }
+    );
 }
 
 function loadOutgoingRequests() {
@@ -2311,14 +2318,12 @@ function loadFriends() {
       const data = doc.data();
       const newFriends = data.friends || [];
 
-      // Si la liste change, recharger les profils ET les notes
       const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
       myFriends = newFriends;
 
       await loadFriendsProfiles();
       
       if (changed) {
-        // Recharger les notes avec la nouvelle liste d'amis
         loadAllNotes();
       }
     });
@@ -2339,6 +2344,45 @@ async function loadFriendsProfiles() {
   renderFriendsContent();
 }
 
+/**
+ * 🔄 Rafraîchit TOUTES les données d'amis depuis le serveur
+ * Utilisé quand on ouvre le modal pour forcer la fraîcheur
+ */
+async function refreshFriendsData() {
+  if (!currentUser) return;
+  
+  try {
+    // Demander au serveur les dernières données
+    const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
+    if (userDoc.exists) {
+      const data = userDoc.data();
+      myFriends = data.friends || [];
+      await loadFriendsProfiles();
+    }
+
+    // Récupérer les demandes de façon fraîche
+    const requestsSnapshot = await db.collection('friendRequests')
+      .where('to', '==', currentUser.uid)
+      .where('status', '==', 'pending')
+      .get({ source: 'server' });
+    
+    incomingRequests = requestsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // Pareil pour les demandes envoyées
+    const sentSnapshot = await db.collection('friendRequests')
+      .where('from', '==', currentUser.uid)
+      .where('status', '==', 'pending')
+      .get({ source: 'server' });
+    
+    outgoingRequests = sentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    updateFriendBadge();
+    renderFriendsContent();
+  } catch (err) {
+    console.error('Erreur refresh:', err);
+  }
+}
+
 async function sendFriendRequest() {
   const input = document.getElementById('friendUsernameInput');
   const username = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
@@ -2357,7 +2401,7 @@ async function sendFriendRequest() {
     const usersSnapshot = await db.collection('users')
       .where('username', '==', username)
       .limit(1)
-      .get();
+      .get({ source: 'server' });
 
     if (usersSnapshot.empty) {
       showToast('❌ Aucun utilisateur avec ce pseudo', 'error');
@@ -2376,7 +2420,7 @@ async function sendFriendRequest() {
       .where('from', '==', currentUser.uid)
       .where('to', '==', targetUid)
       .where('status', '==', 'pending')
-      .get();
+      .get({ source: 'server' });
 
     if (!existing.empty) {
       showToast('ℹ️ Demande déjà envoyée', 'info');
@@ -2431,6 +2475,11 @@ async function acceptFriendRequest(requestId) {
       acceptedAt: Date.now()
     });
 
+    // ✅ Retirer IMMÉDIATEMENT de la liste locale
+    incomingRequests = incomingRequests.filter(r => r.id !== requestId);
+    updateFriendBadge();
+    renderFriendsContent();
+
     showToast('✅ Ami ajouté !', 'success');
   } catch (err) {
     console.error('Erreur accept:', err);
@@ -2444,6 +2493,12 @@ async function declineFriendRequest(requestId) {
     await db.collection('friendRequests').doc(requestId).update({
       status: 'declined'
     });
+
+    // ✅ Retirer IMMÉDIATEMENT de la liste locale
+    incomingRequests = incomingRequests.filter(r => r.id !== requestId);
+    updateFriendBadge();
+    renderFriendsContent();
+
     showToast('Demande refusée', 'info');
   } catch (err) {
     console.error('Erreur refus:', err);
@@ -2496,6 +2551,9 @@ async function removeFriend(friendUid) {
 function openFriendsModal() {
   document.getElementById('friendsModalOverlay').classList.add('open');
   renderFriendsContent();
+  
+  // 🔄 Forcer un rafraîchissement depuis le serveur
+  refreshFriendsData();
 }
 
 function closeFriendsModal() {
@@ -2644,6 +2702,8 @@ async function cancelFriendRequest(requestId) {
   if (!confirm('Annuler cette demande ?')) return;
   try {
     await db.collection('friendRequests').doc(requestId).update({ status: 'cancelled' });
+    outgoingRequests = outgoingRequests.filter(r => r.id !== requestId);
+    renderFriendsContent();
     showToast('Demande annulée', 'info');
   } catch (err) {
     console.error('Erreur:', err);
@@ -2666,7 +2726,6 @@ function loadAllNotes() {
       (snapshot) => {
         const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // ✅ Recalculer la liste autorisée à CHAQUE snapshot (bug fix)
         const allowed = new Set([currentUser.uid, ...myFriends]);
         allNotes = all.filter(n => allowed.has(n.userId));
 
@@ -3557,7 +3616,7 @@ function clearSearchButton() {
 }
 
 /* =========================================================
-   💾 SAUVEGARDE NOTE — FIX : affichage immédiat
+   💾 SAUVEGARDE NOTE
    ========================================================= */
 
 async function saveNote() {
@@ -3578,7 +3637,6 @@ async function saveNote() {
     const lng = pendingLatLng.lng;
     const now = Date.now();
 
-    // Ajout dans Firestore avec ID auto
     const newNoteRef = await db.collection('notes').add({
       userId: currentUser.uid,
       place,
@@ -3590,7 +3648,6 @@ async function saveNote() {
       photo: pendingPhoto
     });
 
-    // ✅ Afficher IMMÉDIATEMENT le marqueur (sans attendre le snapshot)
     const newNote = {
       id: newNoteRef.id,
       userId: currentUser.uid,
@@ -3603,13 +3660,11 @@ async function saveNote() {
       photo: pendingPhoto
     };
 
-    // Ajouter à la liste locale
     if (!allNotes.some(n => n.id === newNote.id)) {
       allNotes.unshift(newNote);
       myNotes.unshift(newNote);
     }
 
-    // Forcer le rendu immédiat
     renderAllMarkers();
     updateFilters();
 
@@ -3617,7 +3672,6 @@ async function saveNote() {
     showToast('☁️ Souvenir enregistré !', 'success');
     map.flyTo([lat, lng], 15, { duration: 1.2 });
 
-    // Ouvrir la popup du nouveau marqueur
     setTimeout(() => {
       const marker = markers[newNote.id];
       if (marker) marker.openPopup();
