@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/__/auth/:path*",
+      "destination": "https://note-world-48a5a.firebaseapp.com/__/auth/:path*"
+    }
+  ]
+}
