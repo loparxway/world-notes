@@ -1625,7 +1625,7 @@
 
 const firebaseConfig = {
   apiKey: "AIzaSyDovjQd6tSzGtFh3chQP4rxIfQKyYOwG4U",
-  authDomain: "note-world-48a5a.firebaseapp.com",
+  authDomain: "world-notes-psi.vercel.app",
   projectId: "note-world-48a5a",
   storageBucket: "note-world-48a5a.firebasestorage.app",
   messagingSenderId: "442712953473",
@@ -1709,7 +1709,6 @@ function signInWithGoogle() {
       }
       alert('Erreur de connexion: ' + error.message);
     });
-    // ⚠️ Pas de reset du bouton : la page va se recharger
   } else {
     // Sur desktop → signInWithPopup
     auth.signInWithPopup(provider).catch((error) => {
@@ -1731,7 +1730,6 @@ function signInWithGoogle() {
 auth.getRedirectResult().then((result) => {
   if (result && result.user) {
     console.log('✅ Connecté après redirection :', result.user.email);
-    // La connexion est déjà gérée par onAuthStateChanged
   } else {
     console.log('ℹ️ Pas de session de redirection à récupérer');
   }
