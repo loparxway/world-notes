@@ -228,7 +228,30 @@
     transform: translateY(-2px);
   }
 
-  .btn-icon { padding: 10px 14px; font-size: 1.1rem; }
+  .btn-icon { padding: 10px 14px; font-size: 1.1rem; position: relative; }
+
+  /* Badge notification */
+  .badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 10px;
+    min-width: 16px;
+    text-align: center;
+    line-height: 1.2;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.5);
+    animation: badgePulse 2s infinite;
+  }
+
+  @keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.15); }
+  }
 
   .user-menu { position: relative; }
 
@@ -257,7 +280,7 @@
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 8px;
-    min-width: 220px;
+    min-width: 240px;
     box-shadow: var(--shadow-lg);
     display: none;
     animation: dropdownEnter 0.2s ease;
@@ -289,6 +312,19 @@
     color: var(--text-faint);
   }
 
+  .user-username {
+    font-size: 0.75rem;
+    color: #f97316;
+    font-weight: 600;
+    margin-top: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .user-username:hover { text-decoration: underline; }
+
   .dropdown-item {
     display: flex;
     align-items: center;
@@ -307,6 +343,11 @@
   }
 
   .dropdown-item:hover {
+    background: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+  }
+
+  .dropdown-item.danger:hover {
     background: rgba(239, 68, 68, 0.15);
     color: #ef4444;
   }
@@ -363,6 +404,77 @@
     background: #22c55e;
     animation: none;
     box-shadow: 0 0 6px #22c55e;
+  }
+
+  /* Filtre map flottant */
+  .map-filter {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+    gap: 4px;
+    box-shadow: var(--shadow-lg);
+    z-index: 500;
+    animation: slideUpFilter 0.4s ease;
+  }
+
+  @keyframes slideUpFilter {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .filter-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .filter-btn:hover {
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--text-primary);
+  }
+
+  .filter-btn.active {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+  }
+
+  .filter-btn .count {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .filter-btn.active .count {
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  @media (max-width: 768px) {
+    .map-filter {
+      left: 12px;
+      bottom: 12px;
+      max-width: calc(100% - 100px);
+      overflow-x: auto;
+    }
+    .filter-btn { padding: 8px 10px; font-size: 0.72rem; }
   }
 
   #sidebar {
@@ -432,6 +544,10 @@
     z-index: 1;
   }
 
+  .note-card.friend-note::before {
+    background: linear-gradient(180deg, #3b82f6, #2563eb);
+  }
+
   .note-card:hover {
     background: var(--bg-card-hover);
     border-color: rgba(249, 115, 22, 0.5);
@@ -460,6 +576,10 @@
     gap: 6px;
   }
 
+  .note-card.friend-note .place {
+    color: #3b82f6;
+  }
+
   .note-card .place .category-icon { font-size: 1.1rem; }
 
   .note-card .text {
@@ -475,6 +595,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .note-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: #3b82f6;
+    font-weight: 600;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--border-subtle);
+  }
+
+  .note-author img {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
   }
 
   .delete-note {
@@ -631,17 +770,8 @@
     border-color: #f97316;
     background: rgba(249, 115, 22, 0.05);
   }
-  .photo-upload-zone.dragover {
-    border-color: #f97316;
-    background: rgba(249, 115, 22, 0.1);
-    transform: scale(1.02);
-  }
 
-  .photo-upload-icon {
-    font-size: 2rem;
-    margin-bottom: 8px;
-    display: block;
-  }
+  .photo-upload-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
 
   .photo-upload-text {
     font-size: 0.85rem;
@@ -856,6 +986,7 @@
 
   .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
 
+  /* 🎨 Marqueur personnel (orange) */
   .custom-marker {
     background: linear-gradient(135deg, #f97316, #ea580c);
     width: 32px; height: 32px;
@@ -894,6 +1025,15 @@
     border-radius: 50%;
     box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
     z-index: 2;
+  }
+
+  /* 👥 Marqueur ami (bleu) */
+  .custom-marker.friend-marker {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+  }
+  .custom-marker.friend-marker:hover {
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.7);
   }
 
   .marker-pop {
@@ -980,6 +1120,8 @@
     gap: 8px;
   }
 
+  .popup-place.friend-place { color: #3b82f6; }
+
   .popup-place .category-icon { font-size: 1.2rem; }
 
   .popup-text {
@@ -987,6 +1129,25 @@
     color: var(--text-secondary);
     line-height: 1.4;
     margin-bottom: 8px;
+  }
+
+  .popup-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: #3b82f6;
+    font-weight: 600;
+  }
+
+  .popup-author img {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
   }
 
   .popup-footer {
@@ -997,6 +1158,10 @@
     border-top: 1px solid var(--border-subtle);
     padding-top: 10px;
     margin-top: 8px;
+  }
+
+  .popup-footer.no-author {
+    margin-top: 0;
   }
 
   .popup-meta {
@@ -1300,6 +1465,197 @@
     font-style: italic;
   }
 
+  /* 👥 AMIS */
+  .username-section {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .username-section h4 {
+    font-size: 0.85rem;
+    color: #3b82f6;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .username-section p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .username-input-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .username-input-row input {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  .username-input-row button {
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .friend-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+  }
+
+  .friend-card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(59, 130, 246, 0.4);
+  }
+
+  .friend-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(59, 130, 246, 0.5);
+    flex-shrink: 0;
+  }
+
+  .friend-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .friend-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .friend-username {
+    font-size: 0.75rem;
+    color: #3b82f6;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .friend-email {
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .friend-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .friend-btn {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .friend-btn:hover {
+    background: rgba(59, 130, 246, 0.9);
+    color: white;
+    transform: translateY(-1px);
+  }
+  .friend-btn.accept {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+  }
+  .friend-btn.accept:hover {
+    background: rgba(34, 197, 94, 0.9);
+    color: white;
+  }
+  .friend-btn.danger {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+  }
+  .friend-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+  }
+
+  .friends-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    background: var(--bg-input);
+    padding: 4px;
+    border-radius: 10px;
+  }
+
+  .friends-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 8px 6px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .friends-tab.active {
+    background: var(--bg-modal);
+    color: #3b82f6;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .friends-tab .tab-badge {
+    background: #ef4444;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 8px;
+    min-width: 14px;
+    text-align: center;
+  }
+
+  .friends-content {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .modal.modal-friends {
+    max-width: 520px;
+  }
+
   .toast {
     position: fixed;
     bottom: 30px;
@@ -1428,6 +1784,9 @@
     </div>
     <div class="actions">
       <button class="btn-ghost btn-toggle-notes" onclick="toggleSidebar()">📖 Notes</button>
+      <button class="btn-ghost btn-icon" onclick="openFriendsModal()" title="Amis">
+        👥<span class="badge" id="friendBadge" style="display: none;">0</span>
+      </button>
       <button class="btn-ghost btn-icon" onclick="toggleSettings()" title="Réglages">⚙️</button>
       <button class="btn-primary" onclick="openAddModal()">➕ Ajouter</button>
 
@@ -1437,8 +1796,14 @@
           <div class="user-info">
             <div class="user-name" id="userName">—</div>
             <div class="user-email" id="userEmail">—</div>
+            <div class="user-username" id="userUsernameDisplay" onclick="copyUsername()">
+              @<span id="userUsername">—</span> <span style="font-size: 0.65rem;">📋</span>
+            </div>
           </div>
-          <button class="dropdown-item" onclick="signOut()">
+          <button class="dropdown-item" onclick="openFriendsModal()">
+            👥 Mes amis
+          </button>
+          <button class="dropdown-item danger" onclick="signOut()">
             🚪 Se déconnecter
           </button>
         </div>
@@ -1449,6 +1814,19 @@
   <div class="sync-indicator" id="syncIndicator">
     <span class="sync-dot"></span>
     <span id="syncText">Synchronisation...</span>
+  </div>
+
+  <!-- Filtre carte -->
+  <div class="map-filter" id="mapFilter">
+    <button class="filter-btn active" data-filter="all" onclick="setMapFilter('all')">
+      👥 Tous <span class="count" id="countAll">0</span>
+    </button>
+    <button class="filter-btn" data-filter="mine" onclick="setMapFilter('mine')">
+      📍 Moi <span class="count" id="countMine">0</span>
+    </button>
+    <button class="filter-btn" data-filter="friends" onclick="setMapFilter('friends')">
+      👥 Amis <span class="count" id="countFriends">0</span>
+    </button>
   </div>
 
   <div class="settings-panel" id="settingsPanel">
@@ -1503,6 +1881,7 @@
     </div>
   </aside>
 
+  <!-- Modal Ajout -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <h2>📍 Nouveau souvenir</h2>
@@ -1581,6 +1960,55 @@
     </div>
   </div>
 
+  <!-- Modal Amis -->
+  <div class="modal-overlay" id="friendsModalOverlay">
+    <div class="modal modal-friends">
+      <h2>👥 Mes amis</h2>
+      <p class="subtitle">Ajoute des amis pour voir leurs souvenirs sur ta carte.</p>
+
+      <!-- Pseudo -->
+      <div class="username-section" id="usernameSection">
+        <h4>👤 Ton pseudo</h4>
+        <p>Choisis un pseudo unique pour que tes amis puissent t'ajouter.</p>
+        <div class="username-input-row">
+          <input type="text" id="usernameInput" placeholder="ex: matheo_paris" maxlength="20" />
+          <button class="btn-primary" onclick="saveUsername()">💾 Enregistrer</button>
+        </div>
+      </div>
+
+      <!-- Ajout d'ami -->
+      <div class="username-section" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05)); border-color: rgba(34, 197, 94, 0.3);">
+        <h4 style="color: #22c55e;">➕ Ajouter un ami</h4>
+        <p>Entre le pseudo de ton ami pour lui envoyer une demande.</p>
+        <div class="username-input-row">
+          <input type="text" id="friendUsernameInput" placeholder="ex: marie_voyage" maxlength="20" />
+          <button class="btn-primary" style="background: linear-gradient(135deg, #22c55e, #16a34a);" onclick="sendFriendRequest()">📨 Envoyer</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="friends-tabs">
+        <button class="friends-tab active" data-tab="friends" onclick="switchFriendsTab('friends')">
+          👥 Amis <span class="tab-badge" id="tabFriendsCount" style="display: none;">0</span>
+        </button>
+        <button class="friends-tab" data-tab="requests" onclick="switchFriendsTab('requests')">
+          📨 Demandes <span class="tab-badge" id="tabRequestsCount" style="display: none;">0</span>
+        </button>
+        <button class="friends-tab" data-tab="sent" onclick="switchFriendsTab('sent')">
+          📤 Envoyées
+        </button>
+      </div>
+
+      <div class="friends-content" id="friendsContent">
+        <!-- Contenu dynamique -->
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeFriendsModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox(event)">×</button>
     <img id="lightboxImg" src="" alt="Photo" onclick="event.stopPropagation()" />
@@ -1609,30 +2037,41 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch((err) => {
-  console.warn('Impossible de définir la persistance:', err);
+  console.warn('Persistance:', err);
 });
 
 db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-  console.warn('Persistance offline non activée:', err.code);
+  console.warn('Persistance offline:', err.code);
 });
 
 /* =========================================================
    ÉTAT GLOBAL
    ========================================================= */
 
-// 🛰️ Vue satellite uniquement
 const SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 const SATELLITE_ATTRIBUTION = '© Esri, Maxar, Earthstar Geographics';
+const DEFAULT_THEME = 'dark';
 
-const DEFAULT_THEME   = 'dark';
-
-let uiTheme  = localStorage.getItem('worldnotes_theme')   || DEFAULT_THEME;
-
+let uiTheme = localStorage.getItem('worldnotes_theme') || DEFAULT_THEME;
 document.documentElement.setAttribute('data-theme', uiTheme);
 
 let currentUser = null;
-let notes = [];
+let myProfile = null;       // { username, displayName, photoURL, email }
+let myFriends = [];          // UIDs de mes amis
+let friendsProfiles = {};    // { uid: { profile, } }
+let incomingRequests = [];   // demandes reçues
+let outgoingRequests = [];   // demandes envoyées
+
+let allNotes = [];           // Toutes les notes (miennes + amis)
+let myNotes = [];
+let friendNotes = [];
+let mapFilter = 'all';       // 'all' | 'mine' | 'friends'
+
+let unsubscribeProfile = null;
 let unsubscribeNotes = null;
+let unsubscribeFriends = null;
+let unsubscribeIncoming = null;
+let unsubscribeOutgoing = null;
 
 let map = null;
 let tileLayer = null;
@@ -1665,58 +2104,60 @@ function signInWithGoogle() {
 
   if (isMobileDevice()) {
     auth.signInWithRedirect(provider).catch((error) => {
-      console.error('Erreur signInWithRedirect:', error);
+      console.error('Erreur:', error);
       if (btn) {
         btn.disabled = false;
         btn.innerHTML = 'Se connecter avec Google';
       }
-      alert('Erreur de connexion: ' + error.message);
     });
   } else {
     auth.signInWithPopup(provider).catch((error) => {
-      console.error('Erreur signInWithPopup:', error);
+      console.error('Erreur:', error);
       if (btn) {
         btn.disabled = false;
         btn.innerHTML = 'Se connecter avec Google';
       }
-      if (error.code === 'auth/popup-blocked') {
-        alert('Autorise les popups pour te connecter.');
-      } else if (error.code === 'auth/unauthorized-domain') {
-        alert('Ce domaine n\'est pas autorisé dans Firebase.');
-      }
+      if (error.code === 'auth/popup-blocked') alert('Autorise les popups.');
+      else if (error.code === 'auth/unauthorized-domain') alert('Domaine non autorisé dans Firebase.');
     });
   }
 }
 
 auth.getRedirectResult().then((result) => {
-  if (result && result.user) {
-    console.log('✅ Connecté après redirection :', result.user.email);
-  }
-}).catch((error) => {
-  console.error('❌ Erreur getRedirectResult:', error);
-});
+  if (result && result.user) console.log('✅ Connecté après redirection');
+}).catch((error) => console.error('❌ getRedirectResult:', error));
 
 function signOut() {
   if (!confirm('Se déconnecter ?')) return;
-  if (unsubscribeNotes) {
-    unsubscribeNotes();
-    unsubscribeNotes = null;
-  }
+  cleanupListeners();
   auth.signOut().catch((err) => console.error(err));
 }
 
-auth.onAuthStateChanged((user) => {
+function cleanupListeners() {
+  [unsubscribeProfile, unsubscribeNotes, unsubscribeFriends, unsubscribeIncoming, unsubscribeOutgoing].forEach(unsub => {
+    if (unsub) try { unsub(); } catch (e) {}
+  });
+  unsubscribeProfile = null;
+  unsubscribeNotes = null;
+  unsubscribeFriends = null;
+  unsubscribeIncoming = null;
+  unsubscribeOutgoing = null;
+}
+
+auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
     showApp();
-    loadUserNotes();
+    await ensureUserProfile();
+    loadProfile();
+    loadIncomingRequests();
+    loadOutgoingRequests();
+    loadAllNotes();
+    updateFriendBadge();
   } else {
     currentUser = null;
+    cleanupListeners();
     showLogin();
-    if (unsubscribeNotes) {
-      unsubscribeNotes();
-      unsubscribeNotes = null;
-    }
   }
 });
 
@@ -1746,27 +2187,517 @@ function showApp() {
   document.getElementById('userName').textContent = currentUser.displayName || 'Utilisateur';
   document.getElementById('userEmail').textContent = currentUser.email || '';
 
-  if (!map) {
-    initMap();
+  if (!map) initMap();
+}
+
+/* =========================================================
+   👤 PROFIL UTILISATEUR
+   ========================================================= */
+
+async function ensureUserProfile() {
+  try {
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const doc = await userRef.get();
+
+    if (!doc.exists) {
+      // Premier login : créer le profil
+      await userRef.set({
+        displayName: currentUser.displayName || 'Utilisateur',
+        email: currentUser.email || '',
+        photoURL: currentUser.photoURL || '',
+        username: '',  // À définir par l'utilisateur
+        createdAt: Date.now()
+      });
+    } else {
+      // Mettre à jour displayName/photoURL au cas où ils changent
+      await userRef.update({
+        displayName: currentUser.displayName || 'Utilisateur',
+        photoURL: currentUser.photoURL || '',
+        email: currentUser.email || ''
+      });
+    }
+  } catch (err) {
+    console.error('Erreur profil:', err);
+  }
+}
+
+function loadProfile() {
+  if (unsubscribeProfile) unsubscribeProfile();
+
+  unsubscribeProfile = db.collection('users').doc(currentUser.uid)
+    .onSnapshot(async (doc) => {
+      if (!doc.exists) return;
+      myProfile = doc.data();
+
+      // Afficher le pseudo
+      const usernameEl = document.getElementById('userUsername');
+      const usernameInput = document.getElementById('usernameInput');
+      const display = document.getElementById('userUsernameDisplay');
+
+      if (myProfile.username) {
+        usernameEl.textContent = myProfile.username;
+        usernameInput.value = myProfile.username;
+        display.style.display = 'flex';
+      } else {
+        usernameEl.textContent = '(à définir)';
+        display.style.display = 'flex';
+      }
+
+      // Recharger les profils d'amis
+      if (myFriends.length > 0) await loadFriendsProfiles();
+    });
+}
+
+async function saveUsername() {
+  const input = document.getElementById('usernameInput');
+  const username = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+
+  if (username.length < 3) {
+    showToast('⚠️ Pseudo trop court (min 3 caractères)', 'error');
+    return;
+  }
+  if (username.length > 20) {
+    showToast('⚠️ Pseudo trop long (max 20 caractères)', 'error');
+    return;
+  }
+
+  try {
+    // Vérifier si le pseudo est déjà pris
+    const existing = await db.collection('users')
+      .where('username', '==', username)
+      .limit(1)
+      .get();
+
+    if (!existing.empty && existing.docs[0].id !== currentUser.uid) {
+      showToast('⚠️ Ce pseudo est déjà pris', 'error');
+      return;
+    }
+
+    await db.collection('users').doc(currentUser.uid).update({ username });
+    showToast(`✅ Pseudo enregistré : @${username}`, 'success');
+  } catch (err) {
+    console.error('Erreur pseudo:', err);
+    showToast('❌ Erreur lors de l\'enregistrement', 'error');
+  }
+}
+
+function copyUsername() {
+  if (!myProfile || !myProfile.username) {
+    showToast('⚠️ Définis d\'abord ton pseudo', 'info');
+    openFriendsModal();
+    return;
+  }
+  navigator.clipboard.writeText(myProfile.username).then(() => {
+    showToast(`📋 Pseudo @${myProfile.username} copié !`, 'success');
+  });
+}
+
+/* =========================================================
+   👥 AMIS
+   ========================================================= */
+
+function loadIncomingRequests() {
+  if (unsubscribeIncoming) unsubscribeIncoming();
+
+  unsubscribeIncoming = db.collection('friendRequests')
+    .where('to', '==', currentUser.uid)
+    .where('status', '==', 'pending')
+    .onSnapshot((snapshot) => {
+      incomingRequests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      updateFriendBadge();
+      renderFriendsContent();
+    });
+}
+
+function loadOutgoingRequests() {
+  if (unsubscribeOutgoing) unsubscribeOutgoing();
+
+  unsubscribeOutgoing = db.collection('friendRequests')
+    .where('from', '==', currentUser.uid)
+    .where('status', '==', 'pending')
+    .onSnapshot((snapshot) => {
+      outgoingRequests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderFriendsContent();
+    });
+}
+
+function loadFriends() {
+  if (unsubscribeFriends) unsubscribeFriends();
+
+  unsubscribeFriends = db.collection('users').doc(currentUser.uid)
+    .onSnapshot(async (doc) => {
+      if (!doc.exists) return;
+      const data = doc.data();
+      myFriends = data.friends || [];
+      await loadFriendsProfiles();
+      // Recharger les notes (pour inclure les nouvelles notes des amis)
+      loadAllNotes();
+    });
+}
+
+async function loadFriendsProfiles() {
+  friendsProfiles = {};
+  for (const friendUid of myFriends) {
+    try {
+      const doc = await db.collection('users').doc(friendUid).get();
+      if (doc.exists) {
+        friendsProfiles[friendUid] = { uid: friendUid, ...doc.data() };
+      }
+    } catch (err) {
+      console.error('Erreur chargement ami:', err);
+    }
+  }
+  renderFriendsContent();
+}
+
+async function sendFriendRequest() {
+  const input = document.getElementById('friendUsernameInput');
+  const username = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+
+  if (username.length < 3) {
+    showToast('⚠️ Pseudo invalide', 'error');
+    return;
+  }
+
+  if (myProfile && username === myProfile.username) {
+    showToast('⚠️ Tu ne peux pas t\'ajouter toi-même !', 'error');
+    return;
+  }
+
+  try {
+    // Trouver l'utilisateur par pseudo
+    const usersSnapshot = await db.collection('users')
+      .where('username', '==', username)
+      .limit(1)
+      .get();
+
+    if (usersSnapshot.empty) {
+      showToast('❌ Aucun utilisateur avec ce pseudo', 'error');
+      return;
+    }
+
+    const targetDoc = usersSnapshot.docs[0];
+    const targetUid = targetDoc.id;
+
+    if (myFriends.includes(targetUid)) {
+      showToast('ℹ️ Vous êtes déjà amis', 'info');
+      return;
+    }
+
+    // Vérifier s'il y a déjà une demande en attente
+    const existing = await db.collection('friendRequests')
+      .where('from', '==', currentUser.uid)
+      .where('to', '==', targetUid)
+      .where('status', '==', 'pending')
+      .get();
+
+    if (!existing.empty) {
+      showToast('ℹ️ Demande déjà envoyée', 'info');
+      return;
+    }
+
+    // Envoyer la demande
+    await db.collection('friendRequests').add({
+      from: currentUser.uid,
+      to: targetUid,
+      fromUsername: myProfile.username || '',
+      toUsername: username,
+      status: 'pending',
+      createdAt: Date.now()
+    });
+
+    input.value = '';
+    showToast(`📨 Demande envoyée à @${username} !`, 'success');
+  } catch (err) {
+    console.error('Erreur demande:', err);
+    showToast('❌ Erreur lors de l\'envoi', 'error');
+  }
+}
+
+async function acceptFriendRequest(requestId) {
+  try {
+    const reqDoc = await db.collection('friendRequests').doc(requestId).get();
+    if (!reqDoc.exists) return;
+
+    const req = reqDoc.data();
+
+    // Ajouter mutuellement dans les deux profils
+    const myRef = db.collection('users').doc(currentUser.uid);
+    const theirRef = db.collection('users').doc(req.from);
+
+    const myDoc = await myRef.get();
+    const theirDoc = await theirRef.get();
+
+    const myFriendsList = myDoc.data().friends || [];
+    const theirFriendsList = theirDoc.data().friends || [];
+
+    if (!myFriendsList.includes(req.from)) {
+      myFriendsList.push(req.from);
+      await myRef.update({ friends: myFriendsList });
+    }
+
+    if (!theirFriendsList.includes(currentUser.uid)) {
+      theirFriendsList.push(currentUser.uid);
+      await theirRef.update({ friends: theirFriendsList });
+    }
+
+    // Marquer la demande comme acceptée
+    await db.collection('friendRequests').doc(requestId).update({
+      status: 'accepted',
+      acceptedAt: Date.now()
+    });
+
+    showToast('✅ Ami ajouté !', 'success');
+  } catch (err) {
+    console.error('Erreur accept:', err);
+    showToast('❌ Erreur', 'error');
+  }
+}
+
+async function declineFriendRequest(requestId) {
+  if (!confirm('Refuser cette demande ?')) return;
+  try {
+    await db.collection('friendRequests').doc(requestId).update({
+      status: 'declined'
+    });
+    showToast('Demande refusée', 'info');
+  } catch (err) {
+    console.error('Erreur refus:', err);
+  }
+}
+
+async function removeFriend(friendUid) {
+  const friend = friendsProfiles[friendUid];
+  const name = friend ? (friend.username ? '@' + friend.username : friend.displayName) : 'cet ami';
+  if (!confirm(`Retirer ${name} de tes amis ?`)) return;
+
+  try {
+    const myRef = db.collection('users').doc(currentUser.uid);
+    const theirRef = db.collection('users').doc(friendUid);
+
+    const myDoc = await myRef.get();
+    const theirDoc = await theirRef.get();
+
+    const myFriendsList = (myDoc.data().friends || []).filter(uid => uid !== friendUid);
+    const theirFriendsList = (theirDoc.data().friends || []).filter(uid => uid !== currentUser.uid);
+
+    await myRef.update({ friends: myFriendsList });
+    await theirRef.update({ friends: theirFriendsList });
+
+    // Supprimer les demandes acceptées entre nous
+    const requests = await db.collection('friendRequests')
+      .where('status', '==', 'accepted')
+      .get();
+    
+    const batch = db.batch();
+    requests.forEach(doc => {
+      const d = doc.data();
+      if ((d.from === currentUser.uid && d.to === friendUid) ||
+          (d.from === friendUid && d.to === currentUser.uid)) {
+        batch.delete(doc.ref);
+      }
+    });
+    await batch.commit();
+
+    showToast('🗑️ Ami retiré', 'info');
+  } catch (err) {
+    console.error('Erreur suppression ami:', err);
+    showToast('❌ Erreur', 'error');
   }
 }
 
 /* =========================================================
-   ☁️ FIRESTORE
+   👥 INTERFACE AMIS
    ========================================================= */
 
-function loadUserNotes() {
+function openFriendsModal() {
+  document.getElementById('friendsModalOverlay').classList.add('open');
+  renderFriendsContent();
+}
+
+function closeFriendsModal() {
+  document.getElementById('friendsModalOverlay').classList.remove('open');
+}
+
+function switchFriendsTab(tab) {
+  document.querySelectorAll('.friends-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  renderFriendsContent(tab);
+}
+
+function updateFriendBadge() {
+  const badge = document.getElementById('friendBadge');
+  const count = incomingRequests.length;
+
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'block';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  // Badge sur l'onglet "Demandes"
+  const tabBadge = document.getElementById('tabRequestsCount');
+  if (tabBadge) {
+    if (count > 0) {
+      tabBadge.textContent = count;
+      tabBadge.style.display = 'inline-block';
+    } else {
+      tabBadge.style.display = 'none';
+    }
+  }
+
+  // Badge sur l'onglet "Amis"
+  const tabFriendsBadge = document.getElementById('tabFriendsCount');
+  if (tabFriendsBadge) {
+    if (myFriends.length > 0) {
+      tabFriendsBadge.textContent = myFriends.length;
+      tabFriendsBadge.style.display = 'inline-block';
+    } else {
+      tabFriendsBadge.style.display = 'none';
+    }
+  }
+}
+
+function renderFriendsContent(tab = null) {
+  if (!tab) {
+    const activeTab = document.querySelector('.friends-tab.active');
+    tab = activeTab ? activeTab.dataset.tab : 'friends';
+  }
+
+  const content = document.getElementById('friendsContent');
+  updateFriendBadge();
+
+  if (tab === 'friends') {
+    if (myFriends.length === 0) {
+      content.innerHTML = `
+        <div class="empty-state">
+          👥 Aucun ami pour l'instant.<br>
+          Ajoute-en avec leur pseudo !
+        </div>
+      `;
+      return;
+    }
+
+    content.innerHTML = myFriends.map(uid => {
+      const profile = friendsProfiles[uid];
+      if (!profile) return '';
+      const avatar = profile.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
+      const name = profile.displayName || 'Utilisateur';
+      const username = profile.username ? '@' + profile.username : '';
+      const email = profile.email || '';
+      return `
+        <div class="friend-card">
+          <img class="friend-avatar" src="${avatar}" alt="${escapeHtml(name)}" />
+          <div class="friend-info">
+            <div class="friend-name">${escapeHtml(name)}</div>
+            ${username ? `<div class="friend-username">${escapeHtml(username)}</div>` : ''}
+            <div class="friend-email">${escapeHtml(email)}</div>
+          </div>
+          <div class="friend-actions">
+            <button class="friend-btn danger" onclick="removeFriend('${uid}')" title="Retirer">🗑️</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  } else if (tab === 'requests') {
+    if (incomingRequests.length === 0) {
+      content.innerHTML = `
+        <div class="empty-state">
+          📨 Aucune demande d'ami en attente.
+        </div>
+      `;
+      return;
+    }
+
+    content.innerHTML = incomingRequests.map(req => {
+      const username = req.fromUsername || '?';
+      return `
+        <div class="friend-card">
+          <div class="friend-avatar" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(59,130,246,0.15);">👤</div>
+          <div class="friend-info">
+            <div class="friend-name">@${escapeHtml(username)}</div>
+            <div class="friend-email">Veut être ton ami</div>
+          </div>
+          <div class="friend-actions">
+            <button class="friend-btn accept" onclick="acceptFriendRequest('${req.id}')">✓ Accepter</button>
+            <button class="friend-btn danger" onclick="declineFriendRequest('${req.id}')">✕</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  } else if (tab === 'sent') {
+    if (outgoingRequests.length === 0) {
+      content.innerHTML = `
+        <div class="empty-state">
+          📤 Aucune demande envoyée en attente.
+        </div>
+      `;
+      return;
+    }
+
+    content.innerHTML = outgoingRequests.map(req => {
+      const username = req.toUsername || '?';
+      return `
+        <div class="friend-card">
+          <div class="friend-avatar" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(249,115,22,0.15);">⏳</div>
+          <div class="friend-info">
+            <div class="friend-name">@${escapeHtml(username)}</div>
+            <div class="friend-email">En attente de réponse…</div>
+          </div>
+          <div class="friend-actions">
+            <button class="friend-btn danger" onclick="cancelFriendRequest('${req.id}')">Annuler</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+async function cancelFriendRequest(requestId) {
+  if (!confirm('Annuler cette demande ?')) return;
+  try {
+    await db.collection('friendRequests').doc(requestId).update({ status: 'cancelled' });
+    showToast('Demande annulée', 'info');
+  } catch (err) {
+    console.error('Erreur:', err);
+  }
+}
+
+/* =========================================================
+   ☁️ NOTES (MOI + AMIS)
+   ========================================================= */
+
+function loadAllNotes() {
   if (unsubscribeNotes) unsubscribeNotes();
 
-  showSyncIndicator('Chargement de tes souvenirs...', false);
+  // Charger toutes les notes auxquelles j'ai accès (mes + celles de mes amis)
+  const allowedUids = [currentUser.uid, ...myFriends];
 
+  showSyncIndicator('Chargement des souvenirs...', false);
+
+  // Firestore 'in' query supporte max 10 éléments. On va faire autrement :
+  // On charge toutes les notes et on filtre côté client
   unsubscribeNotes = db.collection('notes')
-    .where('userId', '==', currentUser.uid)
+    .orderBy('createdAt', 'desc')
+    .limit(500)
     .onSnapshot(
       (snapshot) => {
-        notes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        notes.sort((a, b) => b.createdAt - a.createdAt);
+        const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Filtrer : seulement moi et mes amis
+        const allowed = new Set(allowedUids);
+        allNotes = all.filter(n => allowed.has(n.userId));
+
+        // Séparer mes notes / celles des amis
+        myNotes = allNotes.filter(n => n.userId === currentUser.uid);
+        friendNotes = allNotes.filter(n => n.userId !== currentUser.uid);
+
         renderAllMarkers();
+        updateFilters();
         showSyncIndicator('Synchronisé', true);
       },
       (error) => {
@@ -1776,20 +2707,24 @@ function loadUserNotes() {
     );
 }
 
-function showSyncIndicator(text, synced) {
-  const el = document.getElementById('syncIndicator');
-  const txt = document.getElementById('syncText');
-  txt.textContent = text;
-  el.classList.toggle('synced', synced);
-  el.classList.add('show');
+function loadFriendsAndNotes() {
+  // Recharger les amis puis les notes
+  const userRef = db.collection('users').doc(currentUser.uid);
+  userRef.onSnapshot((doc) => {
+    if (!doc.exists) return;
+    const data = doc.data();
+    const newFriends = data.friends || [];
 
-  if (synced) {
-    setTimeout(() => el.classList.remove('show'), 1500);
-  }
+    // Si la liste a changé, recharger
+    if (JSON.stringify(newFriends) !== JSON.stringify(myFriends)) {
+      myFriends = newFriends;
+      loadFriendsProfiles().then(() => loadAllNotes());
+    }
+  });
 }
 
 /* =========================================================
-   🗺️ CARTE — Vue satellite uniquement
+   🗺️ CARTE
    ========================================================= */
 
 function initMap() {
@@ -1809,7 +2744,6 @@ function initMap() {
 
   L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-  // 🛰️ Satellite uniquement
   tileLayer = L.tileLayer(SATELLITE_URL, {
     attribution: SATELLITE_ATTRIBUTION,
     maxZoom: 19
@@ -1899,9 +2833,13 @@ function createMarkerIcon(note) {
   const icon = note && note.icon ? note.icon : '📍';
   const hasCustom = icon !== '📍';
   const hasPhoto = !!(note && note.photo);
+  const isFriend = note.userId !== currentUser.uid;
+
   const classes = ['custom-marker', 'marker-pop'];
   if (hasCustom) classes.push('has-icon');
   if (hasPhoto) classes.push('has-photo');
+  if (isFriend) classes.push('friend-marker');
+
   return L.divIcon({
     className: '',
     html: `<div class="${classes.join(' ')}">${
@@ -1944,62 +2882,118 @@ function buildPopupContent(note) {
     day: 'numeric', month: 'short', year: 'numeric'
   });
   const icon = note.icon || '📍';
+  const isMine = note.userId === currentUser.uid;
 
   let photoHtml = '';
   if (note.photo) {
     photoHtml = `
-      <img
-        class="popup-photo"
-        src="${note.photo}"
-        alt="Photo souvenir"
-        onclick="openLightbox('${note.id}', event)"
-      />
+      <img class="popup-photo" src="${note.photo}" alt="Photo" onclick="openLightbox('${note.id}', event)" />
     `;
   }
+
+  // Info auteur pour les notes d'amis
+  let authorHtml = '';
+  if (!isMine) {
+    const authorProfile = friendsProfiles[note.userId];
+    const authorName = authorProfile
+      ? (authorProfile.username ? '@' + authorProfile.username : authorProfile.displayName)
+      : 'Un ami';
+    const authorAvatar = authorProfile && authorProfile.photoURL
+      ? authorProfile.photoURL
+      : 'https://www.gravatar.com/avatar/?d=mp';
+
+    authorHtml = `
+      <div class="popup-author">
+        <img src="${authorAvatar}" alt="${escapeHtml(authorName)}" />
+        <span>${escapeHtml(authorName)}</span>
+      </div>
+    `;
+  }
+
+  const deleteBtn = isMine
+    ? `<button class="popup-delete-btn" onclick="deleteNoteFromPopup('${note.id}', event)" title="Supprimer">🗑️ Supprimer</button>`
+    : '';
 
   return `
     ${photoHtml}
     <div class="popup-body">
-      <div class="popup-place">
+      <div class="popup-place ${isMine ? '' : 'friend-place'}">
         <span class="category-icon">${icon}</span>
         ${escapeHtml(note.place)}
       </div>
       <div class="popup-text">${escapeHtml(note.text)}</div>
-      <div class="popup-footer">
+      ${authorHtml}
+      <div class="popup-footer ${isMine ? '' : 'no-author'}">
         <span class="popup-meta">${date}</span>
-        <button class="popup-delete-btn" onclick="deleteNoteFromPopup('${note.id}', event)" title="Supprimer ce souvenir">
-          🗑️ Supprimer
-        </button>
+        ${deleteBtn}
       </div>
     </div>
   `;
 }
 
 function renderAllMarkers() {
+  // Supprimer tous les marqueurs
   Object.values(markers).forEach(m => map.removeLayer(m));
   markers = {};
-  notes.forEach(addMarkerToMap);
+
+  // Filtrer selon le filtre actif
+  let notesToShow = [];
+  if (mapFilter === 'all') notesToShow = allNotes;
+  else if (mapFilter === 'mine') notesToShow = myNotes;
+  else if (mapFilter === 'friends') notesToShow = friendNotes;
+
+  notesToShow.forEach(addMarkerToMap);
   renderSidebar();
   updateNotesCountInfo();
 }
 
 function renderSidebar() {
   const list = document.getElementById('notesList');
-  if (notes.length === 0) {
+  let notesToShow = [];
+  if (mapFilter === 'all') notesToShow = allNotes;
+  else if (mapFilter === 'mine') notesToShow = myNotes;
+  else if (mapFilter === 'friends') notesToShow = friendNotes;
+
+  if (notesToShow.length === 0) {
     list.innerHTML = `<div class="empty-state">Aucun souvenir pour l'instant.<br>Cliquez sur la carte pour commencer ✨</div>`;
     return;
   }
 
-  list.innerHTML = notes.map((note, i) => {
+  list.innerHTML = notesToShow.map((note, i) => {
     const date = new Date(note.createdAt).toLocaleDateString('fr-FR', {
       day: 'numeric', month: 'short'
     });
     const icon = note.icon || '📍';
+    const isMine = note.userId === currentUser.uid;
+
     const photoHtml = note.photo
       ? `<img class="note-thumb" src="${note.photo}" alt="Photo" onclick="openLightbox('${note.id}', event)" />`
       : '';
+
+    // Auteur pour les notes d'amis
+    let authorHtml = '';
+    if (!isMine) {
+      const authorProfile = friendsProfiles[note.userId];
+      const authorName = authorProfile
+        ? (authorProfile.username ? '@' + authorProfile.username : authorProfile.displayName)
+        : 'Ami';
+      const authorAvatar = authorProfile && authorProfile.photoURL
+        ? authorProfile.photoURL
+        : 'https://www.gravatar.com/avatar/?d=mp';
+      authorHtml = `
+        <div class="note-author">
+          <img src="${authorAvatar}" alt="${escapeHtml(authorName)}" />
+          <span>${escapeHtml(authorName)}</span>
+        </div>
+      `;
+    }
+
+    const deleteBtn = isMine
+      ? `<button class="delete-note" onclick="deleteNote('${note.id}', event)" title="Supprimer">🗑️</button>`
+      : '';
+
     return `
-      <div class="note-card" style="animation-delay: ${Math.min(i * 0.04, 0.4)}s">
+      <div class="note-card ${isMine ? '' : 'friend-note'}" style="animation-delay: ${Math.min(i * 0.04, 0.4)}s">
         ${photoHtml}
         <div class="note-body">
           <div onclick="focusNote('${note.id}')">
@@ -2009,9 +3003,10 @@ function renderSidebar() {
             </div>
             <div class="text">${escapeHtml(note.text)}</div>
           </div>
+          ${authorHtml}
           <div class="meta">
             <span>${date}</span>
-            <button class="delete-note" onclick="deleteNote('${note.id}', event)" title="Supprimer">🗑️</button>
+            ${deleteBtn}
           </div>
         </div>
       </div>
@@ -2020,7 +3015,7 @@ function renderSidebar() {
 }
 
 function focusNote(id) {
-  const note = notes.find(n => n.id === id);
+  const note = allNotes.find(n => n.id === id);
   if (!note) return;
   map.flyTo([note.lat, note.lng], 14, { duration: 1.2 });
   const marker = markers[id];
@@ -2028,32 +3023,27 @@ function focusNote(id) {
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
-// 🗑️ Suppression depuis la sidebar
 async function deleteNote(id, event) {
   event.stopPropagation();
   if (!confirm('Supprimer ce souvenir ?')) return;
-
   try {
     await db.collection('notes').doc(id).delete();
     showToast('🗑️ Souvenir supprimé', 'error');
   } catch (err) {
-    console.error('Erreur suppression:', err);
+    console.error('Erreur:', err);
     showToast('❌ Erreur de suppression', 'error');
   }
 }
 
-// 🗑️ Suppression depuis la popup du marqueur
 async function deleteNoteFromPopup(id, event) {
   if (event) event.stopPropagation();
   if (!confirm('Supprimer ce souvenir ? Cette action est définitive.')) return;
-
   try {
     await db.collection('notes').doc(id).delete();
-    // Fermer la popup automatiquement (le marqueur va disparaître)
     map.closePopup();
     showToast('🗑️ Souvenir supprimé', 'error');
   } catch (err) {
-    console.error('Erreur suppression:', err);
+    console.error('Erreur:', err);
     showToast('❌ Erreur de suppression', 'error');
   }
 }
@@ -2063,12 +3053,36 @@ function toggleSidebar() {
 }
 
 /* =========================================================
+   🔀 FILTRE
+   ========================================================= */
+
+function setMapFilter(filter) {
+  mapFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === filter);
+  });
+  renderAllMarkers();
+}
+
+function updateFilters() {
+  document.getElementById('countAll').textContent = allNotes.length;
+  document.getElementById('countMine').textContent = myNotes.length;
+  document.getElementById('countFriends').textContent = friendNotes.length;
+
+  // Cacher le filtre "Amis" si on n'a pas d'amis
+  const friendsBtn = document.querySelector('.filter-btn[data-filter="friends"]');
+  if (friendsBtn) {
+    friendsBtn.style.display = myFriends.length > 0 ? 'flex' : 'none';
+  }
+}
+
+/* =========================================================
    🖼️ LIGHTBOX
    ========================================================= */
 
 function openLightbox(noteId, event) {
   if (event) event.stopPropagation();
-  const note = notes.find(n => n.id === noteId);
+  const note = allNotes.find(n => n.id === noteId);
   if (!note || !note.photo) return;
   document.getElementById('lightboxImg').src = note.photo;
   document.getElementById('lightbox').classList.add('open');
@@ -2108,7 +3122,7 @@ photoUploadZone.addEventListener('drop', (e) => {
   if (file && file.type.startsWith('image/')) {
     handlePhotoFile(file);
   } else {
-    showToast('⚠️ Fichier non supporté (image requise)', 'error');
+    showToast('⚠️ Image requise', 'error');
   }
 });
 
@@ -2118,7 +3132,7 @@ async function handlePhotoFile(file) {
     return;
   }
   try {
-    showToast('⏳ Compression de la photo...', 'info');
+    showToast('⏳ Compression...', 'info');
     const compressedDataUrl = await compressImage(file, 700, 0.7);
     pendingPhoto = compressedDataUrl;
     photoPreview.src = compressedDataUrl;
@@ -2127,8 +3141,8 @@ async function handlePhotoFile(file) {
     const sizeKo = Math.round((compressedDataUrl.length * 0.75) / 1024);
     showToast(`✅ Photo ajoutée (~${sizeKo} Ko)`, 'success');
   } catch (err) {
-    console.error('Erreur compression:', err);
-    showToast('❌ Impossible de charger la photo', 'error');
+    console.error(err);
+    showToast('❌ Erreur photo', 'error');
   }
 }
 
@@ -2146,8 +3160,7 @@ function compressImage(file, maxWidth = 700, quality = 0.7) {
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
         resolve(canvas.toDataURL('image/jpeg', quality));
       };
       img.onerror = () => reject(new Error('Image invalide'));
@@ -2168,7 +3181,7 @@ function removePhoto(event) {
 }
 
 /* =========================================================
-   ⚙️ RÉGLAGES (thème uniquement maintenant)
+   ⚙️ RÉGLAGES
    ========================================================= */
 
 function toggleUserMenu(event) {
@@ -2226,24 +3239,24 @@ function resetSettings() {
 function updateNotesCountInfo() {
   const info = document.getElementById('notesCountInfo');
   if (!info) return;
-  const n = notes.length;
-  const photos = notes.filter(x => x.photo).length;
+  const n = myNotes.length;
+  const photos = myNotes.filter(x => x.photo).length;
   let txt = n === 0 ? 'Aucun souvenir' : `${n} souvenir${n > 1 ? 's' : ''}`;
   if (photos > 0) txt += ` • ${photos} photo${photos > 1 ? 's' : ''}`;
   info.textContent = txt;
 }
 
 function exportNotes() {
-  if (notes.length === 0) {
+  if (myNotes.length === 0) {
     showToast('⚠️ Aucun souvenir à exporter', 'error');
     return;
   }
   const exportData = {
     app: 'World Notes',
-    version: 5,
+    version: 6,
     exportedAt: new Date().toISOString(),
-    notesCount: notes.length,
-    notes: notes.map(n => {
+    notesCount: myNotes.length,
+    notes: myNotes.map(n => {
       const { userId, ...rest } = n;
       return rest;
     })
@@ -2293,12 +3306,10 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
 
     if (validNotes.length === 0) throw new Error('Aucune note valide');
 
-    if (!confirm(`Importer ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} dans ton compte cloud ?`)) {
+    if (!confirm(`Importer ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} ?`)) {
       e.target.value = '';
       return;
     }
-
-    showToast(`⏳ Import de ${validNotes.length} notes...`, 'info');
 
     const batch = db.batch();
     const notesRef = db.collection('notes');
@@ -2320,7 +3331,6 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
 
     await batch.commit();
     showToast(`✅ ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} importé${validNotes.length > 1 ? 's' : ''} !`, 'success');
-
   } catch (err) {
     console.error('Erreur import:', err);
     showToast('❌ Fichier invalide', 'error');
@@ -2329,7 +3339,7 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
 });
 
 /* =========================================================
-   MODAL
+   MODAL AJOUT
    ========================================================= */
 
 function chooseIcon(el) {
@@ -2504,8 +3514,8 @@ async function performSearch(query) {
     activeIndex = -1;
     renderAutocomplete(data);
   } catch (err) {
-    console.error('Erreur recherche:', err);
-    autocompleteList.innerHTML = `<div class="autocomplete-empty">❌ Erreur de recherche.</div>`;
+    console.error(err);
+    autocompleteList.innerHTML = `<div class="autocomplete-empty">❌ Erreur.</div>`;
     autocompleteList.classList.add('open');
   } finally {
     searchSpinner.classList.remove('visible');
@@ -2561,11 +3571,7 @@ function selectSearchResult(result) {
 
   const bbox = result.boundingbox;
   if (bbox) {
-    const south = parseFloat(bbox[0]);
-    const north = parseFloat(bbox[1]);
-    const west = parseFloat(bbox[2]);
-    const east = parseFloat(bbox[3]);
-    map.flyToBounds([[south, west], [north, east]], { duration: 1.5, maxZoom: 15 });
+    map.flyToBounds([[parseFloat(bbox[0]), parseFloat(bbox[2])], [parseFloat(bbox[1]), parseFloat(bbox[3])]], { duration: 1.5, maxZoom: 15 });
   } else {
     map.flyTo([lat, lng], 13, { duration: 1.5 });
   }
@@ -2595,7 +3601,7 @@ function clearSearchButton() {
 }
 
 /* =========================================================
-   💾 SAUVEGARDE
+   💾 SAUVEGARDE NOTE
    ========================================================= */
 
 async function saveNote() {
@@ -2619,8 +3625,7 @@ async function saveNote() {
       userId: currentUser.uid,
       place,
       text,
-      lat: lat,
-      lng: lng,
+      lat, lng,
       createdAt: Date.now(),
       source: pendingSource,
       icon: pendingIcon,
@@ -2631,7 +3636,7 @@ async function saveNote() {
     showToast('☁️ Souvenir enregistré !', 'success');
     map.flyTo([lat, lng], 15, { duration: 1.2 });
   } catch (err) {
-    console.error('Erreur sauvegarde:', err);
+    console.error(err);
     showToast('❌ Erreur de sauvegarde', 'error');
   } finally {
     saveBtn.disabled = false;
@@ -2653,6 +3658,7 @@ function showToast(msg, type = '') {
 }
 
 function escapeHtml(str) {
+  if (str === undefined || str === null) return '';
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
@@ -2663,9 +3669,21 @@ document.addEventListener('keydown', (e) => {
     if (document.getElementById('lightbox').classList.contains('open')) closeLightbox();
     else if (autocompleteList.classList.contains('open')) closeAutocomplete();
     else if (document.getElementById('settingsPanel').classList.contains('open')) toggleSettings();
+    else if (document.getElementById('friendsModalOverlay').classList.contains('open')) closeFriendsModal();
     else closeAddModal();
   }
 });
+
+/* =========================================================
+   INIT
+   ========================================================= */
+
+// Charger les amis + notes après login
+const originalShowApp = showApp;
+showApp = function() {
+  originalShowApp();
+  loadFriendsAndNotes();
+};
 
 updateThemeChoices();
 
