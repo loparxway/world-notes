@@ -1,0 +1,2737 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌍 WORLD NOTES — La carte du monde de tes souvenirs</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Firebase SDK (compat pour simplicité) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+  :root[data-theme="dark"] {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #0b1220;
+    --bg-card: rgba(30, 41, 59, 0.7);
+    --bg-card-hover: rgba(51, 65, 85, 0.8);
+    --bg-overlay: rgba(15, 23, 42, 0.85);
+    --bg-modal: #1e293b;
+    --bg-input: #0f172a;
+    --bg-header: rgba(15, 23, 42, 0.85);
+    --text-primary: #e2e8f0;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-faint: #64748b;
+    --border-color: rgba(148, 163, 184, 0.2);
+    --border-subtle: rgba(148, 163, 184, 0.15);
+    --border-hover: rgba(148, 163, 184, 0.3);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  :root[data-theme="light"] {
+    --bg-primary: #f1f5f9;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e2e8f0;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-hover: rgba(241, 245, 249, 0.95);
+    --bg-overlay: rgba(255, 255, 255, 0.9);
+    --bg-modal: #ffffff;
+    --bg-input: #f8fafc;
+    --bg-header: rgba(255, 255, 255, 0.9);
+    --text-primary: #0f172a;
+    --text-secondary: #1e293b;
+    --text-muted: #475569;
+    --text-faint: #64748b;
+    --border-color: rgba(15, 23, 42, 0.15);
+    --border-subtle: rgba(15, 23, 42, 0.08);
+    --border-hover: rgba(15, 23, 42, 0.25);
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
+    --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  /* ===== ÉCRAN DE LOGIN ===== */
+  #loginScreen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    animation: fadeIn 0.5s ease;
+  }
+
+  #loginScreen.hidden { display: none; }
+
+  .login-card {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 24px;
+    padding: 48px 40px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    animation: loginIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes loginIn {
+    from { opacity: 0; transform: scale(0.9) translateY(30px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .login-globe {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 16px;
+    animation: gentleFloat 4s ease-in-out infinite;
+  }
+
+  @keyframes gentleFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-6px) rotate(10deg); }
+  }
+
+  .login-card h1 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+
+  .login-card p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 32px;
+  }
+
+  .btn-google {
+    width: 100%;
+    padding: 16px 24px;
+    background: white;
+    color: #1f2937;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-google:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    background: #f8fafc;
+  }
+
+  .btn-google:active { transform: translateY(0); }
+
+  .btn-google svg { width: 22px; height: 22px; }
+
+  .login-note {
+    margin-top: 24px;
+    font-size: 0.78rem;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    background: var(--bg-header);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 1000;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+  }
+
+  .logo span.globe {
+    font-size: 1.6rem;
+    display: inline-block;
+    animation: gentleFloat 4s ease-in-out infinite;
+  }
+
+  .actions { display: flex; gap: 10px; align-items: center; }
+
+  button {
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.5);
+    filter: brightness(1.08);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-ghost {
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--text-primary);
+    border: 1px solid var(--border-hover);
+  }
+  .btn-ghost:hover {
+    background: rgba(148, 163, 184, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .btn-icon { padding: 10px 14px; font-size: 1.1rem; }
+
+  /* ===== AVATAR UTILISATEUR ===== */
+  .user-menu {
+    position: relative;
+  }
+
+  .user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid rgba(249, 115, 22, 0.6);
+    cursor: pointer;
+    object-fit: cover;
+    transition: all 0.25s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .user-avatar:hover {
+    transform: scale(1.08);
+    border-color: #f97316;
+    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.5);
+  }
+
+  .user-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 220px;
+    box-shadow: var(--shadow-lg);
+    display: none;
+    animation: dropdownEnter 0.2s ease;
+    z-index: 10;
+  }
+
+  .user-dropdown.open { display: block; }
+
+  @keyframes dropdownEnter {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .user-info {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 6px;
+  }
+
+  .user-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .user-email {
+    font-size: 0.75rem;
+    color: var(--text-faint);
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-weight: 500;
+  }
+
+  .dropdown-item:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+
+  /* ===== CARTE ===== */
+  #map {
+    position: absolute;
+    top: 64px; left: 0; right: 0; bottom: 0;
+    z-index: 1;
+    background: var(--bg-tertiary);
+    animation: mapFadeIn 0.8s ease;
+  }
+
+  @keyframes mapFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Sync indicator (bandeau en haut) */
+  .sync-indicator {
+    position: fixed;
+    top: 76px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-md);
+    z-index: 999;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  .sync-indicator.show { transform: translateX(-50%) translateY(0); }
+
+  .sync-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f97316;
+    animation: syncPulse 1s infinite;
+  }
+
+  @keyframes syncPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+
+  .sync-indicator.synced .sync-dot {
+    background: #22c55e;
+    animation: none;
+    box-shadow: 0 0 6px #22c55e;
+  }
+
+  /* ===== SIDEBAR ===== */
+  #sidebar {
+    position: fixed;
+    top: 64px; right: 0; bottom: 0;
+    width: 340px;
+    background: var(--bg-overlay);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-left: 1px solid var(--border-color);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+  }
+  #sidebar.open { transform: translateX(0); }
+
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sidebar-header h2 { font-size: 1.1rem; color: var(--text-primary); }
+
+  .close-sidebar {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s, transform 0.3s;
+  }
+  .close-sidebar:hover { color: #ef4444; transform: rotate(90deg); }
+
+  .notes-list { flex: 1; overflow-y: auto; padding: 12px; }
+
+  .note-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: noteCardEnter 0.35s ease backwards;
+  }
+
+  @keyframes noteCardEnter {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .note-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, #f97316, #ea580c);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1;
+  }
+
+  .note-card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(249, 115, 22, 0.5);
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: var(--shadow-md);
+  }
+  .note-card:hover::before { opacity: 1; }
+
+  .note-card .note-thumb {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+    border-radius: 11px 11px 0 0;
+  }
+
+  .note-card .note-body { padding: 14px; }
+
+  .note-card .place {
+    font-weight: 700;
+    color: #f97316;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .note-card .place .category-icon { font-size: 1.1rem; }
+
+  .note-card .text {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .note-card .meta {
+    margin-top: 8px;
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .delete-note {
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .delete-note:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+    transform: scale(1.15);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-faint);
+    font-size: 0.9rem;
+    animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+  }
+  .modal-overlay.open {
+    display: flex;
+    animation: overlayFadeIn 0.25s ease;
+  }
+
+  @keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .modal {
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 28px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 92vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: modalBounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes modalBounceIn {
+    from { opacity: 0; transform: scale(0.92) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal h2 {
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+  }
+  .modal .subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+
+  .form-group { margin-bottom: 16px; }
+
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-hover);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.25s ease;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+  }
+
+  textarea { resize: vertical; min-height: 90px; }
+
+  .icon-picker {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+
+  .icon-choice {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    border: 2px solid var(--border-hover);
+    background: var(--bg-input);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+  }
+  .icon-choice:hover {
+    border-color: rgba(249, 115, 22, 0.6);
+    transform: translateY(-2px) scale(1.05);
+  }
+  .icon-choice.active {
+    border-color: #f97316;
+    background: rgba(249, 115, 22, 0.15);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+  }
+
+  /* ===== PHOTO ===== */
+  .photo-upload-zone {
+    border: 2px dashed var(--border-hover);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--bg-input);
+  }
+  .photo-upload-zone:hover {
+    border-color: #f97316;
+    background: rgba(249, 115, 22, 0.05);
+  }
+  .photo-upload-zone.dragover {
+    border-color: #f97316;
+    background: rgba(249, 115, 22, 0.1);
+    transform: scale(1.02);
+  }
+
+  .photo-upload-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .photo-upload-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .photo-upload-text b { color: #f97316; }
+
+  .photo-preview-wrapper {
+    position: relative;
+    display: none;
+    margin-top: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+    animation: photoPreviewIn 0.35s ease;
+  }
+  .photo-preview-wrapper.visible { display: block; }
+
+  @keyframes photoPreviewIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .photo-preview {
+    width: 100%;
+    max-height: 240px;
+    object-fit: cover;
+    display: block;
+    border-radius: 12px;
+  }
+
+  .photo-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.65);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+    backdrop-filter: blur(8px);
+  }
+  .photo-remove:hover {
+    background: rgba(239, 68, 68, 0.9);
+    transform: scale(1.1) rotate(90deg);
+  }
+
+  /* ===== RECHERCHE ===== */
+  .search-wrapper { position: relative; }
+  .search-input-wrapper { position: relative; }
+  .search-input-wrapper input { padding-left: 42px; }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .search-clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: none;
+    transition: all 0.2s;
+  }
+  .search-clear:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+    transform: translateY(-50%) rotate(90deg);
+  }
+  .search-clear.visible { display: block; }
+
+  .search-spinner {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px; height: 14px;
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    border-top-color: #f97316;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+  }
+  .search-spinner.visible { display: block; }
+
+  @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+  .autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 6px;
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: var(--shadow-lg);
+    display: none;
+  }
+  .autocomplete-list.open {
+    display: block;
+    animation: dropdownEnter 0.2s ease;
+  }
+
+  .autocomplete-item {
+    padding: 11px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 0.15s;
+    font-size: 0.88rem;
+  }
+  .autocomplete-item:last-child { border-bottom: none; }
+  .autocomplete-item:hover,
+  .autocomplete-item.active { background: rgba(249, 115, 22, 0.15); }
+
+  .autocomplete-item .name {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .autocomplete-item .details {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .autocomplete-empty {
+    padding: 14px;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+
+  /* ===== POSITION ===== */
+  .location-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg-input);
+    border: 1px dashed var(--border-hover);
+    border-radius: 10px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+  }
+  .location-box.gps {
+    border-color: rgba(34, 197, 94, 0.6);
+    border-style: solid;
+    background: rgba(34, 197, 94, 0.08);
+    color: #22c55e;
+  }
+  .location-box.manual {
+    border-color: rgba(249, 115, 22, 0.6);
+    border-style: solid;
+    background: rgba(249, 115, 22, 0.08);
+    color: #f97316;
+  }
+  .location-box.search {
+    border-color: rgba(59, 130, 246, 0.6);
+    border-style: solid;
+    background: rgba(59, 130, 246, 0.08);
+    color: #3b82f6;
+  }
+
+  .location-box .icon { font-size: 1.2rem; flex-shrink: 0; }
+  .location-box .coords {
+    flex: 1;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn-gps-inline {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    font-size: 0.75rem;
+    padding: 8px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+    flex-shrink: 0;
+  }
+  .btn-gps-inline:hover { box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5); transform: translateY(-1px); }
+  .btn-gps-inline:disabled { opacity: 0.6; cursor: wait; }
+
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+
+  /* ===== MARQUEURS ===== */
+  .custom-marker {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    width: 32px; height: 32px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 2px solid white;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+  .custom-marker:hover {
+    transform: rotate(-45deg) scale(1.2);
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.7);
+  }
+  .custom-marker::after {
+    content: "📍";
+    transform: rotate(45deg);
+    font-size: 14px;
+  }
+
+  .custom-marker.has-icon::after { display: none; }
+
+  .custom-marker.has-photo::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 10px;
+    height: 10px;
+    background: #3b82f6;
+    border: 2px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
+    z-index: 2;
+  }
+
+  .marker-pop {
+    animation: markerPopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes markerPopIn {
+    0%   { transform: rotate(-45deg) scale(0); }
+    60%  { transform: rotate(-45deg) scale(1.25); }
+    100% { transform: rotate(-45deg) scale(1); }
+  }
+
+  .user-location-marker {
+    width: 20px; height: 20px;
+    background: #22c55e;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4); }
+    50%  { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0.15), 0 4px 12px rgba(0, 0, 0, 0.4); }
+    100% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4); }
+  }
+
+  .temp-marker {
+    width: 26px; height: 26px;
+    background: #3b82f6;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4);
+    animation: pulseBlue 1.5s infinite;
+  }
+
+  @keyframes pulseBlue {
+    0%   { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4); }
+    50%  { box-shadow: 0 0 0 14px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.4); }
+    100% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4); }
+  }
+
+  /* ===== POPUP ===== */
+  .leaflet-popup-content-wrapper {
+    background: var(--bg-modal);
+    color: var(--text-primary);
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    padding: 0;
+    overflow: hidden;
+  }
+  .leaflet-popup-tip { background: var(--bg-modal); }
+  .leaflet-popup-content {
+    margin: 0;
+    font-family: inherit;
+    animation: popupContentIn 0.3s ease;
+  }
+
+  @keyframes popupContentIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .popup-photo {
+    width: 100%;
+    max-width: 320px;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .popup-photo:hover { transform: scale(1.03); }
+
+  .popup-body { padding: 14px 16px; }
+
+  .popup-place {
+    font-weight: 700;
+    color: #f97316;
+    font-size: 1rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .popup-place .category-icon { font-size: 1.2rem; }
+
+  .popup-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+
+  .popup-meta {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 8px;
+  }
+
+  /* ===== LIGHTBOX ===== */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+    padding: 40px;
+    animation: lightboxIn 0.3s ease;
+  }
+  .lightbox.open { display: flex; }
+
+  @keyframes lightboxIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 12px;
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
+    animation: lightboxImgIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes lightboxImgIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+    backdrop-filter: blur(8px);
+  }
+  .lightbox-close:hover {
+    background: rgba(239, 68, 68, 0.8);
+    transform: rotate(90deg) scale(1.1);
+  }
+
+  /* ===== BOUTON RECENTRER ===== */
+  .leaflet-control-recenter {
+    background: var(--bg-modal);
+    border: 1px solid var(--border-hover);
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-md);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 10px;
+    user-select: none;
+  }
+  .leaflet-control-recenter:hover {
+    background: var(--bg-secondary);
+    border-color: rgba(34, 197, 94, 0.6);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+  }
+  .leaflet-control-recenter.locating {
+    border-color: rgba(34, 197, 94, 0.8);
+    background: rgba(34, 197, 94, 0.15);
+    animation: recenterPulse 1s infinite;
+  }
+  .leaflet-control-recenter.error {
+    border-color: rgba(239, 68, 68, 0.8);
+    background: rgba(239, 68, 68, 0.15);
+  }
+
+  @keyframes recenterPulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .leaflet-control-zoom a {
+    background: var(--bg-modal) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-hover) !important;
+    transition: all 0.2s !important;
+  }
+  .leaflet-control-zoom a:hover {
+    background: var(--bg-secondary) !important;
+    transform: scale(1.08);
+  }
+
+  /* ===== RÉGLAGES ===== */
+  .settings-panel {
+    position: fixed;
+    top: 76px;
+    right: 20px;
+    width: 360px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: var(--shadow-lg);
+    z-index: 1500;
+    display: none;
+  }
+  .settings-panel.open {
+    display: block;
+    animation: settingsPanelIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes settingsPanelIn {
+    from { opacity: 0; transform: translateY(-12px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .settings-panel h3 {
+    font-size: 1rem;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-primary);
+  }
+
+  .settings-panel h3 button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.3rem;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  .settings-panel h3 button:hover { transform: rotate(90deg); color: #ef4444; }
+
+  .settings-panel label {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+  }
+
+  .settings-panel input[type="text"] {
+    font-size: 0.82rem;
+    font-family: 'SF Mono', Monaco, monospace;
+    margin-bottom: 6px;
+  }
+
+  .key-status {
+    font-size: 0.7rem;
+    color: #22c55e;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .key-status::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #22c55e;
+    animation: keyPulse 2s infinite;
+  }
+
+  @keyframes keyPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.5; }
+  }
+
+  .theme-choices, .style-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .theme-choice, .style-choice {
+    padding: 12px 8px;
+    border-radius: 10px;
+    border: 2px solid var(--border-hover);
+    background: var(--bg-input);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .theme-choice:hover, .style-choice:hover {
+    border-color: rgba(249, 115, 22, 0.5);
+    transform: translateY(-2px);
+  }
+  .theme-choice.active, .style-choice.active {
+    border-color: #f97316;
+    background: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+    transform: scale(1.03);
+  }
+  .theme-choice .emoji, .style-choice .emoji {
+    display: block;
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+  }
+
+  .settings-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .settings-actions button { font-size: 0.82rem; padding: 9px 14px; }
+
+  .api-hint {
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+  .api-hint a { color: #f97316; text-decoration: none; }
+  .api-hint a:hover { text-decoration: underline; }
+
+  .backup-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .backup-section h4 {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .backup-section .description {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .backup-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .btn-backup {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+
+  .btn-export {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  }
+  .btn-export:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+  }
+
+  .btn-import {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+    cursor: pointer;
+  }
+  .btn-import:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+  }
+
+  .notes-count-info {
+    margin-top: 12px;
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--bg-modal);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    color: var(--text-primary);
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 3000;
+    max-width: 90%;
+    text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: rgba(34, 197, 94, 0.6); }
+  .toast.error   { border-color: rgba(239, 68, 68, 0.6); }
+  .toast.info    { border-color: rgba(59, 130, 246, 0.6); }
+
+  .btn-toggle-notes { display: none; }
+
+  @media (max-width: 768px) {
+    #sidebar { width: 100%; }
+    .btn-toggle-notes { display: inline-block; }
+    .logo { font-size: 1.1rem; }
+    .actions button { padding: 9px 12px; font-size: 0.82rem; }
+    .logo span:not(.globe) { display: none; }
+    .modal { padding: 22px; }
+    .settings-panel { width: calc(100% - 40px); right: 20px; left: 20px; }
+    .icon-picker { grid-template-columns: repeat(4, 1fr); }
+    .lightbox { padding: 20px; }
+  }
+
+  .hint {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-overlay);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    z-index: 500;
+    pointer-events: none;
+    transition: opacity 0.5s;
+    text-align: center;
+    max-width: 90%;
+    animation: hintFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes hintFloat {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(-3px); }
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin2 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin2 { to { transform: rotate(360deg); } }
+
+  /* Loader cloud */
+  .cloud-loader {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin2 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
+</style>
+</head>
+<body>
+
+<!-- ===== ÉCRAN DE LOGIN ===== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <span class="login-globe">🌍</span>
+    <h1>WORLD NOTES</h1>
+    <p>La carte du monde de tes souvenirs.<br>Connecte-toi pour commencer.</p>
+
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34.2 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
+        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34.2 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/>
+        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C39.2 37.1 44 31 44 24c0-1.3-.1-2.3-.4-3.5z"/>
+      </svg>
+      Se connecter avec Google
+    </button>
+
+    <p class="login-note">
+      🔒 Tes notes sont stockées dans ton compte Google.<br>
+      Personne d'autre n'y a accès.
+    </p>
+  </div>
+</div>
+
+<!-- ===== APPPRINCIPAL ===== -->
+<div id="app" style="display: none;">
+
+  <header>
+    <div class="logo">
+      <span class="globe">🌍</span>
+      <span>WORLD NOTES</span>
+    </div>
+    <div class="actions">
+      <button class="btn-ghost btn-toggle-notes" onclick="toggleSidebar()">📖 Notes</button>
+      <button class="btn-ghost btn-icon" onclick="toggleSettings()" title="Réglages">⚙️</button>
+      <button class="btn-primary" onclick="openAddModal()">➕ Ajouter</button>
+
+      <div class="user-menu">
+        <img class="user-avatar" id="userAvatar" alt="Profil" onclick="toggleUserMenu(event)" />
+        <div class="user-dropdown" id="userDropdown">
+          <div class="user-info">
+            <div class="user-name" id="userName">—</div>
+            <div class="user-email" id="userEmail">—</div>
+          </div>
+          <button class="dropdown-item" onclick="signOut()">
+            🚪 Se déconnecter
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Indicateur de sync -->
+  <div class="sync-indicator" id="syncIndicator">
+    <span class="sync-dot"></span>
+    <span id="syncText">Synchronisation...</span>
+  </div>
+
+  <div class="settings-panel" id="settingsPanel">
+    <h3>
+      ⚙️ Réglages
+      <button onclick="toggleSettings()">×</button>
+    </h3>
+
+    <label>🎨 Thème de l'interface</label>
+    <div class="theme-choices" id="themeChoices">
+      <div class="theme-choice" data-theme="dark" onclick="chooseTheme('dark')">
+        <span class="emoji">🌙</span>Sombre
+      </div>
+      <div class="theme-choice" data-theme="light" onclick="chooseTheme('light')">
+        <span class="emoji">☀️</span>Clair
+      </div>
+    </div>
+
+    <label>🗺️ Style de carte</label>
+    <div class="style-choices" id="styleChoices">
+      <div class="style-choice" data-style="dark" onclick="chooseStyle('dark')">
+        <span class="emoji">🌑</span>Dark
+      </div>
+      <div class="style-choice" data-style="light" onclick="chooseStyle('light')">
+        <span class="emoji">☁️</span>Light
+      </div>
+      <div class="style-choice" data-style="voyager" onclick="chooseStyle('voyager')">
+        <span class="emoji">🌈</span>Voyager
+      </div>
+      <div class="style-choice" data-style="satellite" onclick="chooseStyle('satellite')">
+        <span class="emoji">🛰️</span>Satellite
+      </div>
+    </div>
+
+    <label for="apiKeyInput">🔑 Clé API CARTO</label>
+    <input type="text" id="apiKeyInput" placeholder="Laisser vide pour garder l'actuelle" />
+    <div class="key-status" id="keyStatus">Clé API enregistrée</div>
+    <div class="api-hint">
+      Non requise pour le style 🛰️ Satellite.
+      <a href="https://carto.com/basemaps/apikey/" target="_blank">Obtenir une clé gratuite →</a>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn-ghost" onclick="resetSettings()">🗑️ Reset</button>
+      <button class="btn-primary" onclick="applySettings()">✓ Appliquer</button>
+    </div>
+
+    <div class="backup-section">
+      <h4>💾 Sauvegarde</h4>
+      <p class="description">
+        Exporte tes notes dans un fichier ou restaure-les depuis une sauvegarde.
+      </p>
+
+      <div class="backup-buttons">
+        <button class="btn-backup btn-export" onclick="exportNotes()">💾 Exporter</button>
+        <button class="btn-backup btn-import" onclick="triggerImport()">📤 Importer</button>
+      </div>
+
+      <input type="file" id="importFileInput" accept=".json,application/json" style="display: none;" />
+
+      <div class="notes-count-info" id="notesCountInfo"></div>
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="hint" id="hint">💡 Clique sur la carte ou sur <b>➕ Ajouter</b></div>
+
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2>📖 Mes souvenirs</h2>
+      <button class="close-sidebar" onclick="toggleSidebar()">×</button>
+    </div>
+    <div class="notes-list" id="notesList">
+      <div class="empty-state">Aucun souvenir pour l'instant.<br>Cliquez sur la carte pour commencer ✨</div>
+    </div>
+  </aside>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h2>📍 Nouveau souvenir</h2>
+      <p class="subtitle">Cherche un lieu par son nom, clique sur la carte, ou utilise ton GPS.</p>
+
+      <div class="form-group">
+        <label>Catégorie</label>
+        <div class="icon-picker" id="iconPicker">
+          <div class="icon-choice active" data-icon="📍" onclick="chooseIcon(this)">📍</div>
+          <div class="icon-choice" data-icon="🏖️" onclick="chooseIcon(this)">🏖️</div>
+          <div class="icon-choice" data-icon="🏛️" onclick="chooseIcon(this)">🏛️</div>
+          <div class="icon-choice" data-icon="🍕" onclick="chooseIcon(this)">🍕</div>
+          <div class="icon-choice" data-icon="⛰️" onclick="chooseIcon(this)">⛰️</div>
+          <div class="icon-choice" data-icon="🌃" onclick="chooseIcon(this)">🌃</div>
+          <div class="icon-choice" data-icon="🏨" onclick="chooseIcon(this)">🏨</div>
+          <div class="icon-choice" data-icon="🎭" onclick="chooseIcon(this)">🎭</div>
+          <div class="icon-choice" data-icon="🌊" onclick="chooseIcon(this)">🌊</div>
+          <div class="icon-choice" data-icon="🛍️" onclick="chooseIcon(this)">🛍️</div>
+          <div class="icon-choice" data-icon="🌲" onclick="chooseIcon(this)">🌲</div>
+          <div class="icon-choice" data-icon="❤️" onclick="chooseIcon(this)">❤️</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="searchInput">🔎 Rechercher un lieu</label>
+        <div class="search-wrapper">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔎</span>
+            <input type="text" id="searchInput" placeholder="Ex: Tour Eiffel, Tokyo, Bali..." autocomplete="off" />
+            <div class="search-spinner" id="searchSpinner"></div>
+            <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
+          </div>
+          <div class="autocomplete-list" id="autocompleteList"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Position</label>
+        <div class="location-box" id="locationBox">
+          <span class="icon" id="locationIcon">📌</span>
+          <span class="coords" id="coordsText">Aucune position sélectionnée</span>
+          <button class="btn-gps-inline" id="gpsBtn" onclick="useMyLocation()">🎯 Ma position</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="placeName">Lieu</label>
+        <input type="text" id="placeName" placeholder="Ex: Paris, France" />
+      </div>
+
+      <div class="form-group">
+        <label for="noteText">Votre anecdote</label>
+        <textarea id="noteText" placeholder="Ex: On est venus ici à 3h du matin après avoir raté le dernier métro 😂"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>📸 Photo (optionnel)</label>
+        <div class="photo-upload-zone" id="photoUploadZone" onclick="document.getElementById('photoInput').click()">
+          <span class="photo-upload-icon">📷</span>
+          <div class="photo-upload-text">
+            <b>Clique</b> pour ajouter une photo<br>
+            ou glisse-dépose ici
+          </div>
+        </div>
+        <input type="file" id="photoInput" accept="image/*" style="display: none;" />
+        <div class="photo-preview-wrapper" id="photoPreviewWrapper">
+          <img class="photo-preview" id="photoPreview" alt="Aperçu" />
+          <button class="photo-remove" onclick="removePhoto(event)" title="Supprimer la photo">×</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeAddModal()">Annuler</button>
+        <button class="btn-primary" id="saveNoteBtn" onclick="saveNote()">💾 Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox(event)">×</button>
+    <img id="lightboxImg" src="" alt="Photo" onclick="event.stopPropagation()" />
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script>
+/* =========================================================
+   🔥 FIREBASE CONFIGURATION
+   ========================================================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDovjQd6tSzGtFh3chQP4rxIfQKyYOwG4U",
+  authDomain: "note-world-48a5a.firebaseapp.com",
+  projectId: "note-world-48a5a",
+  storageBucket: "note-world-48a5a.firebasestorage.app",
+  messagingSenderId: "442712953473",
+  appId: "1:442712953473:web:958767a542c03fdc45f380"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Activer la persistance offline (les notes restent visibles hors ligne)
+db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+  console.warn('Persistance offline non activée:', err.code);
+});
+
+/* =========================================================
+   ÉTAT GLOBAL
+   ========================================================= */
+
+const DEFAULT_API_KEY = 'cb1_46hv_1_3e581bba618cb8d324d5d1e5';
+const DEFAULT_STYLE   = 'dark';
+const DEFAULT_THEME   = 'dark';
+
+const CARTO_STYLES = {
+  dark:      { name: 'dark_all',              label: 'Dark' },
+  light:     { name: 'light_all',             label: 'Light' },
+  voyager:   { name: 'rastertiles/voyager',   label: 'Voyager' },
+  satellite: { name: 'satellite',             label: 'Satellite' }
+};
+
+let apiKey   = localStorage.getItem('worldnotes_apikey')  || DEFAULT_API_KEY;
+let mapStyle = localStorage.getItem('worldnotes_style')   || DEFAULT_STYLE;
+let uiTheme  = localStorage.getItem('worldnotes_theme')   || DEFAULT_THEME;
+
+document.documentElement.setAttribute('data-theme', uiTheme);
+
+let currentUser = null;
+let notes = [];
+let unsubscribeNotes = null;
+
+let map = null;
+let tileLayer = null;
+let pendingLatLng = null;
+let pendingSource = null;
+let pendingIcon = '📍';
+let pendingPhoto = null;
+let markers = {};
+let userLocationMarker = null;
+let userLocationCircle = null;
+let tempMarker = null;
+
+/* =========================================================
+   🔐 AUTHENTIFICATION
+   ========================================================= */
+
+function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  auth.signInWithPopup(provider).catch((error) => {
+    console.error('Erreur signIn:', error);
+    if (error.code === 'auth/popup-blocked') {
+      alert('Autorise les popups pour te connecter.');
+    } else if (error.code === 'auth/unauthorized-domain') {
+      alert('Ce domaine n\'est pas autorisé dans Firebase.\nAjoute-le dans : Authentication → Settings → Domaines autorisés.');
+    }
+  });
+}
+
+function signOut() {
+  if (!confirm('Se déconnecter ?')) return;
+
+  if (unsubscribeNotes) {
+    unsubscribeNotes();
+    unsubscribeNotes = null;
+  }
+
+  auth.signOut().catch((err) => console.error(err));
+}
+
+// Écouter les changements d'état d'authentification
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    currentUser = user;
+    showApp();
+    loadUserNotes();
+  } else {
+    currentUser = null;
+    showLogin();
+    if (unsubscribeNotes) {
+      unsubscribeNotes();
+      unsubscribeNotes = null;
+    }
+  }
+});
+
+function showLogin() {
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('app').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').style.display = 'block';
+
+  // Afficher l'avatar et les infos
+  document.getElementById('userAvatar').src = currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
+  document.getElementById('userName').textContent = currentUser.displayName || 'Utilisateur';
+  document.getElementById('userEmail').textContent = currentUser.email || '';
+
+  // Initialiser la carte SEULEMENT si pas déjà fait
+  if (!map) {
+    initMap();
+  }
+}
+
+/* =========================================================
+   ☁️ FIRESTORE — CHARGEMENT DES NOTES
+   ========================================================= */
+
+function loadUserNotes() {
+  if (unsubscribeNotes) unsubscribeNotes();
+
+  showSyncIndicator('Chargement de tes souvenirs...', false);
+
+  unsubscribeNotes = db.collection('notes')
+    .where('userId', '==', currentUser.uid)
+    .onSnapshot(
+      (snapshot) => {
+        notes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Trier par date décroissante
+        notes.sort((a, b) => b.createdAt - a.createdAt);
+
+        renderAllMarkers();
+        showSyncIndicator('Synchronisé', true);
+      },
+      (error) => {
+        console.error('Erreur Firestore:', error);
+        showToast('❌ Erreur de chargement', 'error');
+      }
+    );
+}
+
+function showSyncIndicator(text, synced) {
+  const el = document.getElementById('syncIndicator');
+  const txt = document.getElementById('syncText');
+  txt.textContent = text;
+  el.classList.toggle('synced', synced);
+  el.classList.add('show');
+
+  if (synced) {
+    setTimeout(() => el.classList.remove('show'), 1500);
+  }
+}
+
+/* =========================================================
+   🗺️ INITIALISATION CARTE
+   ========================================================= */
+
+function buildTileURL(styleKey) {
+  if (styleKey === 'satellite') {
+    return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+  }
+  const styleName = CARTO_STYLES[styleKey].name;
+  return `https://{s}.basemaps.cartocdn.com/${styleName}/{z}/{x}/{y}{r}.png?key=${apiKey}`;
+}
+
+function getTileOptions(styleKey) {
+  if (styleKey === 'satellite') {
+    return { attribution: '© Esri, Maxar, Earthstar Geographics', maxZoom: 19 };
+  }
+  return { attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 19 };
+}
+
+function initMap() {
+  map = L.map('map', {
+    center: [20, 0],
+    zoom: 3,
+    minZoom: 3,
+    maxZoom: 19,
+    maxBounds: [[-85, -180], [85, 180]],
+    maxBoundsViscosity: 1.0,
+    worldCopyJump: true,
+    zoomControl: false,
+    zoomAnimation: true,
+    fadeAnimation: true,
+    markerZoomAnimation: true
+  });
+
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+  applyTileLayer();
+
+  // Bouton recentrer
+  const RecenterControl = L.Control.extend({
+    options: { position: 'bottomright' },
+    onAdd: function () {
+      const container = L.DomUtil.create('div', 'leaflet-control-recenter');
+      container.innerHTML = '🎯';
+      container.title = 'Recentrer sur ma position';
+      L.DomEvent.disableClickPropagation(container);
+      L.DomEvent.disableScrollPropagation(container);
+      L.DomEvent.on(container, 'click', function (e) {
+        L.DomEvent.stopPropagation(e);
+        recenterToMyLocation(container);
+      });
+      return container;
+    }
+  });
+  map.addControl(new RecenterControl());
+
+  // Clic sur la carte
+  map.on('click', (e) => {
+    pendingLatLng = { lat: e.latlng.lat, lng: e.latlng.lng };
+    pendingSource = 'manual';
+    openAddModal();
+  });
+}
+
+function applyTileLayer() {
+  if (!map) return;
+  if (tileLayer) map.removeLayer(tileLayer);
+  tileLayer = L.tileLayer(buildTileURL(mapStyle), getTileOptions(mapStyle)).addTo(map);
+}
+
+/* =========================================================
+   🎯 BOUTON RECENTRER
+   ========================================================= */
+
+function recenterToMyLocation(btn) {
+  if (!navigator.geolocation) {
+    showToast('❌ Géolocalisation non supportée', 'error');
+    flashBtnError(btn);
+    return;
+  }
+  btn.classList.add('locating');
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude: lat, longitude: lng, accuracy } = position.coords;
+      if (userLocationMarker) map.removeLayer(userLocationMarker);
+      if (userLocationCircle) map.removeLayer(userLocationCircle);
+
+      userLocationMarker = L.marker([lat, lng], {
+        icon: createUserLocationIcon(),
+        zIndexOffset: 1000
+      }).addTo(map).bindPopup('🎯 Tu es ici !');
+
+      userLocationCircle = L.circle([lat, lng], {
+        radius: accuracy,
+        color: '#22c55e',
+        fillColor: '#22c55e',
+        fillOpacity: 0.15,
+        weight: 1
+      }).addTo(map);
+
+      map.flyTo([lat, lng], 15, { duration: 1.8, easeLinearity: 0.25 });
+      showToast(`🎯 Recentré sur toi (±${Math.round(accuracy)}m)`, 'success');
+      btn.classList.remove('locating');
+      btn.innerHTML = '🎯';
+    },
+    (error) => {
+      btn.classList.remove('locating');
+      btn.innerHTML = '🎯';
+      let msg = '❌ Impossible de te localiser.';
+      if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.';
+      else if (error.code === error.POSITION_UNAVAILABLE) msg = '📡 Position indisponible.';
+      else if (error.code === error.TIMEOUT) msg = '⏱️ Délai dépassé.';
+      showToast(msg, 'error');
+      flashBtnError(btn);
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+}
+
+function flashBtnError(btn) {
+  btn.classList.add('error');
+  setTimeout(() => btn.classList.remove('error'), 1500);
+}
+
+/* =========================================================
+   📍 MARQUEURS
+   ========================================================= */
+
+function createMarkerIcon(note) {
+  const icon = note && note.icon ? note.icon : '📍';
+  const hasCustom = icon !== '📍';
+  const hasPhoto = !!(note && note.photo);
+  const classes = ['custom-marker', 'marker-pop'];
+  if (hasCustom) classes.push('has-icon');
+  if (hasPhoto) classes.push('has-photo');
+  return L.divIcon({
+    className: '',
+    html: `<div class="${classes.join(' ')}">${
+      hasCustom ? `<span style="transform: rotate(45deg); font-size: 15px; line-height: 1;">${icon}</span>` : ''
+    }</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+  });
+}
+
+function createUserLocationIcon() {
+  return L.divIcon({
+    className: '',
+    html: '<div class="user-location-marker"></div>',
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+  });
+}
+
+function createTempMarkerIcon() {
+  return L.divIcon({
+    className: '',
+    html: '<div class="temp-marker"></div>',
+    iconSize: [26, 26],
+    iconAnchor: [13, 13]
+  });
+}
+
+function addMarkerToMap(note) {
+  const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) })
+    .addTo(map)
+    .bindPopup(buildPopupContent(note), { maxWidth: 340 });
+  markers[note.id] = marker;
+  return marker;
+}
+
+function buildPopupContent(note) {
+  const date = new Date(note.createdAt).toLocaleDateString('fr-FR', {
+    day: 'numeric', month: 'short', year: 'numeric'
+  });
+  const icon = note.icon || '📍';
+
+  let photoHtml = '';
+  if (note.photo) {
+    photoHtml = `
+      <img
+        class="popup-photo"
+        src="${note.photo}"
+        alt="Photo souvenir"
+        onclick="openLightbox('${note.id}', event)"
+      />
+    `;
+  }
+
+  return `
+    ${photoHtml}
+    <div class="popup-body">
+      <div class="popup-place">
+        <span class="category-icon">${icon}</span>
+        ${escapeHtml(note.place)}
+      </div>
+      <div class="popup-text">${escapeHtml(note.text)}</div>
+      <div class="popup-meta">Ajouté le ${date}</div>
+    </div>
+  `;
+}
+
+function renderAllMarkers() {
+  Object.values(markers).forEach(m => map.removeLayer(m));
+  markers = {};
+  notes.forEach(addMarkerToMap);
+  renderSidebar();
+  updateNotesCountInfo();
+}
+
+function renderSidebar() {
+  const list = document.getElementById('notesList');
+  if (notes.length === 0) {
+    list.innerHTML = `<div class="empty-state">Aucun souvenir pour l'instant.<br>Cliquez sur la carte pour commencer ✨</div>`;
+    return;
+  }
+
+  list.innerHTML = notes.map((note, i) => {
+    const date = new Date(note.createdAt).toLocaleDateString('fr-FR', {
+      day: 'numeric', month: 'short'
+    });
+    const icon = note.icon || '📍';
+    const photoHtml = note.photo
+      ? `<img class="note-thumb" src="${note.photo}" alt="Photo" onclick="openLightbox('${note.id}', event)" />`
+      : '';
+    return `
+      <div class="note-card" style="animation-delay: ${Math.min(i * 0.04, 0.4)}s">
+        ${photoHtml}
+        <div class="note-body">
+          <div onclick="focusNote('${note.id}')">
+            <div class="place">
+              <span class="category-icon">${icon}</span>
+              ${escapeHtml(note.place)}
+            </div>
+            <div class="text">${escapeHtml(note.text)}</div>
+          </div>
+          <div class="meta">
+            <span>${date}</span>
+            <button class="delete-note" onclick="deleteNote('${note.id}', event)" title="Supprimer">🗑️</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function focusNote(id) {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  map.flyTo([note.lat, note.lng], 14, { duration: 1.2 });
+  const marker = markers[id];
+  if (marker) setTimeout(() => marker.openPopup(), 700);
+  if (window.innerWidth <= 768) toggleSidebar();
+}
+
+async function deleteNote(id, event) {
+  event.stopPropagation();
+  if (!confirm('Supprimer ce souvenir ?')) return;
+
+  try {
+    await db.collection('notes').doc(id).delete();
+    showToast('🗑️ Souvenir supprimé', 'error');
+  } catch (err) {
+    console.error('Erreur suppression:', err);
+    showToast('❌ Erreur de suppression', 'error');
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* =========================================================
+   🖼️ LIGHTBOX
+   ========================================================= */
+
+function openLightbox(noteId, event) {
+  if (event) event.stopPropagation();
+  const note = notes.find(n => n.id === noteId);
+  if (!note || !note.photo) return;
+  document.getElementById('lightboxImg').src = note.photo;
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function closeLightbox(event) {
+  if (event) event.stopPropagation();
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+/* =========================================================
+   📸 PHOTO
+   ========================================================= */
+
+const photoInput = document.getElementById('photoInput');
+const photoUploadZone = document.getElementById('photoUploadZone');
+const photoPreviewWrapper = document.getElementById('photoPreviewWrapper');
+const photoPreview = document.getElementById('photoPreview');
+
+photoInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) handlePhotoFile(file);
+  e.target.value = '';
+});
+
+photoUploadZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  photoUploadZone.classList.add('dragover');
+});
+photoUploadZone.addEventListener('dragleave', () => {
+  photoUploadZone.classList.remove('dragover');
+});
+photoUploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  photoUploadZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    handlePhotoFile(file);
+  } else {
+    showToast('⚠️ Fichier non supporté (image requise)', 'error');
+  }
+});
+
+async function handlePhotoFile(file) {
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('⚠️ Photo trop lourde (max 10 Mo)', 'error');
+    return;
+  }
+  try {
+    showToast('⏳ Compression de la photo...', 'info');
+    // 700px max + qualité 0.7 = plus léger pour Firestore
+    const compressedDataUrl = await compressImage(file, 700, 0.7);
+    pendingPhoto = compressedDataUrl;
+    photoPreview.src = compressedDataUrl;
+    photoPreviewWrapper.classList.add('visible');
+    photoUploadZone.style.display = 'none';
+    const sizeKo = Math.round((compressedDataUrl.length * 0.75) / 1024);
+    showToast(`✅ Photo ajoutée (~${sizeKo} Ko)`, 'success');
+  } catch (err) {
+    console.error('Erreur compression:', err);
+    showToast('❌ Impossible de charger la photo', 'error');
+  }
+}
+
+function compressImage(file, maxWidth = 700, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => reject(new Error('Image invalide'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Lecture échouée'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function removePhoto(event) {
+  if (event) event.stopPropagation();
+  pendingPhoto = null;
+  photoPreview.src = '';
+  photoPreviewWrapper.classList.remove('visible');
+  photoUploadZone.style.display = '';
+  photoInput.value = '';
+}
+
+/* =========================================================
+   ⚙️ RÉGLAGES
+   ========================================================= */
+
+function toggleUserMenu(event) {
+  if (event) event.stopPropagation();
+  document.getElementById('userDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.user-menu')) {
+    document.getElementById('userDropdown').classList.remove('open');
+  }
+});
+
+function toggleSettings() {
+  const panel = document.getElementById('settingsPanel');
+  const isOpening = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  if (isOpening) {
+    document.getElementById('apiKeyInput').value = '';
+    updateThemeChoices();
+    updateStyleChoices();
+    updateNotesCountInfo();
+  }
+}
+
+function updateThemeChoices() {
+  document.querySelectorAll('.theme-choice').forEach(el => {
+    el.classList.toggle('active', el.dataset.theme === uiTheme);
+  });
+}
+
+function updateStyleChoices() {
+  document.querySelectorAll('.style-choice').forEach(el => {
+    el.classList.toggle('active', el.dataset.style === mapStyle);
+  });
+}
+
+function chooseTheme(theme) {
+  uiTheme = theme;
+  updateThemeChoices();
+}
+
+function chooseStyle(styleKey) {
+  mapStyle = styleKey;
+  updateStyleChoices();
+}
+
+function applySettings() {
+  const newKey = document.getElementById('apiKeyInput').value.trim();
+  if (newKey) {
+    apiKey = newKey;
+    localStorage.setItem('worldnotes_apikey', apiKey);
+  }
+  if (mapStyle !== 'satellite' && !apiKey) {
+    showToast('⚠️ Entre une clé API CARTO valide', 'error');
+    return;
+  }
+  localStorage.setItem('worldnotes_style', mapStyle);
+  localStorage.setItem('worldnotes_theme', uiTheme);
+  document.documentElement.setAttribute('data-theme', uiTheme);
+  applyTileLayer();
+  toggleSettings();
+  showToast(`✅ Réglages appliqués`, 'success');
+}
+
+function resetSettings() {
+  if (!confirm('Réinitialiser les réglages par défaut ?')) return;
+  apiKey = DEFAULT_API_KEY;
+  mapStyle = DEFAULT_STYLE;
+  uiTheme = DEFAULT_THEME;
+  localStorage.setItem('worldnotes_apikey', apiKey);
+  localStorage.setItem('worldnotes_style', mapStyle);
+  localStorage.setItem('worldnotes_theme', uiTheme);
+  document.getElementById('apiKeyInput').value = '';
+  document.documentElement.setAttribute('data-theme', uiTheme);
+  updateThemeChoices();
+  updateStyleChoices();
+  applyTileLayer();
+  showToast('🔄 Réglages réinitialisés', 'success');
+}
+
+/* =========================================================
+   💾 EXPORT / IMPORT
+   ========================================================= */
+
+function updateNotesCountInfo() {
+  const info = document.getElementById('notesCountInfo');
+  if (!info) return;
+  const n = notes.length;
+  const photos = notes.filter(x => x.photo).length;
+  let txt = n === 0 ? 'Aucun souvenir' : `${n} souvenir${n > 1 ? 's' : ''}`;
+  if (photos > 0) txt += ` • ${photos} photo${photos > 1 ? 's' : ''}`;
+  info.textContent = txt;
+}
+
+function exportNotes() {
+  if (notes.length === 0) {
+    showToast('⚠️ Aucun souvenir à exporter', 'error');
+    return;
+  }
+  const exportData = {
+    app: 'World Notes',
+    version: 4,
+    exportedAt: new Date().toISOString(),
+    notesCount: notes.length,
+    notes: notes.map(n => {
+      // Retirer userId du fichier exporté
+      const { userId, ...rest } = n;
+      return rest;
+    })
+  };
+  const json = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const now = new Date();
+  const stamp = now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0') + '-' +
+    String(now.getHours()).padStart(2, '0') + 'h' +
+    String(now.getMinutes()).padStart(2, '0');
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `worldnotes-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  const sizeMo = (blob.size / 1024 / 1024).toFixed(2);
+  showToast(`💾 Export réussi (${sizeMo} Mo)`, 'success');
+}
+
+function triggerImport() {
+  document.getElementById('importFileInput').click();
+}
+
+document.getElementById('importFileInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    let importedNotes;
+    if (Array.isArray(data)) importedNotes = data;
+    else if (data && Array.isArray(data.notes)) importedNotes = data.notes;
+    else throw new Error('Format invalide');
+
+    const validNotes = importedNotes.filter(n =>
+      n && typeof n.place === 'string' &&
+      typeof n.text === 'string' &&
+      typeof n.lat === 'number' &&
+      typeof n.lng === 'number'
+    );
+
+    if (validNotes.length === 0) throw new Error('Aucune note valide');
+
+    if (!confirm(`Importer ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} dans ton compte cloud ?\n\nCes notes viendront s'ajouter à celles existantes.`)) {
+      e.target.value = '';
+      return;
+    }
+
+    showToast(`⏳ Import de ${validNotes.length} notes...`, 'info');
+
+    const batch = db.batch();
+    const notesRef = db.collection('notes');
+
+    validNotes.forEach(note => {
+      const newRef = notesRef.doc();
+      batch.set(newRef, {
+        userId: currentUser.uid,
+        place: note.place,
+        text: note.text,
+        lat: note.lat,
+        lng: note.lng,
+        createdAt: note.createdAt || Date.now(),
+        source: note.source || 'import',
+        icon: note.icon || '📍',
+        photo: note.photo || null
+      });
+    });
+
+    await batch.commit();
+    showToast(`✅ ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} importé${validNotes.length > 1 ? 's' : ''} !`, 'success');
+
+  } catch (err) {
+    console.error('Erreur import:', err);
+    showToast('❌ Fichier invalide', 'error');
+  }
+  e.target.value = '';
+});
+
+/* =========================================================
+   MODAL AJOUT
+   ========================================================= */
+
+function chooseIcon(el) {
+  document.querySelectorAll('.icon-choice').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  pendingIcon = el.dataset.icon;
+}
+
+function openAddModal() {
+  if (!pendingLatLng) {
+    const c = map.getCenter();
+    pendingLatLng = { lat: c.lat, lng: c.lng };
+    pendingSource = 'manual';
+  }
+  updateLocationBox();
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('searchInput').focus(), 100);
+}
+
+function closeAddModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.getElementById('placeName').value = '';
+  document.getElementById('noteText').value = '';
+  document.getElementById('searchInput').value = '';
+  closeAutocomplete();
+  clearSearchButton();
+  pendingLatLng = null;
+  pendingSource = null;
+  pendingIcon = '📍';
+  removePhoto();
+  document.querySelectorAll('.icon-choice').forEach(c => {
+    c.classList.toggle('active', c.dataset.icon === '📍');
+  });
+  if (tempMarker) {
+    map.removeLayer(tempMarker);
+    tempMarker = null;
+  }
+  const btn = document.getElementById('gpsBtn');
+  btn.disabled = false;
+  btn.innerHTML = '🎯 Ma position';
+}
+
+function updateLocationBox() {
+  const box = document.getElementById('locationBox');
+  const icon = document.getElementById('locationIcon');
+  const coords = document.getElementById('coordsText');
+  box.classList.remove('gps', 'manual', 'search');
+  if (!pendingLatLng) {
+    icon.textContent = '📌';
+    coords.textContent = 'Aucune position sélectionnée';
+    return;
+  }
+  const coordStr = `${pendingLatLng.lat.toFixed(5)}, ${pendingLatLng.lng.toFixed(5)}`;
+  if (pendingSource === 'gps') {
+    box.classList.add('gps'); icon.textContent = '🎯'; coords.textContent = coordStr;
+  } else if (pendingSource === 'search') {
+    box.classList.add('search'); icon.textContent = '🔎'; coords.textContent = coordStr;
+  } else {
+    box.classList.add('manual'); icon.textContent = '📌'; coords.textContent = coordStr;
+  }
+}
+
+function useMyLocation() {
+  const btn = document.getElementById('gpsBtn');
+  if (!navigator.geolocation) {
+    showToast('❌ Géolocalisation non supportée', 'error');
+    return;
+  }
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>...';
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude: lat, longitude: lng, accuracy } = position.coords;
+      if (userLocationMarker) map.removeLayer(userLocationMarker);
+      if (userLocationCircle) map.removeLayer(userLocationCircle);
+
+      userLocationMarker = L.marker([lat, lng], {
+        icon: createUserLocationIcon(),
+        zIndexOffset: 1000
+      }).addTo(map).bindPopup('🎯 Tu es ici !');
+
+      userLocationCircle = L.circle([lat, lng], {
+        radius: accuracy,
+        color: '#22c55e',
+        fillColor: '#22c55e',
+        fillOpacity: 0.15,
+        weight: 1
+      }).addTo(map);
+
+      map.flyTo([lat, lng], 16, { duration: 1.5 });
+      pendingLatLng = { lat, lng };
+      pendingSource = 'gps';
+      updateLocationBox();
+      showToast(`🎯 Position trouvée (±${Math.round(accuracy)}m)`, 'success');
+      btn.disabled = false;
+      btn.innerHTML = '✅ OK';
+      setTimeout(() => { btn.innerHTML = '🎯 Ma position'; }, 2000);
+    },
+    (error) => {
+      btn.disabled = false;
+      btn.innerHTML = '🎯 Ma position';
+      let msg = '❌ Impossible de te localiser.';
+      if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.';
+      else if (error.code === error.POSITION_UNAVAILABLE) msg = '📡 Position indisponible.';
+      else if (error.code === error.TIMEOUT) msg = '⏱️ Délai dépassé.';
+      showToast(msg, 'error');
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+}
+
+/* =========================================================
+   🔎 RECHERCHE
+   ========================================================= */
+
+const searchInput = document.getElementById('searchInput');
+const autocompleteList = document.getElementById('autocompleteList');
+const searchSpinner = document.getElementById('searchSpinner');
+const searchClear = document.getElementById('searchClear');
+
+let searchTimeout = null;
+let currentResults = [];
+let activeIndex = -1;
+
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.trim();
+  searchClear.classList.toggle('visible', query.length > 0);
+  clearTimeout(searchTimeout);
+  if (query.length < 3) { closeAutocomplete(); return; }
+  searchTimeout = setTimeout(() => performSearch(query), 350);
+});
+
+searchInput.addEventListener('keydown', (e) => {
+  const items = autocompleteList.querySelectorAll('.autocomplete-item');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    activeIndex = Math.min(activeIndex + 1, items.length - 1);
+    updateActiveItem(items);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    activeIndex = Math.max(activeIndex - 1, -1);
+    updateActiveItem(items);
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (activeIndex >= 0 && items[activeIndex]) items[activeIndex].click();
+    else if (items.length > 0) items[0].click();
+  } else if (e.key === 'Escape') {
+    closeAutocomplete();
+  }
+});
+
+function updateActiveItem(items) {
+  items.forEach((item, i) => {
+    item.classList.toggle('active', i === activeIndex);
+    if (i === activeIndex) item.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-wrapper')) closeAutocomplete();
+});
+
+async function performSearch(query) {
+  searchSpinner.classList.add('visible');
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=6&addressdetails=1&accept-language=fr`;
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error('Erreur réseau');
+    const data = await res.json();
+    currentResults = data;
+    activeIndex = -1;
+    renderAutocomplete(data);
+  } catch (err) {
+    console.error('Erreur recherche:', err);
+    autocompleteList.innerHTML = `<div class="autocomplete-empty">❌ Erreur de recherche.</div>`;
+    autocompleteList.classList.add('open');
+  } finally {
+    searchSpinner.classList.remove('visible');
+  }
+}
+
+function renderAutocomplete(results) {
+  if (results.length === 0) {
+    autocompleteList.innerHTML = `<div class="autocomplete-empty">Aucun lieu trouvé 😕</div>`;
+    autocompleteList.classList.add('open');
+    return;
+  }
+  autocompleteList.innerHTML = results.map((r, i) => {
+    const parts = r.display_name.split(',');
+    const name = parts[0].trim();
+    const details = parts.slice(1).join(',').trim();
+    return `
+      <div class="autocomplete-item" data-index="${i}">
+        <div class="name">📍 ${escapeHtml(name)}</div>
+        <div class="details">${escapeHtml(details)}</div>
+      </div>
+    `;
+  }).join('');
+  autocompleteList.classList.add('open');
+  autocompleteList.querySelectorAll('.autocomplete-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const idx = parseInt(item.dataset.index, 10);
+      selectSearchResult(currentResults[idx]);
+    });
+  });
+}
+
+function selectSearchResult(result) {
+  if (!result) return;
+  const lat = parseFloat(result.lat);
+  const lng = parseFloat(result.lon);
+  pendingLatLng = { lat, lng };
+  pendingSource = 'search';
+  updateLocationBox();
+
+  const nameParts = result.display_name.split(',');
+  const shortName = nameParts[0].trim();
+  const fullName = nameParts.slice(0, 3).map(s => s.trim()).join(', ');
+
+  const placeInput = document.getElementById('placeName');
+  if (!placeInput.value.trim()) placeInput.value = fullName;
+
+  if (tempMarker) map.removeLayer(tempMarker);
+  tempMarker = L.marker([lat, lng], {
+    icon: createTempMarkerIcon(),
+    zIndexOffset: 900
+  }).addTo(map).bindPopup(`🔎 ${escapeHtml(shortName)}`).openPopup();
+
+  const bbox = result.boundingbox;
+  if (bbox) {
+    const south = parseFloat(bbox[0]);
+    const north = parseFloat(bbox[1]);
+    const west = parseFloat(bbox[2]);
+    const east = parseFloat(bbox[3]);
+    map.flyToBounds([[south, west], [north, east]], { duration: 1.5, maxZoom: 15 });
+  } else {
+    map.flyTo([lat, lng], 13, { duration: 1.5 });
+  }
+
+  closeAutocomplete();
+  searchInput.value = shortName;
+  searchClear.classList.add('visible');
+  showToast(`📍 ${shortName}`, 'success');
+  setTimeout(() => document.getElementById('noteText').focus(), 500);
+}
+
+function closeAutocomplete() {
+  autocompleteList.classList.remove('open');
+  activeIndex = -1;
+}
+
+function clearSearch() {
+  searchInput.value = '';
+  searchClear.classList.remove('visible');
+  closeAutocomplete();
+  searchInput.focus();
+}
+
+function clearSearchButton() {
+  searchClear.classList.remove('visible');
+  closeAutocomplete();
+}
+
+/* =========================================================
+   💾 SAUVEGARDE DANS FIRESTORE
+   ========================================================= */
+
+async function saveNote() {
+  const place = document.getElementById('placeName').value.trim();
+  const text = document.getElementById('noteText').value.trim();
+
+  if (!pendingLatLng) { showToast('⚠️ Choisis une position', 'error'); return; }
+  if (!place) { showToast('⚠️ Donne un nom à ce lieu !', 'error'); return; }
+  if (!text) { showToast('⚠️ Écris une anecdote !', 'error'); return; }
+  if (!currentUser) { showToast('⚠️ Tu dois être connecté', 'error'); return; }
+
+  const saveBtn = document.getElementById('saveNoteBtn');
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<span class="cloud-loader"></span>Enregistrement...';
+
+  try {
+    await db.collection('notes').add({
+      userId: currentUser.uid,
+      place,
+      text,
+      lat: pendingLatLng.lat,
+      lng: pendingLatLng.lng,
+      createdAt: Date.now(),
+      source: pendingSource,
+      icon: pendingIcon,
+      photo: pendingPhoto
+    });
+
+    closeAddModal();
+    showToast('☁️ Souvenir enregistré dans le cloud !', 'success');
+    map.flyTo([pendingLatLng.lat, pendingLatLng.lng], 15, { duration: 1.2 });
+  } catch (err) {
+    console.error('Erreur sauvegarde:', err);
+    showToast('❌ Erreur de sauvegarde', 'error');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = '💾 Enregistrer';
+  }
+}
+
+/* =========================================================
+   TOAST / UTILS
+   ========================================================= */
+
+let toastTimer;
+function showToast(msg, type = '') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* =========================================================
+   RACCOURCIS CLAVIER
+   ========================================================= */
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('lightbox').classList.contains('open')) closeLightbox();
+    else if (autocompleteList.classList.contains('open')) closeAutocomplete();
+    else if (document.getElementById('settingsPanel').classList.contains('open')) toggleSettings();
+    else closeAddModal();
+  }
+});
+
+/* =========================================================
+   INITIALISATION UI
+   ========================================================= */
+
+// Appliquer thème + styles au chargement
+updateThemeChoices();
+updateStyleChoices();
+
+// Le hint disparaît après 8s (une fois connecté)
+setTimeout(() => {
+  const hint = document.getElementById('hint');
+  if (hint) hint.style.opacity = '0';
+}, 10000);
+</script>
+
+</body>
+</html>
