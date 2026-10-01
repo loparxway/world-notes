@@ -989,11 +989,44 @@
     margin-bottom: 8px;
   }
 
+  .popup-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 10px;
+    margin-top: 8px;
+  }
+
   .popup-meta {
     font-size: 0.72rem;
     color: var(--text-faint);
-    border-top: 1px solid var(--border-subtle);
-    padding-top: 8px;
+    flex: 1;
+  }
+
+  .popup-delete-btn {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+
+  .popup-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    border-color: #ef4444;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
   }
 
   .lightbox {
@@ -1152,42 +1185,14 @@
     color: var(--text-secondary);
   }
 
-  .settings-panel input[type="text"] {
-    font-size: 0.82rem;
-    font-family: 'SF Mono', Monaco, monospace;
-    margin-bottom: 6px;
-  }
-
-  .key-status {
-    font-size: 0.7rem;
-    color: #22c55e;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .key-status::before {
-    content: '';
-    width: 6px; height: 6px;
-    background: #22c55e;
-    border-radius: 50%;
-    box-shadow: 0 0 6px #22c55e;
-    animation: keyPulse 2s infinite;
-  }
-
-  @keyframes keyPulse {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.5; }
-  }
-
-  .theme-choices, .style-choices {
+  .theme-choices {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-bottom: 16px;
   }
 
-  .theme-choice, .style-choice {
+  .theme-choice {
     padding: 12px 8px;
     border-radius: 10px;
     border: 2px solid var(--border-hover);
@@ -1199,17 +1204,17 @@
     font-weight: 600;
     color: var(--text-secondary);
   }
-  .theme-choice:hover, .style-choice:hover {
+  .theme-choice:hover {
     border-color: rgba(249, 115, 22, 0.5);
     transform: translateY(-2px);
   }
-  .theme-choice.active, .style-choice.active {
+  .theme-choice.active {
     border-color: #f97316;
     background: rgba(249, 115, 22, 0.15);
     color: #f97316;
     transform: scale(1.03);
   }
-  .theme-choice .emoji, .style-choice .emoji {
+  .theme-choice .emoji {
     display: block;
     font-size: 1.4rem;
     margin-bottom: 4px;
@@ -1222,15 +1227,6 @@
     margin-top: 8px;
   }
   .settings-actions button { font-size: 0.82rem; padding: 9px 14px; }
-
-  .api-hint {
-    font-size: 0.7rem;
-    color: var(--text-faint);
-    margin-bottom: 14px;
-    line-height: 1.4;
-  }
-  .api-hint a { color: #f97316; text-decoration: none; }
-  .api-hint a:hover { text-decoration: underline; }
 
   .backup-section {
     margin-top: 20px;
@@ -1471,30 +1467,6 @@
       </div>
     </div>
 
-    <label>🗺️ Style de carte</label>
-    <div class="style-choices" id="styleChoices">
-      <div class="style-choice" data-style="dark" onclick="chooseStyle('dark')">
-        <span class="emoji">🌑</span>Dark
-      </div>
-      <div class="style-choice" data-style="light" onclick="chooseStyle('light')">
-        <span class="emoji">☁️</span>Light
-      </div>
-      <div class="style-choice" data-style="voyager" onclick="chooseStyle('voyager')">
-        <span class="emoji">🌈</span>Voyager
-      </div>
-      <div class="style-choice" data-style="satellite" onclick="chooseStyle('satellite')">
-        <span class="emoji">🛰️</span>Satellite
-      </div>
-    </div>
-
-    <label for="apiKeyInput">🔑 Clé API CARTO</label>
-    <input type="text" id="apiKeyInput" placeholder="Laisser vide pour garder l'actuelle" />
-    <div class="key-status" id="keyStatus">Clé API enregistrée</div>
-    <div class="api-hint">
-      Non requise pour le style 🛰️ Satellite.
-      <a href="https://carto.com/basemaps/apikey/" target="_blank">Obtenir une clé gratuite →</a>
-    </div>
-
     <div class="settings-actions">
       <button class="btn-ghost" onclick="resetSettings()">🗑️ Reset</button>
       <button class="btn-primary" onclick="applySettings()">✓ Appliquer</button>
@@ -1636,7 +1608,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// ⚡ Force la persistance de session (important pour mobile)
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch((err) => {
   console.warn('Impossible de définir la persistance:', err);
 });
@@ -1649,19 +1620,12 @@ db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
    ÉTAT GLOBAL
    ========================================================= */
 
-const DEFAULT_API_KEY = 'cb1_46hv_2_a67b786d87acd873218060a0';
-const DEFAULT_STYLE   = 'dark';
+// 🛰️ Vue satellite uniquement
+const SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+const SATELLITE_ATTRIBUTION = '© Esri, Maxar, Earthstar Geographics';
+
 const DEFAULT_THEME   = 'dark';
 
-const CARTO_STYLES = {
-  dark:      { name: 'dark_all',              label: 'Dark' },
-  light:     { name: 'light_all',             label: 'Light' },
-  voyager:   { name: 'rastertiles/voyager',   label: 'Voyager' },
-  satellite: { name: 'satellite',             label: 'Satellite' }
-};
-
-let apiKey   = localStorage.getItem('worldnotes_apikey')  || DEFAULT_API_KEY;
-let mapStyle = localStorage.getItem('worldnotes_style')   || DEFAULT_STYLE;
 let uiTheme  = localStorage.getItem('worldnotes_theme')   || DEFAULT_THEME;
 
 document.documentElement.setAttribute('data-theme', uiTheme);
@@ -1682,7 +1646,7 @@ let userLocationCircle = null;
 let tempMarker = null;
 
 /* =========================================================
-   🔐 AUTH — Compatible mobile et desktop
+   🔐 AUTH
    ========================================================= */
 
 function isMobileDevice() {
@@ -1700,7 +1664,6 @@ function signInWithGoogle() {
   }
 
   if (isMobileDevice()) {
-    // Sur mobile → signInWithRedirect
     auth.signInWithRedirect(provider).catch((error) => {
       console.error('Erreur signInWithRedirect:', error);
       if (btn) {
@@ -1710,7 +1673,6 @@ function signInWithGoogle() {
       alert('Erreur de connexion: ' + error.message);
     });
   } else {
-    // Sur desktop → signInWithPopup
     auth.signInWithPopup(provider).catch((error) => {
       console.error('Erreur signInWithPopup:', error);
       if (btn) {
@@ -1720,27 +1682,18 @@ function signInWithGoogle() {
       if (error.code === 'auth/popup-blocked') {
         alert('Autorise les popups pour te connecter.');
       } else if (error.code === 'auth/unauthorized-domain') {
-        alert('Ce domaine n\'est pas autorisé dans Firebase.\nAjoute-le dans : Authentication → Settings → Domaines autorisés.');
+        alert('Ce domaine n\'est pas autorisé dans Firebase.');
       }
     });
   }
 }
 
-// 🔄 Récupérer le résultat de la redirection (retour de Google sur mobile)
 auth.getRedirectResult().then((result) => {
   if (result && result.user) {
     console.log('✅ Connecté après redirection :', result.user.email);
-  } else {
-    console.log('ℹ️ Pas de session de redirection à récupérer');
   }
 }).catch((error) => {
   console.error('❌ Erreur getRedirectResult:', error);
-  console.error('Code:', error.code);
-  console.error('Message:', error.message);
-
-  if (error.code === 'auth/unauthorized-domain') {
-    alert('Ce domaine n\'est pas autorisé dans Firebase.\nAjoute-le dans : Authentication → Settings → Domaines autorisés.');
-  }
 });
 
 function signOut() {
@@ -1836,23 +1789,8 @@ function showSyncIndicator(text, synced) {
 }
 
 /* =========================================================
-   🗺️ CARTE
+   🗺️ CARTE — Vue satellite uniquement
    ========================================================= */
-
-function buildTileURL(styleKey) {
-  if (styleKey === 'satellite') {
-    return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-  }
-  const styleName = CARTO_STYLES[styleKey].name;
-  return `https://{s}.basemaps.cartocdn.com/${styleName}/{z}/{x}/{y}{r}.png?key=${apiKey}`;
-}
-
-function getTileOptions(styleKey) {
-  if (styleKey === 'satellite') {
-    return { attribution: '© Esri, Maxar, Earthstar Geographics', maxZoom: 19 };
-  }
-  return { attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 19 };
-}
 
 function initMap() {
   map = L.map('map', {
@@ -1870,7 +1808,12 @@ function initMap() {
   });
 
   L.control.zoom({ position: 'bottomright' }).addTo(map);
-  applyTileLayer();
+
+  // 🛰️ Satellite uniquement
+  tileLayer = L.tileLayer(SATELLITE_URL, {
+    attribution: SATELLITE_ATTRIBUTION,
+    maxZoom: 19
+  }).addTo(map);
 
   const RecenterControl = L.Control.extend({
     options: { position: 'bottomright' },
@@ -1894,12 +1837,6 @@ function initMap() {
     pendingSource = 'manual';
     openAddModal();
   });
-}
-
-function applyTileLayer() {
-  if (!map) return;
-  if (tileLayer) map.removeLayer(tileLayer);
-  tileLayer = L.tileLayer(buildTileURL(mapStyle), getTileOptions(mapStyle)).addTo(map);
 }
 
 function recenterToMyLocation(btn) {
@@ -2028,7 +1965,12 @@ function buildPopupContent(note) {
         ${escapeHtml(note.place)}
       </div>
       <div class="popup-text">${escapeHtml(note.text)}</div>
-      <div class="popup-meta">Ajouté le ${date}</div>
+      <div class="popup-footer">
+        <span class="popup-meta">${date}</span>
+        <button class="popup-delete-btn" onclick="deleteNoteFromPopup('${note.id}', event)" title="Supprimer ce souvenir">
+          🗑️ Supprimer
+        </button>
+      </div>
     </div>
   `;
 }
@@ -2086,12 +2028,29 @@ function focusNote(id) {
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
+// 🗑️ Suppression depuis la sidebar
 async function deleteNote(id, event) {
   event.stopPropagation();
   if (!confirm('Supprimer ce souvenir ?')) return;
 
   try {
     await db.collection('notes').doc(id).delete();
+    showToast('🗑️ Souvenir supprimé', 'error');
+  } catch (err) {
+    console.error('Erreur suppression:', err);
+    showToast('❌ Erreur de suppression', 'error');
+  }
+}
+
+// 🗑️ Suppression depuis la popup du marqueur
+async function deleteNoteFromPopup(id, event) {
+  if (event) event.stopPropagation();
+  if (!confirm('Supprimer ce souvenir ? Cette action est définitive.')) return;
+
+  try {
+    await db.collection('notes').doc(id).delete();
+    // Fermer la popup automatiquement (le marqueur va disparaître)
+    map.closePopup();
     showToast('🗑️ Souvenir supprimé', 'error');
   } catch (err) {
     console.error('Erreur suppression:', err);
@@ -2209,7 +2168,7 @@ function removePhoto(event) {
 }
 
 /* =========================================================
-   ⚙️ RÉGLAGES
+   ⚙️ RÉGLAGES (thème uniquement maintenant)
    ========================================================= */
 
 function toggleUserMenu(event) {
@@ -2228,9 +2187,7 @@ function toggleSettings() {
   const isOpening = !panel.classList.contains('open');
   panel.classList.toggle('open');
   if (isOpening) {
-    document.getElementById('apiKeyInput').value = '';
     updateThemeChoices();
-    updateStyleChoices();
     updateNotesCountInfo();
   }
 }
@@ -2241,53 +2198,24 @@ function updateThemeChoices() {
   });
 }
 
-function updateStyleChoices() {
-  document.querySelectorAll('.style-choice').forEach(el => {
-    el.classList.toggle('active', el.dataset.style === mapStyle);
-  });
-}
-
 function chooseTheme(theme) {
   uiTheme = theme;
   updateThemeChoices();
 }
 
-function chooseStyle(styleKey) {
-  mapStyle = styleKey;
-  updateStyleChoices();
-}
-
 function applySettings() {
-  const newKey = document.getElementById('apiKeyInput').value.trim();
-  if (newKey) {
-    apiKey = newKey;
-    localStorage.setItem('worldnotes_apikey', apiKey);
-  }
-  if (mapStyle !== 'satellite' && !apiKey) {
-    showToast('⚠️ Entre une clé API CARTO valide', 'error');
-    return;
-  }
-  localStorage.setItem('worldnotes_style', mapStyle);
   localStorage.setItem('worldnotes_theme', uiTheme);
   document.documentElement.setAttribute('data-theme', uiTheme);
-  applyTileLayer();
   toggleSettings();
-  showToast(`✅ Réglages appliqués`, 'success');
+  showToast('✅ Réglages appliqués', 'success');
 }
 
 function resetSettings() {
-  if (!confirm('Réinitialiser les réglages par défaut ?')) return;
-  apiKey = DEFAULT_API_KEY;
-  mapStyle = DEFAULT_STYLE;
+  if (!confirm('Réinitialiser le thème par défaut ?')) return;
   uiTheme = DEFAULT_THEME;
-  localStorage.setItem('worldnotes_apikey', apiKey);
-  localStorage.setItem('worldnotes_style', mapStyle);
   localStorage.setItem('worldnotes_theme', uiTheme);
-  document.getElementById('apiKeyInput').value = '';
   document.documentElement.setAttribute('data-theme', uiTheme);
   updateThemeChoices();
-  updateStyleChoices();
-  applyTileLayer();
   showToast('🔄 Réglages réinitialisés', 'success');
 }
 
@@ -2312,7 +2240,7 @@ function exportNotes() {
   }
   const exportData = {
     app: 'World Notes',
-    version: 4,
+    version: 5,
     exportedAt: new Date().toISOString(),
     notesCount: notes.length,
     notes: notes.map(n => {
@@ -2365,7 +2293,7 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
 
     if (validNotes.length === 0) throw new Error('Aucune note valide');
 
-    if (!confirm(`Importer ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} dans ton compte cloud ?\n\nCes notes viendront s'ajouter à celles existantes.`)) {
+    if (!confirm(`Importer ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} dans ton compte cloud ?`)) {
       e.target.value = '';
       return;
     }
@@ -2700,7 +2628,7 @@ async function saveNote() {
     });
 
     closeAddModal();
-    showToast('☁️ Souvenir enregistré dans le cloud !', 'success');
+    showToast('☁️ Souvenir enregistré !', 'success');
     map.flyTo([lat, lng], 15, { duration: 1.2 });
   } catch (err) {
     console.error('Erreur sauvegarde:', err);
@@ -2740,7 +2668,6 @@ document.addEventListener('keydown', (e) => {
 });
 
 updateThemeChoices();
-updateStyleChoices();
 
 setTimeout(() => {
   const hint = document.getElementById('hint');
