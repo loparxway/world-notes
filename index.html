@@ -1209,45 +1209,80 @@ function closeViewProfile() { document.getElementById('viewProfileModalOverlay')
 /* 👥 AMIS */
 function loadIncomingRequests() {
   if (unsubscribeIncoming) unsubscribeIncoming();
-  unsubscribeIncoming = db.collection('friendRequests').where('to', '==', currentUser.uid).where('status', '==', 'pending').onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-    const fromServer = snapshot.docs.filter(doc => !doc.metadata.fromCache);
-    const docsToUse = fromServer.length > 0 ? fromServer : snapshot.docs;
-    incomingRequests = docsToUse.map(doc => ({ id: doc.id, ...doc.data() }));
-    updateFriendBadge(); renderFriendsContent();
-  });
+  unsubscribeIncoming = db.collection('friendRequests')
+    .where('to', '==', currentUser.uid)
+    .where('status', '==', 'pending')
+    .onSnapshot(
+      { includeMetadataChanges: true },
+      (snapshot) => {
+        const fromServer = snapshot.docs.filter(doc => !doc.metadata.fromCache);
+        const docsToUse = fromServer.length > 0 ? fromServer : snapshot.docs;
+        incomingRequests = docsToUse.map(doc => ({ id: doc.id, ...doc.data() }));
+        updateFriendBadge();
+        renderFriendsContent();
+      },
+      (error) => {
+        console.error('Erreur loadIncomingRequests:', error);
+        showToast('❌ Erreur de chargement des demandes', 'error');
+      }
+    );
 }
+
 function loadOutgoingRequests() {
   if (unsubscribeOutgoing) unsubscribeOutgoing();
-  unsubscribeOutgoing = db.collection('friendRequests').where('from', '==', currentUser.uid).where('status', '==', 'pending').onSnapshot((snapshot) => {
-    outgoingRequests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    renderFriendsContent();
-  });
+  unsubscribeOutgoing = db.collection('friendRequests')
+    .where('from', '==', currentUser.uid)
+    .where('status', '==', 'pending')
+    .onSnapshot(
+      (snapshot) => {
+        outgoingRequests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderFriendsContent();
+      },
+      (error) => {
+        console.error('Erreur loadOutgoingRequests:', error);
+      }
+    );
 }
+
 function loadFriends() {
   if (unsubscribeFriends) unsubscribeFriends();
-  unsubscribeFriends = db.collection('users').doc(currentUser.uid).onSnapshot(async (doc) => {
-    if (!doc.exists) return;
-    const data = doc.data();
-    const newFriends = data.friends || [];
-    const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
-    myFriends = newFriends;
-    await loadFriendsProfiles();
-    if (changed) loadAllNotes();
-  });
+  unsubscribeFriends = db.collection('users').doc(currentUser.uid)
+    .onSnapshot(async (doc) => {
+      if (!doc.exists) return;
+      const data = doc.data();
+      const newFriends = data.friends || [];
+      const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
+      myFriends = newFriends;
+      await loadFriendsProfiles();
+      if (changed) loadAllNotes();
+    });
 }
+
 async function loadFriendsProfiles() {
   friendsProfiles = {};
-  if (myFriends.length === 0) { renderFriendsContent(); return; }
+  if (myFriends.length === 0) {
+    renderFriendsContent();
+    return;
+  }
   try {
     const chunks = [];
-    for (let i = 0; i < myFriends.length; i += 10) chunks.push(myFriends.slice(i, i + 10));
-    for (const chunk of chunks) {
-      const snap = await db.collection('users').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
-      snap.forEach(doc => { friendsProfiles[doc.id] = { uid: doc.id, ...doc.data() }; });
+    for (let i = 0; i < myFriends.length; i += 10) {
+      chunks.push(myFriends.slice(i, i + 10));
     }
-  } catch (err) {}
+    for (const chunk of chunks) {
+      const snap = await db.collection('users')
+        .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+        .get();
+      snap.forEach(doc => {
+        friendsProfiles[doc.id] = { uid: doc.id, ...doc.data() };
+      });
+    }
+  } catch (err) {
+    console.error('Erreur loadFriendsProfiles:', err);
+  }
   renderFriendsContent();
 }
+
 async function refreshFriendsData() {
   if (!currentUser) return;
   try {
@@ -1260,113 +1295,386 @@ async function refreshFriendsData() {
       await loadFriendsProfiles();
       if (changed) loadAllNotes();
     }
-    const requestsSnapshot = await db.collection('friendRequests').where('to', '==', currentUser.uid).where('status', '==', 'pending').get({ source: 'server' });
+    const requestsSnapshot = await db.collection('friendRequests')
+      .where('to', '==', currentUser.uid)
+      .where('status', '==', 'pending')
+      .get({ source: 'server' });
     incomingRequests = requestsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const sentSnapshot = await db.collection('friendRequests').where('from', '==', currentUser.uid).where('status', '==', 'pending').get({ source: 'server' });
+
+    const sentSnapshot = await db.collection('friendRequests')
+      .where('from', '==', currentUser.uid)
+      .where('status', '==', 'pending')
+      .get({ source: 'server' });
     outgoingRequests = sentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    updateFriendBadge(); renderFriendsContent();
-  } catch (err) {}
+
+    updateFriendBadge();
+    renderFriendsContent();
+  } catch (err) {
+    console.error('Erreur refreshFriendsData:', err);
+  }
 }
+
 async function sendFriendRequest() {
   const input = document.getElementById('friendUsernameInput');
   const username = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
-  if (username.length < 3) { showToast('⚠️ Pseudo invalide', 'error'); return; }
-  if (myProfile && username === myProfile.username) { showToast('⚠️ Tu ne peux pas t\'ajouter toi-même !', 'error'); return; }
+
+  if (username.length < 3) {
+    showToast('⚠️ Pseudo trop court (min 3 caractères)', 'error');
+    return;
+  }
+
+  if (!myProfile) {
+    showToast('⚠️ Profil en cours de chargement...', 'info');
+    return;
+  }
+
+  if (!myProfile.username) {
+    showToast('⚠️ Définis d\'abord TON pseudo dans ton profil !', 'error');
+    openEditProfileFromMenu();
+    return;
+  }
+
+  if (username === myProfile.username) {
+    showToast('⚠️ Tu ne peux pas t\'ajouter toi-même !', 'error');
+    return;
+  }
+
+  input.disabled = true;
+
   try {
-    const usersSnapshot = await db.collection('users').where('username', '==', username).limit(1).get({ source: 'server' });
-    if (usersSnapshot.empty) { showToast('❌ Aucun utilisateur avec ce pseudo', 'error'); return; }
+    // Trouver l'utilisateur cible par pseudo
+    const usersSnapshot = await db.collection('users')
+      .where('username', '==', username)
+      .limit(1)
+      .get({ source: 'server' });
+
+    if (usersSnapshot.empty) {
+      showToast('❌ Aucun utilisateur avec ce pseudo', 'error');
+      input.disabled = false;
+      return;
+    }
+
     const targetUid = usersSnapshot.docs[0].id;
-    if (myFriends.includes(targetUid)) { showToast('ℹ️ Vous êtes déjà amis', 'info'); return; }
-    const existing = await db.collection('friendRequests').where('from', '==', currentUser.uid).where('to', '==', targetUid).where('status', '==', 'pending').get({ source: 'server' });
-    if (!existing.empty) { showToast('ℹ️ Demande déjà envoyée', 'info'); return; }
-    await db.collection('friendRequests').add({ from: currentUser.uid, to: targetUid, fromUsername: myProfile.username || '', toUsername: username, status: 'pending', createdAt: Date.now() });
+    const targetProfile = usersSnapshot.docs[0].data();
+
+    // Vérifier qu'on n'est pas déjà amis
+    if (myFriends.includes(targetUid)) {
+      showToast('ℹ️ Vous êtes déjà amis', 'info');
+      input.disabled = false;
+      return;
+    }
+
+    // Vérifier s'il y a déjà une demande (envoyée ou reçue)
+    const existingSent = await db.collection('friendRequests')
+      .where('from', '==', currentUser.uid)
+      .where('to', '==', targetUid)
+      .where('status', '==', 'pending')
+      .get({ source: 'server' });
+
+    if (!existingSent.empty) {
+      showToast('ℹ️ Demande déjà envoyée à @' + username, 'info');
+      input.disabled = false;
+      return;
+    }
+
+    // Vérifier si l'autre nous a déjà envoyé une demande
+    const existingReceived = await db.collection('friendRequests')
+      .where('from', '==', targetUid)
+      .where('to', '==', currentUser.uid)
+      .where('status', '==', 'pending')
+      .get({ source: 'server' });
+
+    if (!existingReceived.empty) {
+      // Il nous a déjà demandé → accepter direct
+      await acceptFriendRequest(existingReceived.docs[0].id);
+      input.disabled = false;
+      return;
+    }
+
+    // Créer la demande avec un ID déterministe
+    const requestId = `${currentUser.uid}_${targetUid}`;
+    await db.collection('friendRequests').doc(requestId).set({
+      from: currentUser.uid,
+      to: targetUid,
+      fromUsername: myProfile.username || '',
+      toUsername: username,
+      fromPhotoURL: myProfile.photoURL || '',
+      status: 'pending',
+      createdAt: Date.now()
+    });
+
     input.value = '';
     showToast(`📨 Demande envoyée à @${username} !`, 'success');
-  } catch (err) { showToast('❌ Erreur: ' + err.message, 'error'); }
+  } catch (err) {
+    console.error('Erreur sendFriendRequest:', err);
+    showToast('❌ Erreur: ' + err.message, 'error');
+  } finally {
+    input.disabled = false;
+  }
 }
+
 async function acceptFriendRequest(requestId) {
   try {
     const reqDoc = await db.collection('friendRequests').doc(requestId).get();
-    if (!reqDoc.exists) return;
+    if (!reqDoc.exists) {
+      showToast('❌ Demande introuvable', 'error');
+      return;
+    }
     const req = reqDoc.data();
+
+    if (req.to !== currentUser.uid) {
+      showToast('❌ Cette demande ne t\'est pas destinée', 'error');
+      return;
+    }
+
     const myRef = db.collection('users').doc(currentUser.uid);
     const theirRef = db.collection('users').doc(req.from);
-    const myDoc = await myRef.get(); const theirDoc = await theirRef.get();
-    const myFriendsList = myDoc.data().friends || []; const theirFriendsList = theirDoc.data().friends || [];
-    if (!myFriendsList.includes(req.from)) { myFriendsList.push(req.from); await myRef.update({ friends: myFriendsList }); }
-    if (!theirFriendsList.includes(currentUser.uid)) { theirFriendsList.push(currentUser.uid); await theirRef.update({ friends: theirFriendsList }); }
-    await db.collection('friendRequests').doc(requestId).update({ status: 'accepted', acceptedAt: Date.now() });
+
+    const [myDoc, theirDoc] = await Promise.all([
+      myRef.get(),
+      theirRef.get()
+    ]);
+
+    const myFriendsList = myDoc.data().friends || [];
+    const theirFriendsList = theirDoc.data().friends || [];
+
+    if (!myFriendsList.includes(req.from)) myFriendsList.push(req.from);
+    if (!theirFriendsList.includes(currentUser.uid)) theirFriendsList.push(currentUser.uid);
+
+    // Batch : update les deux profils + la demande en 1 fois
+    const batch = db.batch();
+    batch.update(myRef, { friends: myFriendsList });
+    batch.update(theirRef, { friends: theirFriendsList });
+    batch.update(db.collection('friendRequests').doc(requestId), {
+      status: 'accepted',
+      acceptedAt: Date.now()
+    });
+    await batch.commit();
+
     incomingRequests = incomingRequests.filter(r => r.id !== requestId);
-    updateFriendBadge(); renderFriendsContent();
+    updateFriendBadge();
+    renderFriendsContent();
     setTimeout(refreshFriendsData, 500);
+
     showToast('✅ Ami ajouté !', 'success');
-  } catch (err) { showToast('❌ Erreur: ' + err.message, 'error'); }
+  } catch (err) {
+    console.error('Erreur acceptFriendRequest:', err);
+    showToast('❌ Erreur: ' + err.message, 'error');
+  }
 }
+
 async function declineFriendRequest(requestId) {
   if (!confirm('Refuser cette demande ?')) return;
-  try { await db.collection('friendRequests').doc(requestId).update({ status: 'declined' }); incomingRequests = incomingRequests.filter(r => r.id !== requestId); updateFriendBadge(); renderFriendsContent(); showToast('Demande refusée', 'info'); } catch (err) {}
+  try {
+    await db.collection('friendRequests').doc(requestId).update({ status: 'declined' });
+    incomingRequests = incomingRequests.filter(r => r.id !== requestId);
+    updateFriendBadge();
+    renderFriendsContent();
+    showToast('Demande refusée', 'info');
+  } catch (err) {
+    console.error('Erreur declineFriendRequest:', err);
+    showToast('❌ Erreur', 'error');
+  }
 }
+
 async function removeFriend(friendUid) {
   const friend = friendsProfiles[friendUid];
   const name = friend ? (friend.username ? '@' + friend.username : friend.displayName) : 'cet ami';
   if (!confirm(`Retirer ${name} de tes amis ?`)) return;
+
   try {
-    const myRef = db.collection('users').doc(currentUser.uid); const theirRef = db.collection('users').doc(friendUid);
-    const myDoc = await myRef.get(); const theirDoc = await theirRef.get();
+    const myRef = db.collection('users').doc(currentUser.uid);
+    const theirRef = db.collection('users').doc(friendUid);
+
+    const [myDoc, theirDoc] = await Promise.all([
+      myRef.get(),
+      theirRef.get()
+    ]);
+
     const myFriendsList = (myDoc.data().friends || []).filter(uid => uid !== friendUid);
     const theirFriendsList = (theirDoc.data().friends || []).filter(uid => uid !== currentUser.uid);
-    await myRef.update({ friends: myFriendsList }); await theirRef.update({ friends: theirFriendsList });
-    const requests = await db.collection('friendRequests').where('status', '==', 'accepted').get();
+
     const batch = db.batch();
-    requests.forEach(doc => { const d = doc.data(); if ((d.from === currentUser.uid && d.to === friendUid) || (d.from === friendUid && d.to === currentUser.uid)) batch.delete(doc.ref); });
+    batch.update(myRef, { friends: myFriendsList });
+    batch.update(theirRef, { friends: theirFriendsList });
+
+    // Supprimer les demandes acceptées
+    const requests1 = await db.collection('friendRequests')
+      .where('from', '==', currentUser.uid)
+      .where('to', '==', friendUid)
+      .get();
+    const requests2 = await db.collection('friendRequests')
+      .where('from', '==', friendUid)
+      .where('to', '==', currentUser.uid)
+      .get();
+
+    requests1.forEach(doc => batch.delete(doc.ref));
+    requests2.forEach(doc => batch.delete(doc.ref));
+
     await batch.commit();
+
     showToast('🗑️ Ami retiré', 'info');
-  } catch (err) { showToast('❌ Erreur: ' + err.message, 'error'); }
+  } catch (err) {
+    console.error('Erreur removeFriend:', err);
+    showToast('❌ Erreur: ' + err.message, 'error');
+  }
 }
-function openFriendsModal() { document.getElementById('friendsModalOverlay').classList.add('open'); renderFriendsContent(); refreshFriendsData(); }
-function closeFriendsModal() { document.getElementById('friendsModalOverlay').classList.remove('open'); }
-function switchFriendsTab(tab) { document.querySelectorAll('.friends-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab)); renderFriendsContent(tab); }
+
+function openFriendsModal() {
+  document.getElementById('friendsModalOverlay').classList.add('open');
+  renderFriendsContent();
+  refreshFriendsData();
+}
+
+function closeFriendsModal() {
+  document.getElementById('friendsModalOverlay').classList.remove('open');
+}
+
+function switchFriendsTab(tab) {
+  document.querySelectorAll('.friends-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  renderFriendsContent(tab);
+}
+
 function updateFriendBadge() {
   const badge = document.getElementById('friendBadge');
   const count = incomingRequests.length;
-  if (count > 0) { badge.textContent = count; badge.style.display = 'block'; } else badge.style.display = 'none';
+
+  if (badge) {
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
   const tabBadge = document.getElementById('tabRequestsCount');
-  if (tabBadge) { if (count > 0) { tabBadge.textContent = count; tabBadge.style.display = 'inline-block'; } else tabBadge.style.display = 'none'; }
+  if (tabBadge) {
+    if (count > 0) {
+      tabBadge.textContent = count;
+      tabBadge.style.display = 'inline-block';
+    } else {
+      tabBadge.style.display = 'none';
+    }
+  }
+
   const tabFriendsBadge = document.getElementById('tabFriendsCount');
-  if (tabFriendsBadge) { if (myFriends.length > 0) { tabFriendsBadge.textContent = myFriends.length; tabFriendsBadge.style.display = 'inline-block'; } else tabFriendsBadge.style.display = 'none'; }
+  if (tabFriendsBadge) {
+    if (myFriends.length > 0) {
+      tabFriendsBadge.textContent = myFriends.length;
+      tabFriendsBadge.style.display = 'inline-block';
+    } else {
+      tabFriendsBadge.style.display = 'none';
+    }
+  }
 }
+
 function renderFriendsContent(tab = null) {
-  if (!tab) { const activeTab = document.querySelector('.friends-tab.active'); tab = activeTab ? activeTab.dataset.tab : 'friends'; }
-  const content = document.getElementById('friendsContent'); if (!content) return;
+  if (!tab) {
+    const activeTab = document.querySelector('.friends-tab.active');
+    tab = activeTab ? activeTab.dataset.tab : 'friends';
+  }
+
+  const content = document.getElementById('friendsContent');
+  if (!content) return;
+
   updateFriendBadge();
+
   if (tab === 'friends') {
-    if (myFriends.length === 0) { content.innerHTML = `<div class="empty-state">👥 Aucun ami pour l'instant.<br>Ajoute-en avec leur pseudo !</div>`; return; }
+    if (myFriends.length === 0) {
+      content.innerHTML = `<div class="empty-state">👥 Aucun ami pour l'instant.<br>Ajoute-en avec leur pseudo !</div>`;
+      return;
+    }
+
     content.innerHTML = myFriends.map(uid => {
-      const profile = friendsProfiles[uid]; if (!profile) return '';
+      const profile = friendsProfiles[uid];
+      if (!profile) return `<div class="friend-card" style="opacity: 0.5;"><div class="friend-info"><div class="friend-name">Chargement...</div></div></div>`;
       const avatar = cloudinaryThumb(profile.photoURL, 100) || 'https://www.gravatar.com/avatar/?d=mp';
       const name = profile.displayName || 'Utilisateur';
       const username = profile.username ? '@' + profile.username : '';
       const bio = profile.bio || 'Aucune bio';
-      return `<div class="friend-card" onclick="viewFriendProfile('${uid}')"><img class="friend-avatar" src="${avatar}" alt="${escapeHtml(name)}" loading="lazy" /><div class="friend-info"><div class="friend-name">${escapeHtml(name)}</div>${username ? `<div class="friend-username">${escapeHtml(username)}</div>` : ''}<div class="friend-bio-preview">${escapeHtml(bio)}</div></div><div class="friend-actions" onclick="event.stopPropagation()"><button class="friend-btn danger" onclick="removeFriend('${uid}')" title="Retirer">🗑️</button></div></div>`;
+      return `
+        <div class="friend-card" onclick="viewFriendProfile('${uid}')">
+          <img class="friend-avatar" src="${avatar}" alt="${escapeHtml(name)}" loading="lazy" />
+          <div class="friend-info">
+            <div class="friend-name">${escapeHtml(name)}</div>
+            ${username ? `<div class="friend-username">${escapeHtml(username)}</div>` : ''}
+            <div class="friend-bio-preview">${escapeHtml(bio)}</div>
+          </div>
+          <div class="friend-actions" onclick="event.stopPropagation()">
+            <button class="friend-btn danger" onclick="removeFriend('${uid}')" title="Retirer">🗑️</button>
+          </div>
+        </div>
+      `;
     }).join('');
+
   } else if (tab === 'requests') {
-    if (incomingRequests.length === 0) { content.innerHTML = `<div class="empty-state">📨 Aucune demande d'ami en attente.</div>`; return; }
+    if (incomingRequests.length === 0) {
+      content.innerHTML = `<div class="empty-state">📨 Aucune demande d'ami en attente.</div>`;
+      return;
+    }
+
     content.innerHTML = incomingRequests.map(req => {
       const username = req.fromUsername || '?';
-      return `<div class="friend-card" style="cursor: default;"><div class="friend-avatar" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(59,130,246,0.15);">👤</div><div class="friend-info"><div class="friend-name">@${escapeHtml(username)}</div><div class="friend-bio-preview">Veut être ton ami</div></div><div class="friend-actions"><button class="friend-btn accept" onclick="acceptFriendRequest('${req.id}')">✓ Accepter</button><button class="friend-btn danger" onclick="declineFriendRequest('${req.id}')">✕</button></div></div>`;
+      const avatar = req.fromPhotoURL ? cloudinaryThumb(req.fromPhotoURL, 100) : 'https://www.gravatar.com/avatar/?d=mp';
+      return `
+        <div class="friend-card" style="cursor: default;">
+          <img class="friend-avatar" src="${avatar}" alt="@${escapeHtml(username)}" />
+          <div class="friend-info">
+            <div class="friend-name">@${escapeHtml(username)}</div>
+            <div class="friend-bio-preview">Veut être ton ami</div>
+          </div>
+          <div class="friend-actions">
+            <button class="friend-btn accept" onclick="acceptFriendRequest('${req.id}')">✓ Accepter</button>
+            <button class="friend-btn danger" onclick="declineFriendRequest('${req.id}')">✕</button>
+          </div>
+        </div>
+      `;
     }).join('');
+
   } else if (tab === 'sent') {
-    if (outgoingRequests.length === 0) { content.innerHTML = `<div class="empty-state">📤 Aucune demande envoyée en attente.</div>`; return; }
+    if (outgoingRequests.length === 0) {
+      content.innerHTML = `<div class="empty-state">📤 Aucune demande envoyée en attente.</div>`;
+      return;
+    }
+
     content.innerHTML = outgoingRequests.map(req => {
       const username = req.toUsername || '?';
-      return `<div class="friend-card" style="cursor: default;"><div class="friend-avatar" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(249,115,22,0.15);">⏳</div><div class="friend-info"><div class="friend-name">@${escapeHtml(username)}</div><div class="friend-bio-preview">En attente de réponse…</div></div><div class="friend-actions"><button class="friend-btn danger" onclick="cancelFriendRequest('${req.id}')">Annuler</button></div></div>`;
+      return `
+        <div class="friend-card" style="cursor: default;">
+          <div class="friend-avatar" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(249,115,22,0.15);">⏳</div>
+          <div class="friend-info">
+            <div class="friend-name">@${escapeHtml(username)}</div>
+            <div class="friend-bio-preview">En attente de réponse…</div>
+          </div>
+          <div class="friend-actions">
+            <button class="friend-btn danger" onclick="cancelFriendRequest('${req.id}')">Annuler</button>
+          </div>
+        </div>
+      `;
     }).join('');
   }
 }
-function viewFriendProfile(uid) { const profile = friendsProfiles[uid]; if (!profile) return; showViewProfile(profile, false); }
+
+function viewFriendProfile(uid) {
+  const profile = friendsProfiles[uid];
+  if (!profile) return;
+  showViewProfile(profile, false);
+}
+
 async function cancelFriendRequest(requestId) {
   if (!confirm('Annuler cette demande ?')) return;
-  try { await db.collection('friendRequests').doc(requestId).update({ status: 'cancelled' }); outgoingRequests = outgoingRequests.filter(r => r.id !== requestId); renderFriendsContent(); showToast('Demande annulée', 'info'); } catch (err) {}
+  try {
+    await db.collection('friendRequests').doc(requestId).update({ status: 'cancelled' });
+    outgoingRequests = outgoingRequests.filter(r => r.id !== requestId);
+    renderFriendsContent();
+    showToast('Demande annulée', 'info');
+  } catch (err) {
+    console.error('Erreur cancelFriendRequest:', err);
+    showToast('❌ Erreur', 'error');
+  }
 }
 
 /* ☁️ NOTES */
