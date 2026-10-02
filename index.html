@@ -1365,6 +1365,53 @@
   }
   .leaflet-popup-tip { background: var(--bg-modal); }
   .leaflet-popup-content { margin: 0; }
+    /* 📱 Popup responsive sur mobile */
+  @media (max-width: 768px) {
+    .leaflet-popup-content-wrapper {
+      max-width: calc(100vw - 30px) !important;
+    }
+    .leaflet-popup-content {
+      width: auto !important;
+      max-width: calc(100vw - 30px) !important;
+    }
+    .popup-photo {
+      max-width: 100% !important;
+      height: auto !important;
+      max-height: 200px !important;
+    }
+    .popup-body {
+      padding: 12px 14px !important;
+    }
+    .popup-place {
+      font-size: 0.92rem !important;
+    }
+    .popup-text {
+      font-size: 0.85rem !important;
+    }
+    .reactions-bar {
+      gap: 5px !important;
+    }
+    .reaction-btn {
+      padding: 3px 8px !important;
+      font-size: 0.78rem !important;
+    }
+    .comments-section {
+      max-height: 200px !important;
+      overflow-y: auto !important;
+    }
+    .comment-input-wrapper input {
+      font-size: 0.78rem !important;
+      padding: 7px 10px !important;
+    }
+    .comment-send {
+      width: 32px !important;
+      height: 32px !important;
+      font-size: 0.9rem !important;
+    }
+    .leaflet-popup-tip-container {
+      margin-top: -1px;
+    }
+  }
 
   .popup-photo {
     width: 100%;
@@ -4292,6 +4339,12 @@ function initMap() {
   map.addControl(new RecenterControl());
 
   map.on('click', (e) => {
+    // Fermer la popup ouverte si on clique sur la carte
+    if (map._popup) {
+      map.closePopup();
+      return; // Premier clic = fermer la popup
+    }
+    // Deuxième clic = ouvrir le modal d'ajout
     pendingLatLng = { lat: e.latlng.lat, lng: e.latlng.lng };
     pendingSource = 'manual';
     openAddModal();
@@ -4387,7 +4440,7 @@ function createTempMarkerIcon() {
 function addMarkerToMap(note) {
   const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) })
     .addTo(map)
-    .bindPopup(buildPopupContent(note), { maxWidth: 360, minWidth: 300 });
+    .bindPopup(buildPopupContent(note), { maxWidth: window.innerWidth < 500 ? window.innerWidth - 40 : 360, minWidth: 250, autoPanPadding: [20, 20] });
   markers[note.id] = marker;
   return marker;
 }
