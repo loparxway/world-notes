@@ -35,18 +35,40 @@
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
   }
 
+  :root[data-theme="light"] {
+    --bg-primary: #f1f5f9;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e2e8f0;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-hover: rgba(241, 245, 249, 0.95);
+    --bg-overlay: rgba(255, 255, 255, 0.9);
+    --bg-modal: #ffffff;
+    --bg-input: #f8fafc;
+    --bg-header: rgba(255, 255, 255, 0.9);
+    --text-primary: #0f172a;
+    --text-secondary: #1e293b;
+    --text-muted: #475569;
+    --text-faint: #64748b;
+    --border-color: rgba(15, 23, 42, 0.15);
+    --border-subtle: rgba(15, 23, 42, 0.08);
+    --border-hover: rgba(15, 23, 42, 0.25);
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
+    --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.15);
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0f172a;
-    color: #e2e8f0;
+    background: var(--bg-primary);
+    color: var(--text-primary);
     overflow-x: hidden;
     min-height: 100vh;
   }
 
   /* =====================================================
-     🌍 LANDING PAGE (avant connexion)
+     🌍 LANDING PAGE
      ===================================================== */
 
   #landingScreen {
@@ -182,10 +204,7 @@
   .btn-landing-primary:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 32px rgba(249, 115, 22, 0.6);
-    filter: brightness(1.08);
   }
-
-  .btn-landing-primary svg { width: 24px; height: 24px; }
 
   .landing-footer {
     margin-top: 60px;
@@ -201,15 +220,12 @@
     text-decoration: none;
     cursor: pointer;
     margin: 0 8px;
-    transition: all 0.2s;
   }
 
-  .landing-footer a:hover {
-    text-decoration: underline;
-  }
+  .landing-footer a:hover { text-decoration: underline; }
 
   /* =====================================================
-     📄 MODAL LÉGAL (Conditions / Confidentialité)
+     📄 MODAL LÉGAL
      ===================================================== */
 
   .legal-modal {
@@ -236,12 +252,6 @@
     max-height: 85vh;
     overflow-y: auto;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
-    animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.92) translateY(20px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
   }
 
   .legal-modal-header {
@@ -266,10 +276,9 @@
     cursor: pointer;
     padding: 0;
     line-height: 1;
-    transition: all 0.2s;
   }
 
-  .legal-modal-close:hover { color: #ef4444; transform: rotate(90deg); }
+  .legal-modal-close:hover { color: #ef4444; }
 
   .legal-content {
     color: #cbd5e1;
@@ -286,26 +295,9 @@
   }
 
   .legal-content h3:first-child { margin-top: 0; }
-
-  .legal-content p {
-    margin-bottom: 12px;
-  }
-
-  .legal-content ul {
-    margin-left: 20px;
-    margin-bottom: 12px;
-  }
-
-  .legal-content li {
-    margin-bottom: 6px;
-  }
-
-  .legal-content a {
-    color: #f97316;
-    text-decoration: none;
-  }
-
-  .legal-content a:hover { text-decoration: underline; }
+  .legal-content p { margin-bottom: 12px; }
+  .legal-content ul { margin-left: 20px; margin-bottom: 12px; }
+  .legal-content li { margin-bottom: 6px; }
 
   .legal-modal-footer {
     margin-top: 24px;
@@ -323,16 +315,10 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.25s;
-  }
-
-  .legal-modal-footer button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
   }
 
   /* =====================================================
-     🔐 ÉCRAN DE LOGIN (après avoir cliqué sur "Commencer")
+     🔐 LOGIN
      ===================================================== */
 
   #loginScreen {
@@ -371,7 +357,6 @@
     font-size: 1.8rem;
     margin-bottom: 8px;
     color: white;
-    letter-spacing: -0.5px;
   }
 
   .login-card p {
@@ -422,22 +407,23 @@
     color: #f97316;
     font-size: 0.85rem;
     cursor: pointer;
-    text-decoration: none;
     margin-left: auto;
     margin-right: auto;
-    transition: all 0.2s;
   }
 
   .login-back:hover { text-decoration: underline; }
 
-  /* Le reste du CSS est identique au site principal */
+  /* =====================================================
+     🗺️ APP
+     ===================================================== */
+
   header {
     position: fixed;
     top: 0; left: 0; right: 0;
     height: 64px;
-    background: rgba(15, 23, 42, 0.85);
+    background: var(--bg-header);
     backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -453,7 +439,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
 
   .logo span.globe {
@@ -487,8 +473,8 @@
 
   .btn-ghost {
     background: rgba(148, 163, 184, 0.15);
-    color: #e2e8f0;
-    border: 1px solid rgba(148, 163, 184, 0.3);
+    color: var(--text-primary);
+    border: 1px solid var(--border-hover);
   }
   .btn-ghost:hover {
     background: rgba(148, 163, 184, 0.25);
@@ -534,12 +520,12 @@
     position: absolute;
     top: 50px;
     right: 0;
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 8px;
     min-width: 240px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow-lg);
     display: none;
     z-index: 10;
   }
@@ -548,14 +534,14 @@
 
   .user-info {
     padding: 10px 12px;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    border-bottom: 1px solid var(--border-subtle);
     margin-bottom: 6px;
   }
 
   .user-name {
     font-weight: 700;
     font-size: 0.9rem;
-    color: #e2e8f0;
+    color: var(--text-primary);
     margin-bottom: 2px;
   }
 
@@ -578,7 +564,7 @@
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.85rem;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     transition: all 0.2s;
     border: none;
     background: none;
@@ -602,7 +588,7 @@
     top: calc(64px + env(safe-area-inset-top, 0));
     left: 0; right: 0; bottom: 0;
     z-index: 1;
-    background: #0b1220;
+    background: var(--bg-tertiary);
   }
 
   .sync-indicator {
@@ -610,13 +596,13 @@
     top: calc(76px + env(safe-area-inset-top, 0));
     left: 50%;
     transform: translateX(-50%) translateY(-100px);
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: 20px;
     padding: 8px 18px;
     font-size: 0.8rem;
-    color: #cbd5e1;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-md);
     z-index: 999;
     transition: transform 0.35s;
     display: flex;
@@ -643,20 +629,20 @@
     position: fixed;
     bottom: 24px;
     left: 24px;
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 6px;
     display: flex;
     gap: 4px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow-lg);
     z-index: 500;
   }
 
   .filter-btn {
     background: transparent;
     border: none;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.78rem;
     font-weight: 600;
     padding: 8px 12px;
@@ -686,9 +672,9 @@
     top: calc(64px + env(safe-area-inset-top, 0));
     right: 0; bottom: 0;
     width: 340px;
-    background: rgba(15, 23, 42, 0.95);
+    background: var(--bg-overlay);
     backdrop-filter: blur(16px);
-    border-left: 1px solid rgba(148, 163, 184, 0.2);
+    border-left: 1px solid var(--border-color);
     transform: translateX(100%);
     transition: transform 0.35s;
     z-index: 999;
@@ -699,17 +685,17 @@
 
   .sidebar-header {
     padding: 20px;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    border-bottom: 1px solid var(--border-subtle);
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .sidebar-header h2 { font-size: 1.1rem; color: #e2e8f0; }
+  .sidebar-header h2 { font-size: 1.1rem; color: var(--text-primary); }
 
   .close-sidebar {
     background: none;
     border: none;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0;
@@ -718,8 +704,8 @@
   .notes-list { flex: 1; overflow-y: auto; padding: 12px; }
 
   .note-card {
-    background: rgba(30, 41, 59, 0.7);
-    border: 1px solid rgba(148, 163, 184, 0.15);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
     border-radius: 12px;
     margin-bottom: 10px;
     cursor: pointer;
@@ -743,10 +729,10 @@
   }
 
   .note-card:hover {
-    background: rgba(51, 65, 85, 0.8);
+    background: var(--bg-card-hover);
     border-color: rgba(249, 115, 22, 0.5);
     transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-md);
   }
   .note-card:hover::before { opacity: 1; }
 
@@ -775,14 +761,14 @@
 
   .note-card .text {
     font-size: 0.88rem;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     line-height: 1.4;
   }
 
   .note-card .meta {
     margin-top: 8px;
     font-size: 0.72rem;
-    color: #64748b;
+    color: var(--text-faint);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -797,7 +783,7 @@
     font-weight: 600;
     margin-top: 6px;
     padding-top: 6px;
-    border-top: 1px dashed rgba(148, 163, 184, 0.15);
+    border-top: 1px dashed var(--border-subtle);
   }
 
   .note-author img {
@@ -810,7 +796,7 @@
   .delete-note {
     background: none;
     border: none;
-    color: #64748b;
+    color: var(--text-faint);
     font-size: 1rem;
     cursor: pointer;
     padding: 2px 6px;
@@ -824,7 +810,7 @@
   .empty-state {
     text-align: center;
     padding: 40px 20px;
-    color: #64748b;
+    color: var(--text-faint);
     font-size: 0.9rem;
   }
 
@@ -842,24 +828,24 @@
   .modal-overlay.open { display: flex; }
 
   .modal {
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: 18px;
     padding: 28px;
     width: 100%;
     max-width: 500px;
     max-height: 92vh;
     overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow-lg);
   }
 
   .modal h2 {
     font-size: 1.3rem;
     margin-bottom: 6px;
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
   .modal .subtitle {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.85rem;
     margin-bottom: 20px;
   }
@@ -870,7 +856,7 @@
     display: block;
     font-size: 0.82rem;
     font-weight: 600;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -879,10 +865,10 @@
   input, textarea, select {
     width: 100%;
     padding: 12px 14px;
-    background: #0f172a;
-    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: var(--bg-input);
+    border: 1px solid var(--border-hover);
     border-radius: 10px;
-    color: #e2e8f0;
+    color: var(--text-primary);
     font-family: inherit;
     font-size: 0.95rem;
     outline: none;
@@ -907,8 +893,8 @@
     align-items: center;
     justify-content: center;
     font-size: 1.3rem;
-    border: 2px solid rgba(148, 163, 184, 0.3);
-    background: #0f172a;
+    border: 2px solid var(--border-hover);
+    background: var(--bg-input);
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.25s;
@@ -921,12 +907,12 @@
   }
 
   .photo-upload-zone {
-    border: 2px dashed rgba(148, 163, 184, 0.3);
+    border: 2px dashed var(--border-hover);
     border-radius: 12px;
     padding: 20px;
     text-align: center;
     cursor: pointer;
-    background: #0f172a;
+    background: var(--bg-input);
   }
   .photo-upload-zone:hover {
     border-color: #f97316;
@@ -937,7 +923,7 @@
 
   .photo-upload-text {
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: var(--text-muted);
   }
   .photo-upload-text b { color: #f97316; }
 
@@ -984,7 +970,7 @@
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8;
+    color: var(--text-muted);
   }
 
   .search-clear {
@@ -994,7 +980,7 @@
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #64748b;
+    color: var(--text-faint);
     font-size: 1.1rem;
     cursor: pointer;
     padding: 4px 8px;
@@ -1024,13 +1010,13 @@
     left: 0;
     right: 0;
     margin-top: 6px;
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: 10px;
     max-height: 260px;
     overflow-y: auto;
     z-index: 10;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow-lg);
     display: none;
   }
   .autocomplete-list.open { display: block; }
@@ -1038,13 +1024,13 @@
   .autocomplete-item {
     padding: 11px 14px;
     cursor: pointer;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    border-bottom: 1px solid var(--border-subtle);
     font-size: 0.88rem;
   }
   .autocomplete-item:hover { background: rgba(249, 115, 22, 0.15); }
-  .autocomplete-item .name { color: #e2e8f0; font-weight: 600; margin-bottom: 2px; }
+  .autocomplete-item .name { color: var(--text-primary); font-weight: 600; margin-bottom: 2px; }
   .autocomplete-item .details {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.78rem;
     white-space: nowrap;
     overflow: hidden;
@@ -1056,11 +1042,11 @@
     align-items: center;
     gap: 10px;
     padding: 12px;
-    background: #0f172a;
-    border: 1px dashed rgba(148, 163, 184, 0.3);
+    background: var(--bg-input);
+    border: 1px dashed var(--border-hover);
     border-radius: 10px;
     font-size: 0.82rem;
-    color: #94a3b8;
+    color: var(--text-muted);
   }
   .location-box.gps {
     border-color: rgba(34, 197, 94, 0.6);
@@ -1150,15 +1136,15 @@
   }
 
   .leaflet-popup-content-wrapper {
-    background: #1e293b;
-    color: #e2e8f0;
+    background: var(--bg-modal);
+    color: var(--text-primary);
     border-radius: 14px;
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
     padding: 0;
     overflow: hidden;
   }
-  .leaflet-popup-tip { background: #1e293b; }
+  .leaflet-popup-tip { background: var(--bg-modal); }
   .leaflet-popup-content { margin: 0; }
 
   .popup-photo {
@@ -1187,7 +1173,7 @@
 
   .popup-text {
     font-size: 0.9rem;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     line-height: 1.4;
     margin-bottom: 8px;
   }
@@ -1197,7 +1183,7 @@
     align-items: center;
     gap: 8px;
     padding: 8px 0;
-    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    border-top: 1px solid var(--border-subtle);
     margin-top: 8px;
     font-size: 0.78rem;
     color: #3b82f6;
@@ -1217,12 +1203,29 @@
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    border-top: 1px solid var(--border-subtle);
     padding-top: 10px;
     margin-top: 8px;
   }
 
-  .popup-meta { font-size: 0.72rem; color: #64748b; flex: 1; }
+  .popup-meta { font-size: 0.72rem; color: var(--text-faint); flex: 1; }
+
+  .popup-action-btn {
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .popup-action-btn:hover {
+    background: rgba(59, 130, 246, 0.9);
+    color: white;
+  }
 
   .popup-delete-btn {
     background: rgba(239, 68, 68, 0.12);
@@ -1230,9 +1233,10 @@
     color: #ef4444;
     font-size: 0.75rem;
     font-weight: 600;
-    padding: 6px 12px;
+    padding: 6px 10px;
     border-radius: 8px;
     cursor: pointer;
+    transition: all 0.25s;
   }
 
   .popup-delete-btn:hover {
@@ -1274,8 +1278,8 @@
   }
 
   .leaflet-control-recenter {
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-hover);
     border-radius: 10px;
     width: 40px;
     height: 40px;
@@ -1284,8 +1288,8 @@
     justify-content: center;
     cursor: pointer;
     font-size: 1.2rem;
-    color: #e2e8f0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-md);
     margin-bottom: 10px;
   }
 
@@ -1296,11 +1300,11 @@
     width: 360px;
     max-height: calc(100vh - 96px);
     overflow-y: auto;
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: 14px;
     padding: 22px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow-lg);
     z-index: 1500;
     display: none;
   }
@@ -1312,13 +1316,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
 
   .settings-panel h3 button {
     background: none;
     border: none;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 1.3rem;
     cursor: pointer;
   }
@@ -1326,7 +1330,7 @@
   .settings-panel label {
     font-size: 0.75rem;
     margin-bottom: 6px;
-    color: #cbd5e1;
+    color: var(--text-secondary);
   }
 
   .theme-choices {
@@ -1339,13 +1343,13 @@
   .theme-choice {
     padding: 12px 8px;
     border-radius: 10px;
-    border: 2px solid rgba(148, 163, 184, 0.3);
-    background: #0f172a;
+    border: 2px solid var(--border-hover);
+    background: var(--bg-input);
     cursor: pointer;
     text-align: center;
     font-size: 0.72rem;
     font-weight: 600;
-    color: #cbd5e1;
+    color: var(--text-secondary);
   }
   .theme-choice.active {
     border-color: #f97316;
@@ -1365,18 +1369,18 @@
   .backup-section {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    border-top: 1px solid var(--border-subtle);
   }
 
   .backup-section h4 {
     font-size: 0.85rem;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     margin-bottom: 4px;
   }
 
   .backup-section .description {
     font-size: 0.72rem;
-    color: #64748b;
+    color: var(--text-faint);
     margin-bottom: 12px;
   }
 
@@ -1406,7 +1410,7 @@
   .notes-count-info {
     margin-top: 12px;
     font-size: 0.7rem;
-    color: #64748b;
+    color: var(--text-faint);
     text-align: center;
     font-style: italic;
   }
@@ -1416,7 +1420,7 @@
     flex-direction: column;
     align-items: center;
     padding: 20px 0;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    border-bottom: 1px solid var(--border-subtle);
     margin-bottom: 20px;
     position: relative;
   }
@@ -1441,7 +1445,7 @@
     right: 0;
     background: linear-gradient(135deg, #f97316, #ea580c);
     color: white;
-    border: 3px solid #1e293b;
+    border: 3px solid var(--bg-modal);
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -1450,14 +1454,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
   }
-  .profile-avatar-edit:hover { transform: scale(1.1); }
 
   .profile-name {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #e2e8f0;
+    color: var(--text-primary);
     margin-bottom: 4px;
   }
 
@@ -1470,7 +1472,7 @@
 
   .profile-bio {
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     text-align: center;
     line-height: 1.4;
     max-width: 380px;
@@ -1482,7 +1484,7 @@
     align-items: center;
     gap: 6px;
     font-size: 0.8rem;
-    color: #64748b;
+    color: var(--text-faint);
     margin-top: 8px;
   }
 
@@ -1492,7 +1494,7 @@
     justify-content: center;
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    border-top: 1px solid var(--border-subtle);
     width: 100%;
   }
 
@@ -1506,7 +1508,7 @@
 
   .profile-stat .label {
     font-size: 0.7rem;
-    color: #64748b;
+    color: var(--text-faint);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -1536,8 +1538,8 @@
   }
 
   .friend-card {
-    background: #0f172a;
-    border: 1px solid rgba(148, 163, 184, 0.15);
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
     border-radius: 12px;
     padding: 14px;
     margin-bottom: 10px;
@@ -1549,7 +1551,7 @@
   }
 
   .friend-card:hover {
-    background: rgba(51, 65, 85, 0.8);
+    background: var(--bg-card-hover);
     border-color: rgba(59, 130, 246, 0.5);
     transform: translateY(-2px);
   }
@@ -1568,7 +1570,7 @@
   .friend-name {
     font-weight: 700;
     font-size: 0.95rem;
-    color: #e2e8f0;
+    color: var(--text-primary);
     margin-bottom: 2px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1584,7 +1586,7 @@
 
   .friend-bio-preview {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1626,7 +1628,7 @@
     display: flex;
     gap: 4px;
     margin-bottom: 16px;
-    background: #0f172a;
+    background: var(--bg-input);
     padding: 4px;
     border-radius: 10px;
   }
@@ -1635,7 +1637,7 @@
     flex: 1;
     background: transparent;
     border: none;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.75rem;
     font-weight: 600;
     padding: 8px 6px;
@@ -1648,8 +1650,9 @@
   }
 
   .friends-tab.active {
-    background: #1e293b;
+    background: var(--bg-modal);
     color: #3b82f6;
+    box-shadow: var(--shadow-sm);
   }
 
   .friends-tab .tab-badge {
@@ -1679,7 +1682,7 @@
     padding: 14px;
     margin-bottom: 16px;
     font-size: 0.82rem;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     display: flex;
     align-items: flex-start;
     gap: 10px;
@@ -1695,14 +1698,14 @@
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: #1e293b;
+    background: var(--bg-modal);
     border: 1px solid rgba(249, 115, 22, 0.4);
-    color: #e2e8f0;
+    color: var(--text-primary);
     padding: 12px 22px;
     border-radius: 12px;
     font-size: 0.9rem;
     font-weight: 500;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow-lg);
     transition: transform 0.35s;
     z-index: 3000;
     max-width: 90%;
@@ -1750,13 +1753,13 @@
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(15, 23, 42, 0.9);
+    background: var(--bg-overlay);
     backdrop-filter: blur(10px);
     padding: 10px 20px;
     border-radius: 30px;
     font-size: 0.82rem;
-    color: #94a3b8;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
     z-index: 500;
     pointer-events: none;
     transition: opacity 0.5s;
@@ -1798,7 +1801,7 @@
 <body>
 
 <!-- =====================================================
-     🌍 LANDING PAGE
+     🌍 LANDING
      ===================================================== -->
 <div id="landingScreen">
   <div class="landing-container">
@@ -1857,7 +1860,7 @@
 </div>
 
 <!-- =====================================================
-     🔐 ÉCRAN DE LOGIN
+     🔐 LOGIN
      ===================================================== -->
 <div id="loginScreen">
   <div class="login-card">
@@ -1875,7 +1878,7 @@
       Se connecter avec Google
     </button>
 
-    <p class="login-note" style="margin-top: 20px;">
+    <p class="login-note">
       En te connectant tu acceptes nos<br>
       <a style="color: #f97316; cursor: pointer; text-decoration: underline;" onclick="openLegalModal('terms')">Conditions d'utilisation</a>
       et notre
@@ -1895,9 +1898,7 @@
       <h2 id="legalModalTitle">Titre</h2>
       <button class="legal-modal-close" onclick="closeLegalModal()">×</button>
     </div>
-    <div class="legal-content" id="legalModalContent">
-      <!-- Contenu injecté par JS -->
-    </div>
+    <div class="legal-content" id="legalModalContent"></div>
     <div class="legal-modal-footer">
       <button onclick="closeLegalModal()">J'ai compris</button>
     </div>
@@ -1905,7 +1906,7 @@
 </div>
 
 <!-- =====================================================
-     🌍 APP PRINCIPALE
+     🌍 APP
      ===================================================== -->
 <div id="app" style="display: none;">
 
@@ -2016,10 +2017,11 @@
     </div>
   </aside>
 
+  <!-- MODAL AJOUT / ÉDITION -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
-      <h2>📍 Nouveau souvenir</h2>
-      <p class="subtitle">Cherche un lieu, clique sur la carte, ou utilise ton GPS.</p>
+      <h2 id="modalTitle">📍 Nouveau souvenir</h2>
+      <p class="subtitle" id="modalSubtitle">Cherche un lieu, clique sur la carte, ou utilise ton GPS.</p>
 
       <div class="form-group">
         <label>Catégorie</label>
@@ -2144,7 +2146,7 @@
           <button class="profile-avatar-edit" onclick="document.getElementById('profilePhotoInput').click()">📷</button>
         </div>
         <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;" />
-        <div style="font-size: 0.72rem; color: #64748b; margin-top: 6px;">
+        <div style="font-size: 0.72rem; color: var(--text-faint); margin-top: 6px;">
           Clique sur 📷 pour changer ta photo
         </div>
       </div>
@@ -2152,15 +2154,12 @@
       <div class="form-group">
         <label for="editUsername">Pseudo unique</label>
         <input type="text" id="editUsername" placeholder="ex: matheo_paris" maxlength="20" />
-        <div style="font-size: 0.7rem; color: #64748b; margin-top: 4px;">
-          Ton pseudo permet à tes amis de t'ajouter.
-        </div>
       </div>
 
       <div class="form-group">
         <label for="editBio">Bio</label>
         <textarea id="editBio" placeholder="Ex: Voyageur passionné ✈️" maxlength="150" style="min-height: 70px;"></textarea>
-        <div style="font-size: 0.7rem; color: #64748b; margin-top: 4px; text-align: right;">
+        <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px; text-align: right;">
           <span id="bioCounter">0</span> / 150
         </div>
       </div>
@@ -2241,7 +2240,7 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch((err) => console
 db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.warn('Persistance offline:', err.code));
 
 /* =========================================================
-   🌍 LANDING & LOGIN FLOW
+   🌍 LANDING
    ========================================================= */
 
 function goToLogin() {
@@ -2255,7 +2254,7 @@ function goToLanding() {
 }
 
 /* =========================================================
-   📄 CONTENU DES PAGES LÉGALES
+   📄 CONTENU LÉGAL
    ========================================================= */
 
 const LEGAL_CONTENT = {
@@ -2263,29 +2262,17 @@ const LEGAL_CONTENT = {
     title: '📄 Conditions d\'utilisation',
     content: `
       <h3>1. Acceptation des conditions</h3>
-      <p>
-        En créant un compte sur World Notes, tu acceptes les présentes conditions d'utilisation dans leur intégralité. Si tu n'acceptes pas ces conditions, tu ne dois pas utiliser le service.
-      </p>
-
+      <p>En créant un compte sur World Notes, tu acceptes les présentes conditions d'utilisation dans leur intégralité.</p>
       <h3>2. Description du service</h3>
-      <p>
-        World Notes est une application web gratuite permettant d'épingler des souvenirs géolocalisés sur une carte du monde et de les partager avec des amis. Le service est fourni "tel quel", sans garantie de disponibilité permanente.
-      </p>
-
+      <p>World Notes est une application web gratuite permettant d'épingler des souvenirs géolocalisés sur une carte du monde et de les partager avec des amis.</p>
       <h3>3. Compte utilisateur</h3>
-      <p>
-        Pour utiliser World Notes, tu dois te connecter via ton compte Google. Tu es seul responsable de la confidentialité de ton compte et de toutes les activités qui y sont liées.
-      </p>
+      <p>Pour utiliser World Notes, tu dois te connecter via ton compte Google. Tu es seul responsable de la confidentialité de ton compte.</p>
       <ul>
         <li>Tu dois avoir au moins 13 ans pour utiliser le service.</li>
-        <li>Tu t'engages à fournir des informations exactes.</li>
         <li>Un compte par personne est recommandé.</li>
       </ul>
-
       <h3>4. Contenu publié</h3>
-      <p>
-        Tu restes propriétaire de tous les contenus (textes, photos) que tu publies sur World Notes. En publiant, tu nous accordes une licence limitée pour stocker et afficher ces contenus aux personnes autorisées (toi et tes amis).
-      </p>
+      <p>Tu restes propriétaire de tous les contenus que tu publies sur World Notes. En publiant, tu nous accordes une licence limitée pour stocker et afficher ces contenus aux personnes autorisées.</p>
       <p>Il est interdit de publier :</p>
       <ul>
         <li>Du contenu illégal, violent, haineux ou discriminatoire</li>
@@ -2293,31 +2280,16 @@ const LEGAL_CONTENT = {
         <li>Du contenu portant atteinte aux droits d'autrui</li>
         <li>Du spam ou des publicités non sollicitées</li>
       </ul>
-
       <h3>5. Partage avec des amis</h3>
-      <p>
-        En ajoutant un ami, tu acceptes que cette personne voie tous tes souvenirs (lieux, anecdotes, photos). Tu peux retirer un ami à tout moment, ce qui supprime immédiatement son accès à tes contenus.
-      </p>
-
+      <p>En ajoutant un ami, tu acceptes que cette personne voie tous tes souvenirs. Tu peux retirer un ami à tout moment.</p>
       <h3>6. Responsabilité</h3>
-      <p>
-        World Notes est un projet personnel. Nous ne pouvons être tenus responsables :
-      </p>
+      <p>World Notes est un projet personnel. Nous ne pouvons être tenus responsables :</p>
       <ul>
         <li>De la perte de données (nous te recommandons d'exporter régulièrement)</li>
         <li>De l'indisponibilité temporaire du service</li>
-        <li>De l'utilisation faite par des tiers de tes données si tu les partages</li>
       </ul>
-
-      <h3>7. Modification des conditions</h3>
-      <p>
-        Ces conditions peuvent être modifiées à tout moment. Les utilisateurs seront informés des changements majeurs.
-      </p>
-
-      <h3>8. Suppression de compte</h3>
-      <p>
-        Tu peux supprimer ton compte à tout moment en nous contactant. Toutes tes données seront effacées des serveurs sous 30 jours.
-      </p>
+      <h3>7. Suppression de compte</h3>
+      <p>Tu peux supprimer ton compte à tout moment. Toutes tes données seront effacées des serveurs sous 30 jours.</p>
     `
   },
   privacy: {
@@ -2326,109 +2298,64 @@ const LEGAL_CONTENT = {
       <h3>1. Données collectées</h3>
       <p>World Notes collecte les données suivantes :</p>
       <ul>
-        <li><b>Identité Google</b> : nom, email, photo de profil (via Google Sign-In)</li>
+        <li><b>Identité Google</b> : nom, email, photo de profil</li>
         <li><b>Contenu</b> : lieux, anecdotes, photos que tu publies</li>
-        <li><b>Données techniques</b> : rien de plus que ce que Firebase enregistre par défaut</li>
       </ul>
-
       <h3>2. Utilisation des données</h3>
       <p>Tes données sont utilisées uniquement pour :</p>
       <ul>
         <li>Afficher tes souvenirs sur ta carte personnelle</li>
         <li>Permettre à tes amis de voir tes souvenirs (si tu les ajoutes)</li>
-        <li>Faire fonctionner le service</li>
       </ul>
-      <p><b>Nous ne vendons ni ne partageons jamais tes données à des fins publicitaires ou commerciales.</b></p>
-
+      <p><b>Nous ne vendons ni ne partageons jamais tes données à des fins publicitaires.</b></p>
       <h3>3. Stockage des données</h3>
-      <p>
-        Tes données sont stockées chez <b>Google Firebase</b> (Firestore), un service cloud sécurisé. Les serveurs sont situés en Europe.
-      </p>
-      <p>
-        <b>Important :</b> ton email est stocké mais n'est <b>jamais</b> visible par les autres utilisateurs. Seuls ton pseudo, ta photo et ta bio sont publics auprès de tes amis.
-      </p>
-
+      <p>Tes données sont stockées chez <b>Google Firebase</b> (Firestore). Les serveurs sont situés en Europe.</p>
+      <p><b>Important :</b> ton email est stocké mais n'est <b>jamais</b> visible par les autres utilisateurs.</p>
       <h3>4. Partage avec des tiers</h3>
-      <p>Nous n'utilisons aucun outil de tracking publicitaire. Les services tiers utilisés sont :</p>
+      <p>Les services tiers utilisés sont :</p>
       <ul>
         <li><b>Google Firebase</b> (authentification + base de données)</li>
         <li><b>Esri</b> (fond de carte satellite)</li>
         <li><b>Vercel</b> (hébergement du site)</li>
       </ul>
-
       <h3>5. Tes droits (RGPD)</h3>
-      <p>Conformément au Règlement Général sur la Protection des Données, tu as le droit de :</p>
+      <p>Conformément au RGPD, tu as le droit de :</p>
       <ul>
-        <li><b>Accéder</b> à toutes tes données (via le bouton "Exporter" dans les réglages)</li>
-        <li><b>Rectifier</b> tes données (en modifiant ton profil ou tes notes)</li>
-        <li><b>Supprimer</b> tes données (en supprimant tes notes ou en nous contactant pour supprimer ton compte)</li>
-        <li><b>Portabilité</b> : exporter tes données dans un fichier JSON</li>
+        <li><b>Accéder</b> à toutes tes données (via "Exporter")</li>
+        <li><b>Rectifier</b> tes données</li>
+        <li><b>Supprimer</b> tes données</li>
+        <li><b>Portabilité</b> : exporter en JSON</li>
       </ul>
-
-      <h3>6. Sécurité</h3>
-      <p>
-        Toutes les communications sont chiffrées (HTTPS). L'accès à ta base de données est protégé par des règles de sécurité Firestore : seul toi et tes amis pouvez voir tes notes.
-      </p>
-
-      <h3>7. Cookies</h3>
-      <p>
-        World Notes utilise uniquement des cookies techniques nécessaires à l'authentification Google et au stockage local de tes préférences (thème, dernière carte). <b>Aucun cookie publicitaire.</b>
-      </p>
-
-      <h3>8. Contact</h3>
-      <p>
-        Pour toute question concernant tes données personnelles ou pour exercer tes droits, tu peux nous contacter par email.
-      </p>
+      <h3>6. Cookies</h3>
+      <p>World Notes utilise uniquement des cookies techniques nécessaires à l'authentification. <b>Aucun cookie publicitaire.</b></p>
     `
   },
   about: {
     title: 'ℹ️ À propos de World Notes',
     content: `
       <h3>🌍 Le projet</h3>
-      <p>
-        World Notes est né de l'envie de créer un <b>carnet de voyage social</b> : un endroit simple où épingler ses souvenirs sur une carte du monde et les partager avec ses amis.
-      </p>
-      <p>
-        Plutôt qu'un énième réseau social, World Notes se concentre sur <b>l'essentiel</b> : tes lieux, tes anecdotes, tes photos. Rien de plus.
-      </p>
-
+      <p>World Notes est né de l'envie de créer un <b>carnet de voyage social</b> : un endroit simple où épingler ses souvenirs sur une carte du monde et les partager avec ses amis.</p>
       <h3>✨ Fonctionnalités clés</h3>
       <ul>
         <li>📍 Épingler des souvenirs sur une carte satellite</li>
-        <li>📸 Ajouter une photo à chaque note (compressée automatiquement)</li>
+        <li>📸 Ajouter une photo à chaque note</li>
         <li>🔎 Rechercher des lieux par nom</li>
-        <li>🎯 Se géolocaliser pour ajouter un souvenir à sa position</li>
+        <li>🎯 Se géolocaliser pour ajouter un souvenir</li>
         <li>👥 Système d'amis avec pseudos uniques</li>
         <li>🔀 Filtre : Tous / Moi / Amis</li>
         <li>💾 Export / Import de tes données</li>
         <li>🌙 Thème clair et sombre</li>
       </ul>
-
       <h3>🛠️ Technologie</h3>
-      <p>
-        World Notes est développé en <b>HTML, CSS et JavaScript</b> vanilla. Il utilise :
-      </p>
+      <p>World Notes utilise :</p>
       <ul>
         <li><b>Firebase</b> pour l'authentification et la base de données</li>
         <li><b>Leaflet</b> pour la carte interactive</li>
         <li><b>Esri</b> pour les tuiles satellite</li>
         <li><b>Vercel</b> pour l'hébergement</li>
       </ul>
-
-      <h3>🔒 Vie privée</h3>
-      <p>
-        Tes données t'appartiennent. Aucune publicité. Aucun tracking. Ton email n'est jamais visible par les autres utilisateurs. Tu peux exporter ou supprimer toutes tes données à tout moment.
-      </p>
-
-      <h3>💡 Un projet ouvert</h3>
-      <p>
-        World Notes est un <b>projet personnel</b>, mais il évolue constamment selon les idées et retours. Si tu as une suggestion, n'hésite pas à la partager !
-      </p>
-
       <h3>❤️ Remerciements</h3>
-      <p>
-        Merci aux communautés <b>OpenStreetMap</b>, <b>Firebase</b> et <b>Leaflet</b> qui rendent ce genre de projet possible avec des outils gratuits et ouverts.
-      </p>
+      <p>Merci aux communautés <b>OpenStreetMap</b>, <b>Firebase</b> et <b>Leaflet</b> qui rendent ce projet possible.</p>
     `
   }
 };
@@ -2472,6 +2399,7 @@ let myNotes = [];
 let friendNotes = [];
 let mapFilter = 'all';
 let pendingProfilePhoto = null;
+let editingNoteId = null;  // 🆕 Mode édition
 
 let unsubscribeProfile = null;
 let unsubscribeNotes = null;
@@ -2672,16 +2600,12 @@ function copyUsername() {
 
 function openMyProfile() {
   document.getElementById('userDropdown').classList.remove('open');
-  
   if (!myProfile) {
-    showToast('⏳ Chargement du profil...', 'info');
     setTimeout(() => {
       if (myProfile) showViewProfile(myProfile, true);
-      else showToast('❌ Profil non disponible', 'error');
     }, 1000);
     return;
   }
-  
   showViewProfile(myProfile, true);
 }
 
@@ -2697,7 +2621,6 @@ function openEditProfileFromModal() {
 
 function openEditProfile() {
   if (!myProfile) {
-    showToast('⏳ Chargement...', 'info');
     setTimeout(() => {
       if (myProfile) openEditProfile();
     }, 1000);
@@ -3357,7 +3280,7 @@ function recenterToMyLocation(btn) {
       if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.';
       showToast(msg, 'error');
     },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
   );
 }
 
@@ -3443,9 +3366,16 @@ function buildPopupContent(note) {
     `;
   }
 
-  const deleteBtn = isMine
-    ? `<button class="popup-delete-btn" onclick="deleteNoteFromPopup('${note.id}', event)">🗑️ Supprimer</button>`
-    : '';
+  // 🆕 Boutons d'action
+  let actionBtns = '';
+  if (isMine) {
+    actionBtns = `
+      <div style="display:flex;gap:6px;">
+        <button class="popup-action-btn" onclick="editNoteFromPopup('${note.id}', event)" title="Modifier">✏️</button>
+        <button class="popup-delete-btn" onclick="deleteNoteFromPopup('${note.id}', event)" title="Supprimer">🗑️</button>
+      </div>
+    `;
+  }
 
   return `
     ${photoHtml}
@@ -3458,7 +3388,7 @@ function buildPopupContent(note) {
       ${authorHtml}
       <div class="popup-footer">
         <span class="popup-meta">${date}</span>
-        ${deleteBtn}
+        ${actionBtns}
       </div>
     </div>
   `;
@@ -3568,6 +3498,52 @@ async function deleteNoteFromPopup(id, event) {
     map.closePopup();
     showToast('🗑️ Souvenir supprimé', 'error');
   } catch (err) { showToast('❌ Erreur', 'error'); }
+}
+
+/* 🆕 MODIFIER UNE NOTE */
+function editNoteFromPopup(id, event) {
+  if (event) event.stopPropagation();
+  const note = allNotes.find(n => n.id === id);
+  if (!note || note.userId !== currentUser.uid) return;
+
+  editingNoteId = id;
+  map.closePopup();
+
+  // Changer le titre
+  document.getElementById('modalTitle').textContent = '✏️ Modifier le souvenir';
+  document.getElementById('modalSubtitle').textContent = 'Modifie les infos puis enregistre.';
+
+  // Pré-remplir les champs
+  document.getElementById('placeName').value = note.place;
+  document.getElementById('noteText').value = note.text;
+  pendingLatLng = { lat: note.lat, lng: note.lng };
+  pendingSource = note.source || 'manual';
+  pendingIcon = note.icon || '📍';
+  pendingPhoto = note.photo || null;
+
+  // Sélectionner l'icône
+  document.querySelectorAll('.icon-choice').forEach(c => {
+    c.classList.toggle('active', c.dataset.icon === (note.icon || '📍'));
+  });
+
+  // Prévisualiser la photo
+  if (note.photo) {
+    document.getElementById('photoPreview').src = note.photo;
+    document.getElementById('photoPreviewWrapper').classList.add('visible');
+    document.getElementById('photoUploadZone').style.display = 'none';
+  } else {
+    document.getElementById('photoPreview').src = '';
+    document.getElementById('photoPreviewWrapper').classList.remove('visible');
+    document.getElementById('photoUploadZone').style.display = '';
+  }
+
+  updateLocationBox();
+
+  // Changer le bouton Enregistrer
+  document.getElementById('saveNoteBtn').innerHTML = '💾 Mettre à jour';
+
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('placeName').focus(), 100);
 }
 
 function toggleSidebar() {
@@ -3737,8 +3713,7 @@ function applySettings() {
   showToast('✅ Réglages appliqués', 'success');
 }
 
-/* =========================================================
-   💾 EXPORT / IMPORT
+/* =========================================================   💾 EXPORT / IMPORT
    ========================================================= */
 
 function updateNotesCountInfo() {
@@ -3758,7 +3733,7 @@ function exportNotes() {
   }
   const exportData = {
     app: 'World Notes',
-    version: 8,
+    version: 9,
     exportedAt: new Date().toISOString(),
     notesCount: myNotes.length,
     notes: myNotes.map(n => {
@@ -3844,7 +3819,7 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
 });
 
 /* =========================================================
-   MODAL AJOUT
+   MODAL AJOUT / ÉDITION
    ========================================================= */
 
 function chooseIcon(el) {
@@ -3854,6 +3829,12 @@ function chooseIcon(el) {
 }
 
 function openAddModal() {
+  // Reset du mode édition si on ouvre un nouveau
+  editingNoteId = null;
+  document.getElementById('modalTitle').textContent = '📍 Nouveau souvenir';
+  document.getElementById('modalSubtitle').textContent = 'Cherche un lieu, clique sur la carte, ou utilise ton GPS.';
+  document.getElementById('saveNoteBtn').innerHTML = '💾 Enregistrer';
+
   if (!pendingLatLng) {
     const c = map.getCenter();
     pendingLatLng = { lat: c.lat, lng: c.lng };
@@ -3874,6 +3855,7 @@ function closeAddModal() {
   pendingLatLng = null;
   pendingSource = null;
   pendingIcon = '📍';
+  editingNoteId = null;  // Reset
   removePhoto();
   document.querySelectorAll('.icon-choice').forEach(c => {
     c.classList.toggle('active', c.dataset.icon === '📍');
@@ -3882,6 +3864,11 @@ function closeAddModal() {
   const btn = document.getElementById('gpsBtn');
   btn.disabled = false;
   btn.innerHTML = '🎯 Ma position';
+
+  // Reset du titre
+  document.getElementById('modalTitle').textContent = '📍 Nouveau souvenir';
+  document.getElementById('modalSubtitle').textContent = 'Cherche un lieu, clique sur la carte, ou utilise ton GPS.';
+  document.getElementById('saveNoteBtn').innerHTML = '💾 Enregistrer';
 }
 
 function updateLocationBox() {
@@ -3934,7 +3921,7 @@ function useMyLocation() {
       if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.';
       showToast(msg, 'error');
     },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
   );
 }
 
@@ -4083,7 +4070,7 @@ function clearSearchButton() {
 }
 
 /* =========================================================
-   💾 SAUVEGARDE NOTE
+   💾 SAUVEGARDE NOTE (CRÉATION + ÉDITION)
    ========================================================= */
 
 async function saveNote() {
@@ -4097,55 +4084,101 @@ async function saveNote() {
 
   const saveBtn = document.getElementById('saveNoteBtn');
   saveBtn.disabled = true;
+  const originalHTML = saveBtn.innerHTML;
   saveBtn.innerHTML = '<span class="cloud-loader"></span>Enregistrement...';
 
   try {
     const lat = pendingLatLng.lat;
     const lng = pendingLatLng.lng;
-    const now = Date.now();
 
-    const newNoteRef = await db.collection('notes').add({
-      userId: currentUser.uid,
-      place, text, lat, lng,
-      createdAt: now,
-      source: pendingSource,
-      icon: pendingIcon,
-      photo: pendingPhoto
-    });
+    // 🆕 MODE ÉDITION
+    if (editingNoteId) {
+      await db.collection('notes').doc(editingNoteId).update({
+        place,
+        text,
+        lat, lng,
+        source: pendingSource,
+        icon: pendingIcon,
+        photo: pendingPhoto,
+        updatedAt: Date.now()
+      });
 
-    const newNote = {
-      id: newNoteRef.id,
-      userId: currentUser.uid,
-      place, text, lat, lng,
-      createdAt: now,
-      source: pendingSource,
-      icon: pendingIcon,
-      photo: pendingPhoto
-    };
+      // Mettre à jour localement
+      const noteIndex = allNotes.findIndex(n => n.id === editingNoteId);
+      if (noteIndex !== -1) {
+        allNotes[noteIndex] = {
+          ...allNotes[noteIndex],
+          place, text, lat, lng,
+          source: pendingSource,
+          icon: pendingIcon,
+          photo: pendingPhoto,
+          updatedAt: Date.now()
+        };
+      }
+      const myIndex = myNotes.findIndex(n => n.id === editingNoteId);
+      if (myIndex !== -1 && noteIndex !== -1) {
+        myNotes[myIndex] = allNotes[noteIndex];
+      }
 
-    if (!allNotes.some(n => n.id === newNote.id)) {
-      allNotes.unshift(newNote);
-      myNotes.unshift(newNote);
+      renderAllMarkers();
+      updateFilters();
+
+      const updatedId = editingNoteId;
+      editingNoteId = null;
+      closeAddModal();
+      showToast('✅ Souvenir modifié !', 'success');
+      map.flyTo([lat, lng], 15, { duration: 1.2 });
+      setTimeout(() => {
+        const marker = markers[updatedId];
+        if (marker) marker.openPopup();
+      }, 800);
+
+    } else {
+      // MODE CRÉATION
+      const now = Date.now();
+      const newNoteRef = await db.collection('notes').add({
+        userId: currentUser.uid,
+        place, text, lat, lng,
+        createdAt: now,
+        source: pendingSource,
+        icon: pendingIcon,
+        photo: pendingPhoto
+      });
+
+      const newNote = {
+        id: newNoteRef.id,
+        userId: currentUser.uid,
+        place, text, lat, lng,
+        createdAt: now,
+        source: pendingSource,
+        icon: pendingIcon,
+        photo: pendingPhoto
+      };
+
+      if (!allNotes.some(n => n.id === newNote.id)) {
+        allNotes.unshift(newNote);
+        myNotes.unshift(newNote);
+      }
+
+      renderAllMarkers();
+      updateFilters();
+
+      closeAddModal();
+      showToast('☁️ Souvenir enregistré !', 'success');
+      map.flyTo([lat, lng], 15, { duration: 1.2 });
+
+      setTimeout(() => {
+        const marker = markers[newNote.id];
+        if (marker) marker.openPopup();
+      }, 800);
     }
-
-    renderAllMarkers();
-    updateFilters();
-
-    closeAddModal();
-    showToast('☁️ Souvenir enregistré !', 'success');
-    map.flyTo([lat, lng], 15, { duration: 1.2 });
-
-    setTimeout(() => {
-      const marker = markers[newNote.id];
-      if (marker) marker.openPopup();
-    }, 800);
 
   } catch (err) {
     console.error(err);
     showToast('❌ Erreur de sauvegarde', 'error');
   } finally {
     saveBtn.disabled = false;
-    saveBtn.innerHTML = '💾 Enregistrer';
+    saveBtn.innerHTML = originalHTML;
   }
 }
 
