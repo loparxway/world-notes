@@ -34,6 +34,9 @@
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
     --favorite: #fbbf24;
+    --tag-bg: rgba(139, 92, 246, 0.15);
+    --tag-color: #a78bfa;
+    --tag-border: rgba(139, 92, 246, 0.3);
   }
 
   :root[data-theme="light"] {
@@ -57,6 +60,9 @@
     --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
     --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.15);
     --favorite: #d97706;
+    --tag-bg: rgba(139, 92, 246, 0.1);
+    --tag-color: #7c3aed;
+    --tag-border: rgba(139, 92, 246, 0.25);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -69,10 +75,7 @@
     min-height: 100vh;
   }
 
-  /* =====================================================
-     🌍 LANDING
-     ===================================================== */
-
+  /* LANDING */
   #landingScreen {
     position: fixed;
     inset: 0;
@@ -90,10 +93,7 @@
     padding: 60px 20px 80px;
   }
 
-  .landing-hero {
-    text-align: center;
-    margin-bottom: 50px;
-  }
+  .landing-hero { text-align: center; margin-bottom: 50px; }
 
   .landing-globe {
     font-size: 5rem;
@@ -146,23 +146,9 @@
     border-color: rgba(249, 115, 22, 0.4);
   }
 
-  .feature-icon {
-    font-size: 2rem;
-    margin-bottom: 12px;
-    display: block;
-  }
-
-  .feature-card h3 {
-    font-size: 1.05rem;
-    margin-bottom: 8px;
-    color: white;
-  }
-
-  .feature-card p {
-    font-size: 0.88rem;
-    color: #94a3b8;
-    line-height: 1.5;
-  }
+  .feature-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+  .feature-card h3 { font-size: 1.05rem; margin-bottom: 8px; color: white; }
+  .feature-card p { font-size: 0.88rem; color: #94a3b8; line-height: 1.5; }
 
   .landing-cta { text-align: center; margin-top: 40px; }
 
@@ -203,10 +189,7 @@
     margin: 0 8px;
   }
 
-  /* =====================================================
-     📄 MODAL LÉGAL
-     ===================================================== */
-
+  /* MODAL LÉGAL */
   .legal-modal {
     position: fixed;
     inset: 0;
@@ -277,10 +260,7 @@
     cursor: pointer;
   }
 
-  /* =====================================================
-     🔐 LOGIN
-     ===================================================== */
-
+  /* LOGIN */
   #loginScreen {
     position: fixed;
     inset: 0;
@@ -351,10 +331,7 @@
     margin-right: auto;
   }
 
-  /* =====================================================
-     🗺️ APP
-     ===================================================== */
-
+  /* APP */
   header {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -572,6 +549,8 @@
     gap: 4px;
     box-shadow: var(--shadow-lg);
     z-index: 500;
+    flex-wrap: wrap;
+    max-width: calc(100vw - 48px);
   }
 
   .filter-btn {
@@ -606,6 +585,45 @@
     text-align: center;
   }
 
+  /* 🆕 RANDOM BUTTON */
+  .btn-random {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+    border: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+  }
+
+  .btn-random:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 12px 32px rgba(139, 92, 246, 0.7);
+  }
+
+  .btn-random:active {
+    transform: scale(0.95);
+  }
+
+  .btn-random.loading {
+    animation: spin3 0.6s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes spin3 {
+    to { transform: rotate(360deg); }
+  }
+
   #sidebar {
     position: fixed;
     top: calc(64px + env(safe-area-inset-top, 0));
@@ -638,6 +656,59 @@
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0;
+  }
+
+  /* 🆕 RECHERCHE DANS LA SIDEBAR */
+  .sidebar-search {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    position: relative;
+  }
+
+  .sidebar-search input {
+    width: 100%;
+    padding: 10px 36px 10px 36px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-hover);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.25s;
+  }
+
+  .sidebar-search input:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+  }
+
+  .sidebar-search .search-icon-sm {
+    position: absolute;
+    left: 26px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+
+  .sidebar-search .clear-search {
+    position: absolute;
+    right: 26px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    cursor: pointer;
+    padding: 4px;
+    display: none;
+    font-size: 1rem;
+  }
+
+  .sidebar-search .clear-search.visible {
+    display: block;
   }
 
   .notes-list { flex: 1; overflow-y: auto; padding: 12px; }
@@ -726,6 +797,25 @@
     line-height: 1.4;
   }
 
+  /* 🆕 TAGS DANS LES CARTES */
+  .note-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .tag-chip {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    border: 1px solid var(--tag-border);
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
   .note-card .meta {
     margin-top: 8px;
     font-size: 0.72rem;
@@ -733,12 +823,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-
-  .note-card .note-date-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
   }
 
   .note-author {
@@ -806,16 +890,8 @@
     box-shadow: var(--shadow-lg);
   }
 
-  .modal h2 {
-    font-size: 1.3rem;
-    margin-bottom: 6px;
-    color: var(--text-primary);
-  }
-  .modal .subtitle {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    margin-bottom: 20px;
-  }
+  .modal h2 { font-size: 1.3rem; margin-bottom: 6px; color: var(--text-primary); }
+  .modal .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
 
   .form-group { margin-bottom: 16px; }
 
@@ -923,6 +999,70 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  /* 🆕 INPUT TAGS */
+  .tags-input-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-hover);
+    border-radius: 10px;
+    min-height: 48px;
+    cursor: text;
+    transition: all 0.25s;
+  }
+
+  .tags-input-wrapper:focus-within {
+    border-color: #f97316;
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+  }
+
+  .tags-input-wrapper .tag-chip-modal {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    border: 1px solid var(--tag-border);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .tags-input-wrapper .tag-chip-modal .remove-tag {
+    cursor: pointer;
+    color: var(--tag-color);
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0 2px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .tags-input-wrapper .tag-chip-modal .remove-tag:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+  }
+
+  .tags-input-wrapper input {
+    flex: 1;
+    min-width: 100px;
+    padding: 4px 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    font-size: 0.88rem;
+    outline: none;
+    color: var(--text-primary);
+  }
+
+  .tags-input-wrapper input:focus {
+    box-shadow: none;
+    border: none;
   }
 
   .search-wrapper { position: relative; }
@@ -1080,9 +1220,7 @@
     user-select: none;
   }
 
-  .fav-toggle:hover {
-    border-color: var(--favorite);
-  }
+  .fav-toggle:hover { border-color: var(--favorite); }
 
   .fav-toggle.active {
     border-color: var(--favorite);
@@ -1105,9 +1243,7 @@
     color: var(--text-secondary);
   }
 
-  .fav-toggle.active .fav-label {
-    color: var(--favorite);
-  }
+  .fav-toggle.active .fav-label { color: var(--favorite); }
 
   .custom-marker {
     background: linear-gradient(135deg, #f97316, #ea580c);
@@ -1574,10 +1710,6 @@
     color: white;
     margin-bottom: 16px;
   }
-  .btn-full.edit-profile:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-  }
 
   .friend-card {
     background: var(--bg-input);
@@ -1727,6 +1859,69 @@
 
   .info-banner .icon { font-size: 1.2rem; flex-shrink: 0; }
 
+  /* 🆕 RANDOM NOTE MODAL */
+  .random-note-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 6000;
+    padding: 20px;
+  }
+
+  .random-note-modal.open { display: flex; }
+
+  .random-note-content {
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 0;
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: randomIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+
+  @keyframes randomIn {
+    from { opacity: 0; transform: scale(0.9) rotate(-2deg); }
+    to   { opacity: 1; transform: scale(1) rotate(0); }
+  }
+
+  .random-note-content .popup-photo {
+    max-width: 100%;
+    height: 220px;
+  }
+
+  .random-note-content .popup-body {
+    padding: 20px 22px;
+  }
+
+  .random-note-content h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .random-note-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 16px 20px 20px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .random-note-actions button {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+  }
+
   .toast {
     position: fixed;
     bottom: 30px;
@@ -1774,11 +1969,12 @@
     .lightbox { padding: 20px; }
     .leaflet-bottom.leaflet-right { bottom: 80px !important; }
     .leaflet-bottom.leaflet-left { bottom: 80px !important; }
-    .map-filter { left: 12px; right: 70px; bottom: 16px; padding: 5px; }
-    .filter-btn { padding: 8px 10px; font-size: 0.7rem; flex-shrink: 0; }
-    .filter-btn .count { min-width: 16px; padding: 1px 5px; font-size: 0.65rem; }
+    .map-filter { left: 12px; right: 80px; bottom: 16px; padding: 5px; max-width: none; }
+    .filter-btn { padding: 8px 8px; font-size: 0.68rem; flex-shrink: 0; }
+    .filter-btn .count { min-width: 14px; padding: 1px 4px; font-size: 0.6rem; }
     .sync-indicator { font-size: 0.75rem; padding: 6px 14px; }
     .legal-modal-content { padding: 22px; }
+    .btn-random { bottom: 80px; right: 12px; width: 48px; height: 48px; font-size: 1.3rem; }
   }
 
   .hint {
@@ -1852,14 +2048,14 @@
         <p>Ajoute des anecdotes sur les lieux que tu as visités : photos, souvenirs, moments uniques.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon">⭐</span>
-        <h3>Marque tes favoris</h3>
-        <p>Mets en avant tes souvenirs préférés et retrouve-les instantanément grâce au filtre dédié.</p>
+        <span class="feature-icon">🏷️</span>
+        <h3>Organise avec des tags</h3>
+        <p>Catégorise tes souvenirs avec des tags personnalisés (#voyage, #famille) et retrouve-les facilement.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon">👥</span>
-        <h3>Partage avec tes amis</h3>
-        <p>Ajoute des amis par pseudo et découvrez mutuellement vos voyages sur une carte commune.</p>
+        <span class="feature-icon">🎲</span>
+        <h3>Souvenirs aléatoires</h3>
+        <p>Un clic et redécouvre un souvenir oublié. Laisse le hasard te surprendre !</p>
       </div>
       <div class="feature-card">
         <span class="feature-icon">🔒</span>
@@ -1982,6 +2178,9 @@
     </button>
   </div>
 
+  <!-- 🆕 BOUTON RANDOM -->
+  <button class="btn-random" id="btnRandom" onclick="showRandomNote()" title="Souvenir aléatoire">🎲</button>
+
   <div class="settings-panel" id="settingsPanel">
     <h3>
       ⚙️ Réglages
@@ -2025,6 +2224,14 @@
       <h2>📖 Mes souvenirs</h2>
       <button class="close-sidebar" onclick="toggleSidebar()">×</button>
     </div>
+
+    <!-- 🆕 RECHERCHE -->
+    <div class="sidebar-search">
+      <span class="search-icon-sm">🔍</span>
+      <input type="text" id="sidebarSearch" placeholder="Rechercher un souvenir..." />
+      <button class="clear-search" id="clearSidebarSearch" onclick="clearSidebarSearch()">×</button>
+    </div>
+
     <div class="notes-list" id="notesList">
       <div class="empty-state">Aucun souvenir pour l'instant.</div>
     </div>
@@ -2059,6 +2266,17 @@
           <div class="icon-choice" data-icon="🛍️" onclick="chooseIcon(this)">🛍️</div>
           <div class="icon-choice" data-icon="🌲" onclick="chooseIcon(this)">🌲</div>
           <div class="icon-choice" data-icon="❤️" onclick="chooseIcon(this)">❤️</div>
+        </div>
+      </div>
+
+      <!-- 🆕 TAGS -->
+      <div class="form-group">
+        <label>🏷️ Tags</label>
+        <div class="tags-input-wrapper" id="tagsInputWrapper" onclick="document.getElementById('tagInputField').focus()">
+          <input type="text" id="tagInputField" placeholder="Ajouter un tag..." maxlength="20" />
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px;">
+          Appuie sur <b>Entrée</b> ou <b>virgule</b> pour valider un tag (max 5)
         </div>
       </div>
 
@@ -2239,6 +2457,13 @@
     </div>
   </div>
 
+  <!-- 🆕 MODAL RANDOM -->
+  <div class="random-note-modal" id="randomNoteModal" onclick="closeRandomNoteIfOutside(event)">
+    <div class="random-note-content" id="randomNoteContent" onclick="event.stopPropagation()">
+      <!-- Contenu injecté -->
+    </div>
+  </div>
+
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox(event)">×</button>
     <img id="lightboxImg" src="" alt="Photo" onclick="event.stopPropagation()" />
@@ -2310,7 +2535,7 @@ const LEGAL_CONTENT = {
     title: '🔒 Politique de confidentialité',
     content: `
       <h3>1. Données collectées</h3>
-      <p>World Notes collecte : identité Google (nom, email, photo), contenu (lieux, anecdotes, photos).</p>
+      <p>World Notes collecte : identité Google (nom, email, photo), contenu (lieux, anecdotes, photos, tags).</p>
       <h3>2. Utilisation des données</h3>
       <p>Tes données sont utilisées uniquement pour afficher tes souvenirs et permettre à tes amis de les voir.</p>
       <p><b>Nous ne vendons ni ne partageons jamais tes données à des fins publicitaires.</b></p>
@@ -2332,9 +2557,12 @@ const LEGAL_CONTENT = {
       <ul>
         <li>📍 Épingler des souvenirs sur une carte satellite</li>
         <li>⭐ Système de favoris</li>
+        <li>🏷️ Tags personnalisés pour organiser</li>
+        <li>🔍 Recherche dans tes souvenirs</li>
+        <li>🎲 Souvenir aléatoire</li>
         <li>📅 Date personnalisée</li>
         <li>📍 Adresse auto-complétée</li>
-        <li>📸 Ajouter une photo à chaque note</li>
+        <li>📸 Photos</li>
         <li>👥 Système d'amis</li>
         <li>💾 Export / Import</li>
       </ul>
@@ -2388,9 +2616,12 @@ let myNotes = [];
 let friendNotes = [];
 let favoriteNotes = [];
 let mapFilter = 'all';
+let sidebarSearchQuery = '';
 let pendingProfilePhoto = null;
 let editingNoteId = null;
 let pendingIsFavorite = false;
+let pendingTags = [];
+let currentRandomNoteId = null;
 
 let unsubscribeProfile = null;
 let unsubscribeNotes = null;
@@ -3326,6 +3557,11 @@ function addMarkerToMap(note) {
   return marker;
 }
 
+function renderTagsHtml(tags) {
+  if (!tags || tags.length === 0) return '';
+  return `<div class="note-tags">${tags.map(t => `<span class="tag-chip">#${escapeHtml(t)}</span>`).join('')}</div>`;
+}
+
 function buildPopupContent(note) {
   const date = new Date(note.createdAt).toLocaleDateString('fr-FR', {
     day: 'numeric', month: 'short', year: 'numeric'
@@ -3382,6 +3618,7 @@ function buildPopupContent(note) {
         ${favStar}
       </div>
       <div class="popup-text">${escapeHtml(note.text)}</div>
+      ${renderTagsHtml(note.tags)}
       ${authorHtml}
       <div class="popup-footer">
         <span class="popup-meta">📅 ${date}</span>
@@ -3401,6 +3638,17 @@ function renderAllMarkers() {
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
 
+  // Filtre recherche
+  if (sidebarSearchQuery.trim()) {
+    const q = sidebarSearchQuery.toLowerCase().trim();
+    notesToShow = notesToShow.filter(n => {
+      const inPlace = (n.place || '').toLowerCase().includes(q);
+      const inText = (n.text || '').toLowerCase().includes(q);
+      const inTags = (n.tags || []).some(t => t.toLowerCase().includes(q));
+      return inPlace || inText || inTags;
+    });
+  }
+
   notesToShow.forEach(addMarkerToMap);
   renderSidebar();
   updateNotesCountInfo();
@@ -3414,8 +3662,23 @@ function renderSidebar() {
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
 
+  // Filtre recherche
+  if (sidebarSearchQuery.trim()) {
+    const q = sidebarSearchQuery.toLowerCase().trim();
+    notesToShow = notesToShow.filter(n => {
+      const inPlace = (n.place || '').toLowerCase().includes(q);
+      const inText = (n.text || '').toLowerCase().includes(q);
+      const inTags = (n.tags || []).some(t => t.toLowerCase().includes(q));
+      return inPlace || inText || inTags;
+    });
+  }
+
   if (notesToShow.length === 0) {
-    list.innerHTML = `<div class="empty-state">Aucun souvenir pour l'instant.<br>Cliquez sur la carte pour commencer ✨</div>`;
+    if (sidebarSearchQuery.trim()) {
+      list.innerHTML = `<div class="empty-state">🔍 Aucun résultat pour "${escapeHtml(sidebarSearchQuery)}"</div>`;
+    } else {
+      list.innerHTML = `<div class="empty-state">Aucun souvenir pour l'instant.<br>Cliquez sur la carte pour commencer ✨</div>`;
+    }
     return;
   }
 
@@ -3468,9 +3731,10 @@ function renderSidebar() {
             </div>
             <div class="text">${escapeHtml(note.text)}</div>
           </div>
+          ${renderTagsHtml(note.tags)}
           ${authorHtml}
           <div class="meta">
-            <span class="note-date-badge">📅 ${date}</span>
+            <span>📅 ${date}</span>
             ${deleteBtn}
           </div>
         </div>
@@ -3507,7 +3771,10 @@ async function deleteNoteFromPopup(id, event) {
   } catch (err) { showToast('❌ Erreur', 'error'); }
 }
 
-/* 🆕 FAVORIS */
+/* =========================================================
+   ⭐ FAVORIS
+   ========================================================= */
+
 async function toggleFavorite(id, event) {
   if (event) event.stopPropagation();
   const note = allNotes.find(n => n.id === id);
@@ -3555,7 +3822,6 @@ async function toggleFavoriteFromPopup(id, event) {
     renderAllMarkers();
     updateFilters();
 
-    // Rouvrir la popup
     setTimeout(() => {
       const marker = markers[id];
       if (marker) marker.openPopup();
@@ -3568,7 +3834,208 @@ async function toggleFavoriteFromPopup(id, event) {
   }
 }
 
-/* 🆕 ÉDITER UNE NOTE */
+/* =========================================================
+   🏷️ TAGS
+   ========================================================= */
+
+function renderTagsInModal() {
+  const wrapper = document.getElementById('tagsInputWrapper');
+  const input = document.getElementById('tagInputField');
+
+  // Retirer les anciens chips
+  wrapper.querySelectorAll('.tag-chip-modal').forEach(c => c.remove());
+
+  // Ajouter les chips
+  pendingTags.forEach(tag => {
+    const chip = document.createElement('div');
+    chip.className = 'tag-chip-modal';
+    chip.innerHTML = `#${escapeHtml(tag)}<span class="remove-tag" data-tag="${escapeHtml(tag)}">×</span>`;
+    wrapper.insertBefore(chip, input);
+  });
+
+  // Écouter les clics sur remove
+  wrapper.querySelectorAll('.remove-tag').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const tag = btn.dataset.tag;
+      removeTag(tag);
+    });
+  });
+}
+
+function addTag(tagText) {
+  const tag = tagText.trim().toLowerCase().replace(/^#/, '').replace(/[^a-z0-9_àâäéèêëïîôöùûüç-]/gi, '');
+  if (!tag || tag.length < 2 || tag.length > 20) return;
+  if (pendingTags.includes(tag)) return;
+  if (pendingTags.length >= 5) {
+    showToast('⚠️ Max 5 tags par souvenir', 'error');
+    return;
+  }
+  pendingTags.push(tag);
+  renderTagsInModal();
+}
+
+function removeTag(tag) {
+  pendingTags = pendingTags.filter(t => t !== tag);
+  renderTagsInModal();
+}
+
+// Écouter les touches dans l'input tags
+const tagInputField = document.getElementById('tagInputField');
+tagInputField.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    addTag(tagInputField.value);
+    tagInputField.value = '';
+  } else if (e.key === 'Backspace' && tagInputField.value === '' && pendingTags.length > 0) {
+    // Supprimer le dernier tag
+    pendingTags.pop();
+    renderTagsInModal();
+  }
+});
+
+tagInputField.addEventListener('blur', () => {
+  if (tagInputField.value.trim()) {
+    addTag(tagInputField.value);
+    tagInputField.value = '';
+  }
+});
+
+/* =========================================================
+   🔍 RECHERCHE DANS LA SIDEBAR
+   ========================================================= */
+
+const sidebarSearchInput = document.getElementById('sidebarSearch');
+const clearSidebarSearchBtn = document.getElementById('clearSidebarSearch');
+
+sidebarSearchInput.addEventListener('input', () => {
+  sidebarSearchQuery = sidebarSearchInput.value;
+  clearSidebarSearchBtn.classList.toggle('visible', sidebarSearchQuery.length > 0);
+  renderAllMarkers();
+});
+
+function clearSidebarSearch() {
+  sidebarSearchInput.value = '';
+  sidebarSearchQuery = '';
+  clearSidebarSearchBtn.classList.remove('visible');
+  renderAllMarkers();
+}
+
+/* =========================================================
+   🎲 SOUVENIR ALÉATOIRE
+   ========================================================= */
+
+function showRandomNote() {
+  const btn = document.getElementById('btnRandom');
+  btn.classList.add('loading');
+
+  // Notes dispo selon le filtre
+  let available = [];
+  if (mapFilter === 'all') available = allNotes;
+  else if (mapFilter === 'mine') available = myNotes;
+  else if (mapFilter === 'friends') available = friendNotes;
+  else if (mapFilter === 'favorites') available = favoriteNotes;
+
+  if (available.length === 0) {
+    btn.classList.remove('loading');
+    showToast('⚠️ Aucun souvenir disponible', 'error');
+    return;
+  }
+
+  // Petit délai pour l'effet
+  setTimeout(() => {
+    btn.classList.remove('loading');
+
+    const random = available[Math.floor(Math.random() * available.length)];
+    currentRandomNoteId = random.id;
+
+    const isMine = random.userId === currentUser.uid;
+    const icon = random.icon || '📍';
+    const date = new Date(random.createdAt).toLocaleDateString('fr-FR', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    let authorHtml = '';
+    if (!isMine) {
+      const authorProfile = friendsProfiles[random.userId];
+      const authorName = authorProfile
+        ? (authorProfile.username ? '@' + authorProfile.username : authorProfile.displayName)
+        : 'Un ami';
+      const authorAvatar = authorProfile && authorProfile.photoURL
+        ? authorProfile.photoURL
+        : 'https://www.gravatar.com/avatar/?d=mp';
+      authorHtml = `
+        <div class="popup-author" style="cursor:default;">
+          <img src="${authorAvatar}" alt="${escapeHtml(authorName)}" />
+          <span>${escapeHtml(authorName)}</span>
+        </div>
+      `;
+    }
+
+    let photoHtml = '';
+    if (random.photo) {
+      photoHtml = `<img class="popup-photo" src="${random.photo}" alt="Photo" onclick="openLightbox('${random.id}', event)" />`;
+    }
+
+    const tagsHtml = renderTagsHtml(random.tags);
+
+    const content = document.getElementById('randomNoteContent');
+    content.innerHTML = `
+      ${photoHtml}
+      <div class="popup-body">
+        <h2 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
+          🎲 Souvenir aléatoire
+        </h2>
+        <div class="popup-place ${isMine ? '' : 'friend-place'}">
+          <div class="place-left">
+            <span class="category-icon">${icon}</span>
+            ${escapeHtml(random.place)}
+          </div>
+          ${random.favorite ? '⭐' : ''}
+        </div>
+        <div class="popup-text">${escapeHtml(random.text)}</div>
+        ${tagsHtml}
+        ${authorHtml}
+        <div style="margin-top: 12px; font-size: 0.75rem; color: var(--text-faint);">
+          📅 ${date}
+        </div>
+      </div>
+      <div class="random-note-actions">
+        <button class="btn-ghost" onclick="closeRandomNote()">Fermer</button>
+        <button class="btn-primary" onclick="goToRandomNote()">📍 Voir sur la carte</button>
+        <button class="btn-primary" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);" onclick="rollAnotherRandom()">🎲 Autre</button>
+      </div>
+    `;
+
+    document.getElementById('randomNoteModal').classList.add('open');
+  }, 400);
+}
+
+function closeRandomNote() {
+  document.getElementById('randomNoteModal').classList.remove('open');
+  currentRandomNoteId = null;
+}
+
+function closeRandomNoteIfOutside(event) {
+  if (event.target.id === 'randomNoteModal') closeRandomNote();
+}
+
+function goToRandomNote() {
+  if (!currentRandomNoteId) return;
+  const id = currentRandomNoteId;
+  closeRandomNote();
+  focusNote(id);
+}
+
+function rollAnotherRandom() {
+  closeRandomNote();
+  setTimeout(showRandomNote, 200);
+}
+
+/* =========================================================
+   ✏️ ÉDITER UNE NOTE
+   ========================================================= */
+
 function editNoteFromPopup(id, event) {
   if (event) event.stopPropagation();
   const note = allNotes.find(n => n.id === id);
@@ -3587,6 +4054,7 @@ function editNoteFromPopup(id, event) {
   pendingIcon = note.icon || '📍';
   pendingPhoto = note.photo || null;
   pendingIsFavorite = note.favorite === true;
+  pendingTags = note.tags ? [...note.tags] : [];
 
   // Date
   const dateInput = document.getElementById('noteDate');
@@ -3614,6 +4082,9 @@ function editNoteFromPopup(id, event) {
     document.getElementById('photoPreviewWrapper').classList.remove('visible');
     document.getElementById('photoUploadZone').style.display = '';
   }
+
+  // Tags
+  renderTagsInModal();
 
   // Adresse
   if (note.address) {
@@ -3695,7 +4166,6 @@ async function reverseGeocode(lat, lng) {
     const data = await res.json();
 
     if (data && data.display_name) {
-      // Nettoyer l'adresse : garder les 3 premiers éléments
       const parts = data.display_name.split(',').slice(0, 3).map(s => s.trim());
       return parts.join(', ');
     }
@@ -3881,7 +4351,7 @@ function exportNotes() {
   }
   const exportData = {
     app: 'World Notes',
-    version: 10,
+    version: 11,
     exportedAt: new Date().toISOString(),
     notesCount: myNotes.length,
     notes: myNotes.map(n => {
@@ -3955,7 +4425,8 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
         photo: note.photo || null,
         favorite: note.favorite || false,
         userDate: note.userDate || null,
-        address: note.address || null
+        address: note.address || null,
+        tags: note.tags || []
       });
     });
 
@@ -3981,7 +4452,10 @@ function chooseIcon(el) {
 function openAddModal() {
   editingNoteId = null;
   pendingIsFavorite = false;
+  pendingTags = [];
   updateFavToggle();
+  renderTagsInModal();
+  document.getElementById('tagInputField').value = '';
   document.getElementById('modalTitle').textContent = '📍 Nouveau souvenir';
   document.getElementById('modalSubtitle').textContent = 'Cherche un lieu, clique sur la carte, ou utilise ton GPS.';
   document.getElementById('saveNoteBtn').innerHTML = '💾 Enregistrer';
@@ -4004,6 +4478,7 @@ function closeAddModal() {
   document.getElementById('noteText').value = '';
   document.getElementById('searchInput').value = '';
   document.getElementById('noteDate').value = '';
+  document.getElementById('tagInputField').value = '';
   closeAutocomplete();
   clearSearchButton();
   hideAddress();
@@ -4011,8 +4486,10 @@ function closeAddModal() {
   pendingSource = null;
   pendingIcon = '📍';
   pendingIsFavorite = false;
+  pendingTags = [];
   editingNoteId = null;
   updateFavToggle();
+  renderTagsInModal();
   removePhoto();
   document.querySelectorAll('.icon-choice').forEach(c => {
     c.classList.toggle('active', c.dataset.icon === '📍');
@@ -4067,12 +4544,10 @@ function useMyLocation() {
       updateLocationBox();
       showToast(`🎯 Position trouvée (±${Math.round(accuracy)}m)`, 'success');
 
-      // 🆕 REVERSE GEOCODING : récupérer l'adresse
       showToast('🔎 Recherche de l\'adresse...', 'info');
       const address = await reverseGeocode(lat, lng);
       if (address) {
         showAddress(address);
-        // Pré-remplir le lieu si vide
         const placeInput = document.getElementById('placeName');
         if (!placeInput.value.trim()) {
           placeInput.value = address;
@@ -4205,7 +4680,6 @@ function selectSearchResult(result) {
   const placeInput = document.getElementById('placeName');
   if (!placeInput.value.trim()) placeInput.value = fullName;
 
-  // Adresse aussi
   showAddress(fullName);
 
   if (tempMarker) map.removeLayer(tempMarker);
@@ -4257,6 +4731,12 @@ async function saveNote() {
   if (!text) { showToast('⚠️ Écris une anecdote !', 'error'); return; }
   if (!currentUser) { showToast('⚠️ Tu dois être connecté', 'error'); return; }
 
+  // Ajouter le tag en cours s'il y en a un
+  if (tagInputField.value.trim()) {
+    addTag(tagInputField.value);
+    tagInputField.value = '';
+  }
+
   const saveBtn = document.getElementById('saveNoteBtn');
   saveBtn.disabled = true;
   const originalHTML = saveBtn.innerHTML;
@@ -4278,6 +4758,7 @@ async function saveNote() {
         favorite: pendingIsFavorite,
         userDate: userDate || null,
         address: address,
+        tags: pendingTags,
         updatedAt: Date.now()
       });
 
@@ -4292,6 +4773,7 @@ async function saveNote() {
           favorite: pendingIsFavorite,
           userDate: userDate || null,
           address: address,
+          tags: pendingTags,
           updatedAt: Date.now()
         };
       }
@@ -4326,7 +4808,8 @@ async function saveNote() {
         photo: pendingPhoto,
         favorite: pendingIsFavorite,
         userDate: userDate || null,
-        address: address
+        address: address,
+        tags: pendingTags
       });
 
       const newNote = {
@@ -4339,7 +4822,8 @@ async function saveNote() {
         photo: pendingPhoto,
         favorite: pendingIsFavorite,
         userDate: userDate || null,
-        address: address
+        address: address,
+        tags: pendingTags
       };
 
       if (!allNotes.some(n => n.id === newNote.id)) {
@@ -4392,7 +4876,8 @@ function escapeHtml(str) {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (document.getElementById('legalModal').classList.contains('open')) closeLegalModal();
+    if (document.getElementById('randomNoteModal').classList.contains('open')) closeRandomNote();
+    else if (document.getElementById('legalModal').classList.contains('open')) closeLegalModal();
     else if (document.getElementById('lightbox').classList.contains('open')) closeLightbox();
     else if (autocompleteList.classList.contains('open')) closeAutocomplete();
     else if (document.getElementById('settingsPanel').classList.contains('open')) toggleSettings();
@@ -4400,6 +4885,12 @@ document.addEventListener('keydown', (e) => {
     else if (document.getElementById('viewProfileModalOverlay').classList.contains('open')) closeViewProfile();
     else if (document.getElementById('friendsModalOverlay').classList.contains('open')) closeFriendsModal();
     else closeAddModal();
+  }
+  // Raccourci R pour random
+  if (e.key === 'r' && !e.ctrlKey && !e.metaKey && !e.altKey && 
+      document.activeElement.tagName !== 'INPUT' && 
+      document.activeElement.tagName !== 'TEXTAREA') {
+    showRandomNote();
   }
 });
 
