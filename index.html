@@ -14,6 +14,16 @@
 <meta name="apple-mobile-web-app-title" content="World Notes">
 <link rel="apple-touch-icon" href="https://res.cloudinary.com/cifcliyv/image/upload/icon-192.png">
 <link rel="icon" type="image/png" href="https://res.cloudinary.com/cifcliyv/image/upload/icon-192.png">
+<!-- 🔗 Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="World Notes">
+<meta property="og:title" content="🌍 World Notes — La carte du monde de tes souvenirs">
+<meta property="og:description" content="Épingle tes souvenirs sur une carte du monde et partage-les avec tes amis.">
+<meta property="og:image" content="https://res.cloudinary.com/cifcliyv/image/upload/icon-512.png">
+<meta property="og:url" content="https://world-notes-psi.vercel.app/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="🌍 World Notes">
+<meta name="twitter:image" content="https://res.cloudinary.com/cifcliyv/image/upload/icon-512.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -2588,6 +2598,37 @@
     margin-right: 8px;
   }
 
+  /* 🔗 Menu partage */
+.share-menu{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:8000;padding:20px}
+.share-menu.open{display:flex}
+.share-menu-content{background:var(--bg-modal);border:1px solid var(--border-color);border-radius:20px;padding:24px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:randomIn .35s cubic-bezier(.34,1.56,.64,1)}
+.share-menu h3{font-size:1.1rem;color:var(--text-primary);margin-bottom:6px;text-align:center}
+.share-menu .subtitle{font-size:.82rem;color:var(--text-muted);margin-bottom:18px;text-align:center}
+.share-apps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.share-app{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 6px;border-radius:12px;background:var(--bg-input);border:1px solid var(--border-subtle);cursor:pointer;transition:all .2s;color:var(--text-secondary);font-size:.65rem;font-weight:600;text-align:center;text-decoration:none}
+.share-app:hover{transform:translateY(-3px);border-color:rgba(249,115,22,.5);background:rgba(249,115,22,.1)}
+.share-app .share-icon{font-size:1.6rem;line-height:1}
+.share-actions{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--border-subtle);padding-top:16px}
+.share-action-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;background:var(--bg-input);border:1px solid var(--border-subtle);color:var(--text-primary);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;width:100%;text-align:left}
+.share-action-btn:hover{background:rgba(249,115,22,.15);border-color:rgba(249,115,22,.5);color:#f97316}
+.share-action-btn .icon{font-size:1.2rem}
+.share-close{margin-top:14px;background:none;border:none;color:var(--text-muted);font-size:.85rem;cursor:pointer;display:block;margin-left:auto;margin-right:auto;padding:8px 16px;border-radius:8px}
+.share-close:hover{color:var(--text-primary);background:rgba(148,163,184,.1)}
+.qr-container{text-align:center;padding:20px;background:white;border-radius:14px;margin-bottom:16px;display:flex;align-items:center;justify-content:center}
+.qr-container img{max-width:100%;height:auto;display:block}
+.ios-install-banner{position:fixed;bottom:20px;left:20px;right:20px;background:var(--bg-modal);border:2px solid #f97316;border-radius:14px;padding:16px;z-index:7000;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;animation:slideUpBanner .5s cubic-bezier(.34,1.56,.64,1)}
+.ios-install-banner.show{display:block}
+@keyframes slideUpBanner{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+.ios-install-banner .banner-content{display:flex;align-items:flex-start;gap:12px}
+.ios-install-banner .banner-icon{font-size:1.8rem;flex-shrink:0}
+.ios-install-banner .banner-text{flex:1;font-size:.85rem;color:var(--text-secondary);line-height:1.4}
+.ios-install-banner .banner-text b{color:var(--text-primary);display:block;margin-bottom:4px}
+.ios-install-banner .banner-text .share-ios{display:inline-flex;align-items:center;gap:4px;background:#f97316;color:white;padding:2px 8px;border-radius:6px;font-size:.75rem;font-weight:600;margin:0 3px}
+.ios-install-banner .banner-close{background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;padding:0;line-height:1;flex-shrink:0}
+.draft-restored-banner{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(22,163,74,.1));border:1px solid rgba(34,197,94,.4);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:.82rem;color:#22c55e;display:none;align-items:center;gap:8px;justify-content:space-between}
+.draft-restored-banner.visible{display:flex}
+.draft-restored-banner button{background:none;border:1px solid rgba(34,197,94,.5);color:#22c55e;font-size:.72rem;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600}
+.draft-restored-banner button:hover{background:rgba(34,197,94,.15)}
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
@@ -2811,6 +2852,10 @@
     <div class="modal">
       <h2 id="modalTitle">📍 Nouveau souvenir</h2>
       <p class="subtitle" id="modalSubtitle">Cherche un lieu, clique sur la carte, ou utilise ton GPS.</p>
+            <div class="draft-restored-banner" id="draftBanner">
+        <span>💾 Brouillon restauré</span>
+        <button onclick="clearDraft()">Effacer le brouillon</button>
+      </div>
 
       <div class="form-group">
         <label>⭐ Favori</label>
@@ -3052,7 +3097,48 @@
     <img id="lightboxImg" src="" alt="Photo" onclick="event.stopPropagation()" />
   </div>
 
-  <div class="toast" id="toast"></div>
+  <!-- 🔗 Menu de partage -->
+<div class="share-menu" id="shareMenu" onclick="closeShareMenuIfOutside(event)">
+  <div class="share-menu-content" onclick="event.stopPropagation()">
+    <h3>📤 Partager ce souvenir</h3>
+    <p class="subtitle">Envoie-le à tes amis !</p>
+    <div class="share-apps">
+      <a class="share-app" id="shareWhatsApp" target="_blank" rel="noopener"><span class="share-icon">💬</span>WhatsApp</a>
+      <a class="share-app" id="shareTelegram" target="_blank" rel="noopener"><span class="share-icon">✈️</span>Telegram</a>
+      <a class="share-app" id="shareTwitter" target="_blank" rel="noopener"><span class="share-icon">🐦</span>Twitter</a>
+      <a class="share-app" id="shareFacebook" target="_blank" rel="noopener"><span class="share-icon">📘</span>Facebook</a>
+    </div>
+    <div class="share-actions">
+      <button class="share-action-btn" onclick="copyLinkOnly()"><span class="icon">🔗</span>Copier le lien</button>
+      <button class="share-action-btn" onclick="copyTextAndLink()"><span class="icon">📋</span>Copier le texte + lien</button>
+      <button class="share-action-btn" onclick="showQRCode()"><span class="icon">📱</span>Afficher le QR code</button>
+    </div>
+    <button class="share-close" onclick="closeShareMenu()">Fermer</button>
+  </div>
+</div>
+
+<!-- 📱 QR Code -->
+<div class="share-menu" id="qrModal" onclick="closeQRIfOutside(event)">
+  <div class="share-menu-content" onclick="event.stopPropagation()" style="max-width:380px;">
+    <h3>📱 Scanner pour ouvrir</h3>
+    <p class="subtitle">Scanne ce QR code avec ton téléphone</p>
+    <div class="qr-container"><img id="qrImage" src="" alt="QR Code"></div>
+    <button class="share-close" onclick="closeQRModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- 📱 Bannière iPhone -->
+<div class="ios-install-banner" id="iosBanner">
+  <div class="banner-content">
+    <span class="banner-icon">📲</span>
+    <div class="banner-text">
+      <b>Installe World Notes sur ton iPhone</b>
+      Appuie sur <span class="share-ios">⬆️ Partager</span> puis <b>"Sur l'écran d'accueil"</b>
+    </div>
+    <button class="banner-close" onclick="closeIOSBanner()">×</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 </div>
 
 <script>
@@ -4721,24 +4807,94 @@ async function deleteComment(commentId, noteId, event) {
   }
 }
 
+let currentShareNoteId = null;
+
 function shareNote(noteId, event) {
   if (event) event.stopPropagation();
-  
+  currentShareNoteId = noteId;
+  openShareMenu(noteId);
+}
+
+function openShareMenu(noteId) {
+  const note = notesByIdCache[noteId];
+  if (!note) return;
   const url = `${window.location.origin}${window.location.pathname}?note=${noteId}`;
-  
-  if (navigator.share && isMobileDevice()) {
-    navigator.share({
-      title: 'World Notes',
-      text: 'Découvre ce souvenir sur World Notes !',
-      url
-    }).catch(err => {});
-  } else {
-    navigator.clipboard.writeText(url).then(() => {
-      showToast('🔗 Lien copié dans le presse-papier !', 'success');
-    }).catch(() => {
-      prompt('Copie ce lien :', url);
-    });
-  }
+  const text = `📍 ${note.place}\n\n"${note.text}"\n\nDécouvre ce souvenir sur World Notes 🌍`;
+  const encodedUrl = encodeURIComponent(url);
+  const encodedText = encodeURIComponent(text);
+  document.getElementById('shareWhatsApp').href = `https://wa.me/?text=${encodedText}%0A%0A${encodedUrl}`;
+  document.getElementById('shareTelegram').href = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
+  document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+  document.getElementById('shareFacebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+  document.getElementById('shareMenu').classList.add('open');
+}
+
+function closeShareMenu() {
+  document.getElementById('shareMenu').classList.remove('open');
+}
+
+function closeShareMenuIfOutside(event) {
+  if (event.target.id === 'shareMenu') closeShareMenu();
+}
+
+function copyLinkOnly() {
+  if (!currentShareNoteId) return;
+  const url = `${window.location.origin}${window.location.pathname}?note=${currentShareNoteId}`;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('🔗 Lien copié !', 'success');
+    closeShareMenu();
+  }).catch(() => prompt('Copie ce lien :', url));
+}
+
+function copyTextAndLink() {
+  if (!currentShareNoteId) return;
+  const note = notesByIdCache[currentShareNoteId];
+  if (!note) return;
+  const url = `${window.location.origin}${window.location.pathname}?note=${currentShareNoteId}`;
+  const fullText = `📍 ${note.place}\n\n"${note.text}"\n\nDécouvre ce souvenir sur World Notes 🌍\n${url}`;
+  navigator.clipboard.writeText(fullText).then(() => {
+    showToast('📋 Texte + lien copiés !', 'success');
+    closeShareMenu();
+  }).catch(() => prompt('Copie ce texte :', fullText));
+}
+
+function showQRCode() {
+  if (!currentShareNoteId) return;
+  const url = `${window.location.origin}${window.location.pathname}?note=${currentShareNoteId}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=0f172a&margin=10`;
+  document.getElementById('qrImage').src = qrUrl;
+  closeShareMenu();
+  document.getElementById('qrModal').classList.add('open');
+}
+
+function closeQRModal() {
+  document.getElementById('qrModal').classList.remove('open');
+}
+
+function closeQRIfOutside(event) {
+  if (event.target.id === 'qrModal') closeQRModal();
+}
+
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+
+function isStandalone() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+function showIOSBannerIfNeeded() {
+  if (!isIOS() || isStandalone()) return;
+  const dismissedAt = localStorage.getItem('ios_banner_dismissed_at');
+  if (dismissedAt && (Date.now() - parseInt(dismissedAt)) < 7 * 24 * 60 * 60 * 1000) return;
+  setTimeout(() => {
+    document.getElementById('iosBanner').classList.add('show');
+  }, 5000);
+}
+
+function closeIOSBanner() {
+  document.getElementById('iosBanner').classList.remove('show');
+  localStorage.setItem('ios_banner_dismissed_at', Date.now().toString());
 }
 
 async function toggleFavorite(id, event) {
@@ -5556,6 +5712,84 @@ function chooseIcon(el) {
   el.classList.add('active');
   pendingIcon = el.dataset.icon;
 }
+const DRAFT_KEY = 'worldnotes_draft';
+let draftSaveTimeout = null;
+
+function saveDraft() {
+  if (editingNoteId) return;
+  const draft = {
+    place: document.getElementById('placeName').value,
+    text: document.getElementById('noteText').value,
+    date: document.getElementById('noteDate').value,
+    tags: pendingTags,
+    icon: pendingIcon,
+    favorite: pendingIsFavorite,
+    lat: pendingLatLng?.lat,
+    lng: pendingLatLng?.lng,
+    source: pendingSource,
+    savedAt: Date.now()
+  };
+  const isEmpty = !draft.place && !draft.text && draft.tags.length === 0;
+  if (isEmpty) { localStorage.removeItem(DRAFT_KEY); return; }
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+}
+
+function scheduleSaveDraft() {
+  clearTimeout(draftSaveTimeout);
+  draftSaveTimeout = setTimeout(saveDraft, 800);
+}
+
+function loadDraft() {
+  const raw = localStorage.getItem(DRAFT_KEY);
+  if (!raw) return null;
+  try {
+    const draft = JSON.parse(raw);
+    if (Date.now() - draft.savedAt > 7 * 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(DRAFT_KEY);
+      return null;
+    }
+    return draft;
+  } catch (e) {
+    localStorage.removeItem(DRAFT_KEY);
+    return null;
+  }
+}
+
+function restoreDraft(draft) {
+  if (!draft) return;
+  document.getElementById('placeName').value = draft.place || '';
+  document.getElementById('noteText').value = draft.text || '';
+  document.getElementById('noteDate').value = draft.date || '';
+  if (draft.lat && draft.lng) {
+    pendingLatLng = { lat: draft.lat, lng: draft.lng };
+    pendingSource = draft.source || 'manual';
+    updateLocationBox();
+  }
+  if (draft.icon) {
+    pendingIcon = draft.icon;
+    document.querySelectorAll('.icon-choice').forEach(c => {
+      c.classList.toggle('active', c.dataset.icon === draft.icon);
+    });
+  }
+  if (draft.tags && Array.isArray(draft.tags)) {
+    pendingTags = draft.tags;
+    renderTagsInModal();
+  }
+  if (draft.favorite) {
+    pendingIsFavorite = true;
+    updateFavToggle();
+  }
+  const banner = document.getElementById('draftBanner');
+  if (banner && (draft.place || draft.text || (draft.tags && draft.tags.length > 0))) {
+    banner.classList.add('visible');
+  }
+}
+
+function clearDraft() {
+  localStorage.removeItem(DRAFT_KEY);
+  document.getElementById('draftBanner').classList.remove('visible');
+  showToast('🗑️ Brouillon effacé', 'info');
+}
 
 function openAddModal() {
   editingNoteId = null;
@@ -5578,6 +5812,20 @@ function openAddModal() {
   updateLocationBox();
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('searchInput').focus(), 100);
+
+  const draft = loadDraft();
+  if (draft) {
+    setTimeout(() => restoreDraft(draft), 150);
+  }
+
+  ['placeName', 'noteText', 'noteDate'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.dataset.draftListener) {
+      el.addEventListener('input', scheduleSaveDraft);
+      el.addEventListener('change', scheduleSaveDraft);
+      el.dataset.draftListener = 'true';
+    }
+  });
 }
 
 function closeAddModal() {
@@ -5827,6 +6075,10 @@ async function saveNote() {
   const userDate = document.getElementById('noteDate').value;
 
   if (!pendingLatLng) { showToast('⚠️ Choisis une position', 'error'); return; }
+    // 💾 Effacer le brouillon avant sauvegarde
+  localStorage.removeItem(DRAFT_KEY);
+  const draftBannerEl = document.getElementById('draftBanner');
+  if (draftBannerEl) draftBannerEl.classList.remove('visible');
   if (!place) { showToast('⚠️ Donne un nom à ce lieu !', 'error'); return; }
   if (!text) { showToast('⚠️ Écris une anecdote !', 'error'); return; }
   if (!currentUser) { showToast('⚠️ Tu dois être connecté', 'error'); return; }
@@ -5946,6 +6198,9 @@ setTimeout(() => {
   const hint = document.getElementById('hint');
   if (hint) hint.style.opacity = '0';
 }, 10000);
+
+// 📱 Bannière iPhone
+showIOSBannerIfNeeded();
 </script>
 
 </body>
