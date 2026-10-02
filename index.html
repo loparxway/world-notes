@@ -1389,9 +1389,10 @@ async function sendFriendRequest() {
       .get({ source: 'server' });
 
     if (!existingReceived.empty) {
-      // Il nous a déjà demandé → accepter direct
-      await acceptFriendRequest(existingReceived.docs[0].id);
+      // Il nous a déjà demandé → on refuse et on lui demande d'accepter manuellement
+      showToast('ℹ️ @' + username + ' t\'a déjà envoyé une demande. Va dans l\'onglet "Demandes" pour l\'accepter.', 'info');
       input.disabled = false;
+      input.value = '';
       return;
     }
 
