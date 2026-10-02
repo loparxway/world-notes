@@ -2549,6 +2549,7 @@
 </head>
 <body>
 
+<!-- LANDING -->
 <div id="landingScreen">
   <div class="landing-container">
     <div class="landing-hero">
@@ -2601,6 +2602,7 @@
   </div>
 </div>
 
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-card">
     <span class="login-globe">🌍</span>
@@ -2628,6 +2630,7 @@
   </div>
 </div>
 
+<!-- MODAL LÉGAL -->
 <div class="legal-modal" id="legalModal" onclick="closeLegalModalIfOutside(event)">
   <div class="legal-modal-content" onclick="event.stopPropagation()">
     <div class="legal-modal-header">
@@ -2641,6 +2644,7 @@
   </div>
 </div>
 
+<!-- APP -->
 <div id="app" style="display: none;">
   <header>
     <div class="logo">
@@ -3172,7 +3176,6 @@ let currentRandomNoteId = null;
 let currentStatsTab = 'dashboard';
 let pendingNoteId = null;
 
-// Cache des notes par ID (pour aller vite)
 let notesByIdCache = {};
 
 let unsubscribeProfile = null;
@@ -3195,7 +3198,6 @@ let userLocationCircle = null;
 let tempMarker = null;
 
 const REACTION_EMOJIS = ['❤️', '😂', '😍', '🔥', '👏', '😮'];
-// Limite Firestore pour l'opérateur "in"
 const FIRESTORE_IN_LIMIT = 30;
 
 /* =========================================================
@@ -3257,6 +3259,7 @@ function cleanupListeners() {
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
+    console.log('🔐 Connecté - UID:', user.uid);
     showApp();
     await ensureUserProfile();
     loadProfile();
@@ -3264,8 +3267,6 @@ auth.onAuthStateChanged(async (user) => {
     loadOutgoingRequests();
     loadFriends();
     loadAllNotes();
-    // ⚠️ Les listeners reactions et comments seront chargés
-    // APRÈS le premier loadAllNotes (voir dans loadAllNotes)
     updateFriendBadge();
     handleUrlParams();
   } else {
@@ -3387,6 +3388,7 @@ function loadProfile() {
     .onSnapshot(async (doc) => {
       if (!doc.exists) return;
       myProfile = doc.data();
+      console.log('👤 Profil chargé. Amis:', myProfile.friends);
 
       const avatarSrc = myProfile.photoURL || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
       document.getElementById('userAvatar').src = avatarSrc;
@@ -3620,7 +3622,10 @@ function loadFriends() {
       myFriends = newFriends;
 
       await loadFriendsProfiles();
-      if (changed) loadAllNotes();
+      if (changed) {
+        console.log('👥 Amis mis à jour, rechargement des notes');
+        loadAllNotes();
+      }
     });
 }
 
@@ -3630,7 +3635,6 @@ async function loadFriendsProfiles() {
     renderFriendsContent();
     return;
   }
-  // Optimisation : 1 seule requête au lieu de N
   try {
     const chunks = [];
     for (let i = 0; i < myFriends.length; i += 10) {
@@ -3998,11 +4002,23 @@ function loadAllNotes() {
     .limit(500)
     .onSnapshot(
       (snapshot) => {
-        const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        const allowed = new Set([currentUser.uid, ...myFriends]);
-        allNotes = all.filter(n => allowed.has(n.userId));
+        console.log('📥 Snapshot notes reçu. Docs:', snapshot.size, '| fromCache:', snapshot.metadata.fromCache);
 
-        // Met à jour le cache par ID
+        const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        console.log('📋 Total notes dans Firestore:', all.length);
+
+        const allowed = new Set([currentUser.uid, ...myFriends]);
+        console.log('🔑 UIDs autorisés:', [...allowed]);
+
+        allNotes = all.filter(n => allowed.has(n.userId));
+        console.log('✅ Notes après filtre:', allNotes.length);
+
+        // Debug des notes filtrées
+        all.forEach(n => {
+          const ok = allowed.has(n.userId);
+          console.log(`  ${ok ? '✅' : '❌'} "${n.place}" | userId=${n.userId?.substring(0,10)}...`);
+        });
+
         notesByIdCache = {};
         allNotes.forEach(n => { notesByIdCache[n.id] = n; });
 
@@ -4010,7 +4026,6 @@ function loadAllNotes() {
         friendNotes = allNotes.filter(n => n.userId !== currentUser.uid);
         favoriteNotes = allNotes.filter(n => n.favorite === true);
 
-        // Charge (ou recharge) les listeners filtrés
         loadAllReactions();
         loadAllComments();
 
@@ -4019,16 +4034,12 @@ function loadAllNotes() {
         showSyncIndicator('Synchronisé', true);
       },
       (error) => {
-        console.error('Erreur Firestore:', error);
+        console.error('❌ Erreur Firestore notes:', error);
         showToast('❌ Erreur de chargement', 'error');
       }
     );
 }
 
-/**
- * Charge les réactions UNIQUEMENT pour les notes visibles.
- * Filtre par noteId (max 30 par requête Firestore), fait plusieurs requêtes si besoin.
- */
 function loadAllReactions() {
   if (unsubscribeReactions) unsubscribeReactions();
 
@@ -4040,13 +4051,11 @@ function loadAllReactions() {
     return;
   }
 
-  // Regroupe par 30 (limite Firestore pour l'opérateur "in")
   const chunks = [];
   for (let i = 0; i < visibleNoteIds.length; i += FIRESTORE_IN_LIMIT) {
     chunks.push(visibleNoteIds.slice(i, i + FIRESTORE_IN_LIMIT));
   }
 
-  // On doit créer plusieurs listeners (un par chunk), donc on stocke les unsubscribers
   const unsubs = [];
   unsubscribeReactions = () => unsubs.forEach(u => { try { u(); } catch(e){} });
 
@@ -4055,14 +4064,12 @@ function loadAllReactions() {
       .where('noteId', 'in', chunk)
       .onSnapshot(
         (snapshot) => {
-          // Reset des réactions pour ce chunk
           chunk.forEach(id => { delete allReactions[id]; });
           snapshot.docs.forEach(doc => {
             const r = { id: doc.id, ...doc.data() };
             if (!allReactions[r.noteId]) allReactions[r.noteId] = [];
             allReactions[r.noteId].push(r);
           });
-          // Rafraîchit uniquement la popup ouverte
           refreshOpenPopup();
         },
         (error) => {
@@ -4073,9 +4080,6 @@ function loadAllReactions() {
   });
 }
 
-/**
- * Charge les commentaires UNIQUEMENT pour les notes visibles.
- */
 function loadAllComments() {
   if (unsubscribeComments) unsubscribeComments();
 
@@ -4420,11 +4424,6 @@ function buildPopupContent(note) {
   `;
 }
 
-/**
- * 🚀 VERSION OPTIMISÉE :
- * - Ne recrée PAS les marqueurs déjà présents (identiques)
- * - Ne ferme PAS la popup ouverte inutilement
- */
 function renderAllMarkers() {
   let notesToShow = [];
   if (mapFilter === 'all') notesToShow = allNotes;
@@ -4442,10 +4441,10 @@ function renderAllMarkers() {
     });
   }
 
-  // IDs des notes à afficher
+  console.log('🗺️ renderAllMarkers - notes à afficher:', notesToShow.length);
+
   const idsToShow = new Set(notesToShow.map(n => n.id));
 
-  // Supprime les marqueurs qui ne doivent plus être affichés
   Object.keys(markers).forEach(id => {
     if (!idsToShow.has(id)) {
       map.removeLayer(markers[id]);
@@ -4453,23 +4452,18 @@ function renderAllMarkers() {
     }
   });
 
-  // Ajoute les nouveaux marqueurs (ceux qui n'existent pas encore)
   notesToShow.forEach(note => {
     if (!markers[note.id]) {
       addMarkerToMap(note);
     }
   });
 
-  // Rafraîchit la popup ouverte si elle existe
   refreshOpenPopup();
 
   renderSidebar();
   updateNotesCountInfo();
 }
 
-/**
- * Reconstruit le contenu de la popup actuellement ouverte (sans la fermer)
- */
 function refreshOpenPopup() {
   if (!map) return;
   const openPopup = map._popup;
@@ -4481,7 +4475,6 @@ function refreshOpenPopup() {
   const note = notesByIdCache[noteId];
   if (!note) return;
 
-  // Sauvegarde le focus et la position du curseur dans le champ commentaire
   let savedFocus = null;
   let savedValue = '';
   let savedSelection = null;
@@ -4492,10 +4485,8 @@ function refreshOpenPopup() {
     try { savedSelection = [activeEl.selectionStart, activeEl.selectionEnd]; } catch(e) {}
   }
 
-  // Remplace le contenu sans fermer la popup
   openPopup.setContent(buildPopupContent(note));
 
-  // Restaure le focus
   if (savedFocus) {
     const newEl = document.getElementById(savedFocus);
     if (newEl) {
@@ -4642,7 +4633,6 @@ async function toggleReaction(noteId, emoji, event) {
         createdAt: Date.now()
       });
     }
-    // Le listener va automatiquement rafraîchir la popup
   } catch (err) {
     console.error('Erreur réaction:', err);
     showToast('❌ Erreur', 'error');
@@ -4671,8 +4661,6 @@ async function addComment(noteId) {
     });
 
     input.value = '';
-    // Le listener va rafraîchir la popup, mais on désactive le champ pour éviter le double-envoi
-    // La restauration se fera via refreshOpenPopup
   } catch (err) {
     console.error('Erreur commentaire:', err);
     showToast('❌ Erreur', 'error');
@@ -4687,7 +4675,6 @@ async function deleteComment(commentId, noteId, event) {
   try {
     await db.collection('comments').doc(commentId).delete();
     showToast('🗑️ Commentaire supprimé', 'info');
-    // Le listener va rafraîchir la popup automatiquement
   } catch (err) {
     console.error('Erreur suppression commentaire:', err);
     showToast('❌ Erreur', 'error');
@@ -4724,7 +4711,6 @@ async function toggleFavorite(id, event) {
   try {
     await db.collection('notes').doc(id).update({ favorite: newVal });
     showToast(newVal ? '⭐ Ajouté aux favoris !' : 'Retiré des favoris', newVal ? 'success' : 'info');
-    // Le listener va tout rafraîchir automatiquement
   } catch (err) {
     console.error('Erreur favori:', err);
     showToast('❌ Erreur', 'error');
@@ -5824,6 +5810,7 @@ async function saveNote() {
     const address = addressEl.classList.contains('visible') ? addressEl.textContent.replace('📍 Adresse détectée : ', '').trim() : null;
 
     if (editingNoteId) {
+      console.log('💾 Update note:', editingNoteId);
       await db.collection('notes').doc(editingNoteId).update({
         place, text, lat, lng,
         source: pendingSource,
@@ -5848,6 +5835,7 @@ async function saveNote() {
 
     } else {
       const now = Date.now();
+      console.log('💾 Création note - userId:', currentUser.uid);
       await db.collection('notes').add({
         userId: currentUser.uid,
         place, text, lat, lng,
@@ -5860,6 +5848,7 @@ async function saveNote() {
         address: address,
         tags: pendingTags
       });
+      console.log('✅ Note créée avec succès');
 
       closeAddModal();
       showToast('☁️ Souvenir enregistré !', 'success');
@@ -5867,8 +5856,8 @@ async function saveNote() {
     }
 
   } catch (err) {
-    console.error(err);
-    showToast('❌ Erreur de sauvegarde', 'error');
+    console.error('❌ Erreur saveNote:', err);
+    showToast('❌ Erreur de sauvegarde: ' + err.message, 'error');
   } finally {
     saveBtn.disabled = false;
     saveBtn.innerHTML = originalHTML;
