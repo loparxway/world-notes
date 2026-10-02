@@ -3037,6 +3037,28 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch((err) => console
 db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.warn('Persistance offline:', err.code));
 
 /* =========================================================
+   ☁️ CLOUDINARY
+   ========================================================= */
+
+const CLOUDINARY_CLOUD_NAME = 'cfcliyv';
+const CLOUDINARY_UPLOAD_PRESET = 'worldnotes';
+
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    { method: 'POST', body: formData }
+  );
+
+  if (!res.ok) throw new Error('Upload échoué');
+  const data = await res.json();
+  return data.secure_url;
+}
+
+/* =========================================================
    🌍 LANDING
    ========================================================= */
 
@@ -3083,7 +3105,7 @@ const LEGAL_CONTENT = {
       <p>Tes données sont utilisées uniquement pour afficher tes souvenirs et permettre à tes amis de les voir, réagir et commenter.</p>
       <p><b>Nous ne vendons ni ne partageons jamais tes données à des fins publicitaires.</b></p>
       <h3>3. Stockage des données</h3>
-      <p>Tes données sont stockées chez <b>Google Firebase</b>. Les serveurs sont situés en Europe.</p>
+      <p>Tes données sont stockées chez <b>Google Firebase</b> et <b>Cloudinary</b> pour les photos. Les serveurs Firebase sont situés en Europe.</p>
       <p><b>Ton email n'est jamais visible par les autres utilisateurs.</b></p>
       <h3>4. Tes droits (RGPD)</h3>
       <p>Tu as le droit d'accéder, rectifier, supprimer et exporter toutes tes données.</p>
@@ -3151,8 +3173,8 @@ let allNotes = [];
 let myNotes = [];
 let friendNotes = [];
 let favoriteNotes = [];
-let allReactions = {}; // { noteId: [ {id, userId, emoji, ...} ] }
-let allComments = {}; // { noteId: [ {id, userId, text, createdAt} ] }
+let allReactions = {};
+let allComments = {};
 let mapFilter = 'all';
 let sidebarSearchQuery = '';
 let pendingProfilePhoto = null;
@@ -3161,7 +3183,7 @@ let pendingIsFavorite = false;
 let pendingTags = [];
 let currentRandomNoteId = null;
 let currentStatsTab = 'dashboard';
-let pendingNoteId = null; // Pour l'ajout de note via lien
+let pendingNoteId = null;
 
 let unsubscribeProfile = null;
 let unsubscribeNotes = null;
@@ -3276,7 +3298,6 @@ function handleUrlParams() {
       } else {
         showToast('⚠️ Ce souvenir n\'est pas disponible', 'info');
       }
-      // Nettoyer l'URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }, 2000);
   }
@@ -3453,14 +3474,14 @@ document.getElementById('profilePhotoInput').addEventListener('change', async (e
   }
 
   try {
-    showToast('⏳ Compression...', 'info');
-    const compressed = await compressImage(file, 300, 0.8);
-    pendingProfilePhoto = compressed;
-    document.getElementById('editProfileAvatar').src = compressed;
+    showToast('⏳ Envoi de la photo...', 'info');
+    const url = await uploadToCloudinary(file);
+    pendingProfilePhoto = url;
+    document.getElementById('editProfileAvatar').src = url;
     showToast('✅ Photo prête !', 'success');
   } catch (err) {
     console.error(err);
-    showToast('❌ Erreur photo', 'error');
+    showToast('❌ Erreur photo : ' + err.message, 'error');
   }
 });
 
@@ -3991,7 +4012,6 @@ function loadAllNotes() {
     );
 }
 
-/* 🆕 RÉACTIONS */
 function loadAllReactions() {
   if (unsubscribeReactions) unsubscribeReactions();
 
@@ -4012,7 +4032,6 @@ function loadAllReactions() {
     );
 }
 
-/* 🆕 COMMENTAIRES */
 function loadAllComments() {
   if (unsubscribeComments) unsubscribeComments();
 
@@ -4180,11 +4199,8 @@ function renderTagsHtml(tags) {
   return `<div class="note-tags">${tags.map(t => `<span class="tag-chip">#${escapeHtml(t)}</span>`).join('')}</div>`;
 }
 
-/* 🆕 Rendu des réactions */
 function renderReactionsHtml(noteId) {
   const reactions = allReactions[noteId] || [];
-  
-  // Compter par emoji
   const counts = {};
   reactions.forEach(r => {
     if (!counts[r.emoji]) counts[r.emoji] = { count: 0, userReacted: false };
@@ -4207,7 +4223,6 @@ function renderReactionsHtml(noteId) {
   `;
 }
 
-/* 🆕 Rendu des commentaires */
 function renderCommentsHtml(noteId) {
   const comments = allComments[noteId] || [];
   const note = allNotes.find(n => n.id === noteId);
@@ -4483,7 +4498,6 @@ async function deleteNoteFromPopup(id, event) {
   } catch (err) { showToast('❌ Erreur', 'error'); }
 }
 
-/* 🆕 RÉACTIONS */
 async function toggleReaction(noteId, emoji, event) {
   if (event) event.stopPropagation();
   if (!currentUser) return;
@@ -4493,10 +4507,8 @@ async function toggleReaction(noteId, emoji, event) {
 
   try {
     if (existing) {
-      // Retirer la réaction
       await db.collection('reactions').doc(existing.id).delete();
     } else {
-      // Ajouter la réaction
       await db.collection('reactions').add({
         noteId,
         userId: currentUser.uid,
@@ -4505,7 +4517,6 @@ async function toggleReaction(noteId, emoji, event) {
       });
     }
 
-    // Rafraîchir la popup
     setTimeout(() => {
       const marker = markers[noteId];
       if (marker && map.hasLayer(marker)) {
@@ -4518,7 +4529,6 @@ async function toggleReaction(noteId, emoji, event) {
   }
 }
 
-/* 🆕 COMMENTAIRES */
 async function addComment(noteId) {
   const input = document.getElementById(`commentInput_${noteId}`);
   if (!input) return;
@@ -4542,7 +4552,6 @@ async function addComment(noteId) {
 
     input.value = '';
     
-    // Rafraîchir la popup
     setTimeout(() => {
       const marker = markers[noteId];
       if (marker && map.hasLayer(marker)) {
@@ -4577,7 +4586,6 @@ async function deleteComment(commentId, noteId, event) {
   }
 }
 
-/* 🆕 PARTAGE */
 function shareNote(noteId, event) {
   if (event) event.stopPropagation();
   
@@ -4598,7 +4606,6 @@ function shareNote(noteId, event) {
   }
 }
 
-/* FAVORIS */
 async function toggleFavorite(id, event) {
   if (event) event.stopPropagation();
   const note = allNotes.find(n => n.id === id);
@@ -4658,7 +4665,6 @@ async function toggleFavoriteFromPopup(id, event) {
   }
 }
 
-/* TAGS */
 function renderTagsInModal() {
   const wrapper = document.getElementById('tagsInputWrapper');
   const input = document.getElementById('tagInputField');
@@ -4717,7 +4723,6 @@ tagInputField.addEventListener('blur', () => {
   }
 });
 
-/* RECHERCHE SIDEBAR */
 const sidebarSearchInput = document.getElementById('sidebarSearch');
 const clearSidebarSearchBtn = document.getElementById('clearSidebarSearch');
 
@@ -4734,7 +4739,6 @@ function clearSidebarSearch() {
   renderAllMarkers();
 }
 
-/* RANDOM */
 function showRandomNote() {
   const btn = document.querySelector('.btn-float:not(.btn-stats)');
   if (btn) btn.style.animation = 'spin3 0.6s linear infinite';
@@ -4840,7 +4844,6 @@ function rollAnotherRandom() {
   setTimeout(showRandomNote, 200);
 }
 
-/* STATS */
 function openStatsModal() {
   document.getElementById('statsModal').classList.add('open');
   switchStatsTab(currentStatsTab);
@@ -5090,7 +5093,6 @@ function renderStatsContent(tab) {
   }
 }
 
-/* ÉDITER */
 function editNoteFromPopup(id, event) {
   if (event) event.stopPropagation();
   const note = allNotes.find(n => n.id === id);
@@ -5162,7 +5164,6 @@ function toggleSidebar() {
   }
 }
 
-/* FILTRE */
 function setMapFilter(filter) {
   mapFilter = filter;
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -5184,7 +5185,6 @@ function updateFilters() {
   if (favBtn) favBtn.style.display = favoriteNotes.length > 0 ? 'flex' : 'none';
 }
 
-/* FAVORIS MODAL */
 function toggleFavInModal() {
   pendingIsFavorite = !pendingIsFavorite;
   updateFavToggle();
@@ -5206,7 +5206,6 @@ function updateFavToggle() {
   }
 }
 
-/* ADRESSE */
 async function reverseGeocode(lat, lng) {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=fr`;
@@ -5237,7 +5236,6 @@ function hideAddress() {
   el.innerHTML = '';
 }
 
-/* LIGHTBOX */
 function openLightbox(noteId, event) {
   if (event) event.stopPropagation();
   const note = allNotes.find(n => n.id === noteId);
@@ -5251,7 +5249,6 @@ function closeLightbox(event) {
   document.getElementById('lightbox').classList.remove('open');
 }
 
-/* PHOTO */
 const photoInput = document.getElementById('photoInput');
 const photoUploadZone = document.getElementById('photoUploadZone');
 const photoPreviewWrapper = document.getElementById('photoPreviewWrapper');
@@ -5282,43 +5279,17 @@ async function handlePhotoFile(file) {
     return;
   }
   try {
-    showToast('⏳ Compression...', 'info');
-    const compressedDataUrl = await compressImage(file, 700, 0.7);
-    pendingPhoto = compressedDataUrl;
-    photoPreview.src = compressedDataUrl;
+    showToast('⏳ Envoi de la photo...', 'info');
+    const url = await uploadToCloudinary(file);
+    pendingPhoto = url;
+    photoPreview.src = url;
     photoPreviewWrapper.classList.add('visible');
     photoUploadZone.style.display = 'none';
-    const sizeKo = Math.round((compressedDataUrl.length * 0.75) / 1024);
-    showToast(`✅ Photo ajoutée (~${sizeKo} Ko)`, 'success');
+    showToast('✅ Photo ajoutée !', 'success');
   } catch (err) {
     console.error(err);
-    showToast('❌ Erreur photo', 'error');
+    showToast('❌ Erreur photo : ' + err.message, 'error');
   }
-}
-
-function compressImage(file, maxWidth = 700, quality = 0.7) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        let { width, height } = img;
-        if (width > maxWidth) {
-          height = Math.round((height * maxWidth) / width);
-          width = maxWidth;
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', quality));
-      };
-      img.onerror = () => reject(new Error('Image invalide'));
-      img.src = e.target.result;
-    };
-    reader.onerror = () => reject(new Error('Lecture échouée'));
-    reader.readAsDataURL(file);
-  });
 }
 
 function removePhoto(event) {
@@ -5330,7 +5301,6 @@ function removePhoto(event) {
   photoInput.value = '';
 }
 
-/* RÉGLAGES */
 function toggleUserMenu(event) {
   if (event) event.stopPropagation();
   document.getElementById('userDropdown').classList.toggle('open');
@@ -5370,7 +5340,6 @@ function applySettings() {
   showToast('✅ Réglages appliqués', 'success');
 }
 
-/* EXPORT / IMPORT */
 function updateNotesCountInfo() {
   const info = document.getElementById('notesCountInfo');
   if (!info) return;
@@ -5476,7 +5445,6 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
   e.target.value = '';
 });
 
-/* MODAL AJOUT */
 function chooseIcon(el) {
   document.querySelectorAll('.icon-choice').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
@@ -5605,7 +5573,6 @@ function useMyLocation() {
   );
 }
 
-/* RECHERCHE */
 const searchInput = document.getElementById('searchInput');
 const autocompleteList = document.getElementById('autocompleteList');
 const searchSpinner = document.getElementById('searchSpinner');
@@ -5748,7 +5715,6 @@ function clearSearchButton() {
   closeAutocomplete();
 }
 
-/* SAUVEGARDE */
 async function saveNote() {
   const place = document.getElementById('placeName').value.trim();
   const text = document.getElementById('noteText').value.trim();
@@ -5879,7 +5845,6 @@ async function saveNote() {
   }
 }
 
-/* TOAST */
 let toastTimer;
 function showToast(msg, type = '') {
   const toast = document.getElementById('toast');
