@@ -449,7 +449,39 @@ textarea{resize:vertical;min-height:90px}
 .draft-restored-banner{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(22,163,74,.1));border:1px solid rgba(34,197,94,.4);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:.82rem;color:#22c55e;display:none;align-items:center;gap:8px;justify-content:space-between}
 .draft-restored-banner.visible{display:flex}
 .draft-restored-banner button{background:none;border:1px solid rgba(34,197,94,.5);color:#22c55e;font-size:.72rem;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600}
-::-webkit-scrollbar{width:8px}
+/* 📁 GROUPES */
+.groups-list{display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto;padding:4px}
+.group-card{background:var(--bg-input);border:1px solid var(--border-subtle);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.25s}
+.group-card:hover{background:var(--bg-card-hover);border-color:rgba(249,115,22,0.5);transform:translateY(-2px)}
+.group-emoji{font-size:2rem;flex-shrink:0;width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:rgba(249,115,22,0.12);border-radius:12px}
+.group-info{flex:1;min-width:0}
+.group-name{font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.group-meta{font-size:0.75rem;color:var(--text-muted)}
+.group-actions{display:flex;gap:6px;flex-shrink:0}
+.group-btn{background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.3);color:#f97316;font-size:0.72rem;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer;transition:all 0.2s}
+.group-btn:hover{background:rgba(249,115,22,0.9);color:white}
+.group-btn.danger{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.3);color:#ef4444}
+.group-btn.danger:hover{background:rgba(239,68,68,0.9);color:white}
+.emoji-picker-group{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.emoji-choice-group{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:2px solid var(--border-hover);background:var(--bg-input);border-radius:10px;cursor:pointer;transition:all 0.25s}
+.emoji-choice-group:hover{transform:translateY(-2px)}
+.emoji-choice-group.active{border-color:#f97316;background:rgba(249,115,22,0.15);transform:scale(1.08)}
+.group-members-list{display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;margin-bottom:12px}
+.group-member-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg-input);border:1px solid var(--border-subtle);border-radius:10px}
+.group-member-row img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(59,130,246,0.5)}
+.group-member-info{flex:1;min-width:0}
+.group-member-name{font-size:0.85rem;font-weight:700;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.group-member-username{font-size:0.72rem;color:#3b82f6;font-weight:600}
+.group-member-action{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
+.group-member-action:hover{background:rgba(239,68,68,0.9);color:white}
+.group-owner-badge{background:linear-gradient(135deg,#fbbf24,#d97706);color:white;font-size:0.6rem;font-weight:700;padding:2px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0}
+
+/* 📍 Pastille filtre groupe (sur la carte) */
+.group-filter-badge{position:fixed;top:calc(76px + env(safe-area-inset-top,0));left:50%;transform:translateX(-50%) translateY(-100px);background:linear-gradient(135deg,#f97316,#ea580c);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:8px 16px;font-size:0.85rem;font-weight:600;color:white;box-shadow:0 8px 24px rgba(249,115,22,0.5);z-index:998;display:flex;align-items:center;gap:10px;transition:transform 0.35s;max-width:calc(100vw - 32px)}
+.group-filter-badge.show{transform:translateX(-50%) translateY(0)}
+.group-filter-badge .badge-close{background:rgba(255,255,255,0.25);border:none;color:white;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;transition:all 0.2s}
+.group-filter-badge .badge-close:hover{background:rgba(255,255,255,0.4);transform:scale(1.1)}
+.group-filter-badge .badge-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}::-webkit-scrollbar{width:8px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(148,163,184,0.3);border-radius:4px}
 @media (max-width:768px){
@@ -531,6 +563,7 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
     <div class="actions">
       <button class="btn-ghost btn-toggle-notes" onclick="toggleSidebar()">📖 Notes</button>
       <button class="btn-ghost btn-icon" onclick="openFriendsModal()" title="Amis">👥<span class="badge" id="friendBadge" style="display: none;">0</span></button>
+            <button class="btn-ghost btn-icon" onclick="openGroupsModal()" title="Groupes">📁</button>
       <button class="btn-ghost btn-icon" onclick="toggleSettings()" title="Réglages">⚙️</button>
       <button class="btn-primary" onclick="openAddModal()">➕ Ajouter</button>
       <div class="user-menu">
@@ -843,6 +876,12 @@ let markers = {}, markersCluster = null, userLocationMarker = null, userLocation
 const REACTION_EMOJIS = ['❤️', '😂', '😍', '🔥', '👏', '😮'];
 const FIRESTORE_IN_LIMIT = 30;
 let currentShareNoteId = null;
+let allGroups = [];
+let activeGroupId = null;
+let currentEditingGroupId = null;
+let currentViewingGroupId = null;
+let pendingGroupEmoji = '🏖️';
+let unsubscribeGroups = null;
 
 /* 🔐 AUTH */
 function isMobileDevice() { return /iPhone|iPad|iPod|Android|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
@@ -861,7 +900,7 @@ function cleanupListeners() {
   unsubscribeProfile = unsubscribeNotes = unsubscribeFriends = unsubscribeIncoming = unsubscribeOutgoing = unsubscribeReactions = unsubscribeComments = null;
 }
 auth.onAuthStateChanged(async (user) => {
-  if (user) { currentUser = user; showApp(); await ensureUserProfile(); loadProfile(); loadIncomingRequests(); loadOutgoingRequests(); loadFriends(); loadAllNotes(); updateFriendBadge(); handleUrlParams(); }
+  if (user) { currentUser = user; showApp(); await ensureUserProfile(); loadProfile(); loadIncomingRequests(); loadOutgoingRequests(); loadFriends(); loadAllNotes(); loadGroups(); updateFriendBadge(); handleUrlParams(); }
   else { currentUser = null; cleanupListeners(); showLogin(); }
 });
 function handleUrlParams() {
@@ -1337,6 +1376,20 @@ function renderAllMarkers() {
   else if (mapFilter === 'mine') notesToShow = myNotes;
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
+
+  // 📁 Filtre groupe actif
+  if (activeGroupId) {
+    const group = allGroups.find(g => g.id === activeGroupId);
+    if (group) {
+      const memberSet = new Set(group.members || []);
+      notesToShow = notesToShow.filter(n => memberSet.has(n.userId));
+    } else {
+      // Le groupe n'existe plus, on désactive le filtre
+      activeGroupId = null;
+      const badge = document.getElementById('groupFilterBadge');
+      if (badge) badge.classList.remove('show');
+    }
+  }
   if (sidebarSearchQuery.trim()) {
     const q = sidebarSearchQuery.toLowerCase().trim();
     notesToShow = notesToShow.filter(n => { const inPlace = (n.place || '').toLowerCase().includes(q); const inText = (n.text || '').toLowerCase().includes(q); const inTags = (n.tags || []).some(t => t.toLowerCase().includes(q)); return inPlace || inText || inTags; });
@@ -1470,6 +1523,418 @@ async function toggleFavoriteFromPopup(id, event) {
   const note = notesByIdCache[id]; if (!note || note.userId !== currentUser.uid) return;
   const newVal = !note.favorite;
   try { await db.collection('notes').doc(id).update({ favorite: newVal }); showToast(newVal ? '⭐ Ajouté aux favoris !' : 'Retiré des favoris', newVal ? 'success' : 'info'); } catch (err) { showToast('❌ Erreur', 'error'); }
+}
+/* 📁 GROUPES */
+function loadGroups() {
+  if (unsubscribeGroups) unsubscribeGroups();
+  unsubscribeGroups = db.collection('groups')
+    .where('members', 'array-contains', currentUser.uid)
+    .onSnapshot(
+      (snapshot) => {
+        allGroups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        allGroups.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        renderGroupsList();
+        updateFilters();
+      },
+      (error) => {
+        console.error('Erreur loadGroups:', error);
+      }
+    );
+}
+/* 📁 GROUPES - FONCTIONS */
+function renderGroupsList() {
+  const list = document.getElementById('groupsList');
+  if (!list) return;
+
+  if (allGroups.length === 0) {
+    list.innerHTML = `<div class="empty-state">📁 Aucun groupe pour l'instant.<br>Crée ton premier groupe !</div>`;
+    return;
+  }
+
+  list.innerHTML = allGroups.map(g => {
+    const memberCount = (g.members || []).length;
+    const isOwner = g.ownerId === currentUser.uid;
+    return `
+      <div class="group-card" onclick="openGroupDetail('${g.id}')">
+        <div class="group-emoji">${g.emoji || '📁'}</div>
+        <div class="group-info">
+          <div class="group-name">${escapeHtml(g.name || 'Sans nom')}</div>
+          <div class="group-meta">${memberCount} membre${memberCount > 1 ? 's' : ''}${isOwner ? ' • Créateur' : ''}</div>
+        </div>
+        <div class="group-actions" onclick="event.stopPropagation()">
+          <button class="group-btn danger" onclick="confirmDeleteGroup('${g.id}')" title="Supprimer">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openGroupsModal() {
+  document.getElementById('groupsModalOverlay').classList.add('open');
+  renderGroupsList();
+}
+
+function closeGroupsModal() {
+  document.getElementById('groupsModalOverlay').classList.remove('open');
+}
+
+function openCreateGroup() {
+  currentEditingGroupId = null;
+  pendingGroupEmoji = '🏖️';
+  document.getElementById('groupModalTitle').textContent = '➕ Nouveau groupe';
+  document.getElementById('groupModalSubtitle').textContent = 'Donne-lui un nom et un emoji.';
+  document.getElementById('groupName').value = '';
+  document.getElementById('saveGroupBtn').innerHTML = '💾 Créer le groupe';
+  document.querySelectorAll('#groupEmojiPicker .emoji-choice-group').forEach(el => {
+    el.classList.toggle('active', el.dataset.emoji === '🏖️');
+  });
+  document.getElementById('groupsModalOverlay').classList.remove('open');
+  document.getElementById('editGroupModalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('groupName').focus(), 200);
+}
+
+function chooseGroupEmoji(el) {
+  document.querySelectorAll('#groupEmojiPicker .emoji-choice-group').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  pendingGroupEmoji = el.dataset.emoji;
+}
+
+function closeEditGroupModal() {
+  document.getElementById('editGroupModalOverlay').classList.remove('open');
+  currentEditingGroupId = null;
+  if (allGroups.length > 0 || true) {
+    document.getElementById('groupsModalOverlay').classList.add('open');
+  }
+}
+
+async function saveGroup() {
+  const name = document.getElementById('groupName').value.trim();
+  if (name.length < 2) {
+    showToast('⚠️ Le nom doit faire au moins 2 caractères', 'error');
+    return;
+  }
+
+  const saveBtn = document.getElementById('saveGroupBtn');
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<span class="cloud-loader"></span>Enregistrement...';
+
+  try {
+    if (currentEditingGroupId) {
+      // Modification
+      await db.collection('groups').doc(currentEditingGroupId).update({
+        name: name,
+        emoji: pendingGroupEmoji,
+        updatedAt: Date.now()
+      });
+      showToast('✅ Groupe modifié !', 'success');
+    } else {
+      // Création
+      await db.collection('groups').add({
+        name: name,
+        emoji: pendingGroupEmoji,
+        ownerId: currentUser.uid,
+        members: [currentUser.uid],
+        createdAt: Date.now()
+      });
+      showToast('✅ Groupe créé !', 'success');
+    }
+    closeEditGroupModal();
+  } catch (err) {
+    console.error('Erreur saveGroup:', err);
+    showToast('❌ Erreur : ' + err.message, 'error');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = currentEditingGroupId ? '💾 Mettre à jour' : '💾 Créer le groupe';
+  }
+}
+
+function openGroupDetail(groupId) {
+  const group = allGroups.find(g => g.id === groupId);
+  if (!group) return;
+
+  currentViewingGroupId = groupId;
+
+  document.getElementById('detailGroupEmoji').textContent = group.emoji || '📁';
+  document.getElementById('detailGroupName').textContent = group.name || 'Sans nom';
+  const memberCount = (group.members || []).length;
+  document.getElementById('detailGroupMeta').textContent = `${memberCount} membre${memberCount > 1 ? 's' : ''}`;
+
+  const isOwner = group.ownerId === currentUser.uid;
+  const btn = document.getElementById('deleteOrLeaveGroupBtn');
+  btn.innerHTML = isOwner ? '🗑️ Supprimer le groupe' : '🚪 Quitter le groupe';
+  btn.onclick = () => isOwner ? confirmDeleteGroup(groupId) : leaveGroup(groupId);
+
+  renderGroupMembers(group);
+
+  document.getElementById('groupsModalOverlay').classList.remove('open');
+  document.getElementById('groupDetailModalOverlay').classList.add('open');
+}
+
+function renderGroupMembers(group) {
+  const list = document.getElementById('groupMembersList');
+  if (!list) return;
+
+  const members = group.members || [];
+  if (members.length === 0) {
+    list.innerHTML = `<div class="empty-state">Aucun membre</div>`;
+    return;
+  }
+
+  list.innerHTML = members.map(uid => {
+    const isMe = uid === currentUser.uid;
+    const isOwner = uid === group.ownerId;
+    let profile = null;
+    let name = 'Toi';
+    let username = '';
+    let avatar = myProfile?.photoURL || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
+
+    if (!isMe) {
+      profile = friendsProfiles[uid];
+      if (!profile) {
+        name = 'Chargement...';
+      } else {
+        name = profile.displayName || 'Utilisateur';
+        username = profile.username ? '@' + profile.username : '';
+        avatar = cloudinaryThumb(profile.photoURL, 100) || 'https://www.gravatar.com/avatar/?d=mp';
+      }
+    } else {
+      name = (myProfile?.displayName || 'Toi') + ' (toi)';
+      username = myProfile?.username ? '@' + myProfile.username : '';
+    }
+
+    const canRemove = !isMe && !isOwner && group.ownerId === currentUser.uid;
+
+    return `
+      <div class="group-member-row">
+        <img src="${avatar}" alt="${escapeHtml(name)}" loading="lazy" />
+        <div class="group-member-info">
+          <div class="group-member-name">${escapeHtml(name)}</div>
+          ${username ? `<div class="group-member-username">${escapeHtml(username)}</div>` : ''}
+        </div>
+        ${isOwner ? '<span class="group-owner-badge">Créateur</span>' : ''}
+        ${canRemove ? `<button class="group-member-action" onclick="removeMemberFromGroup('${group.id}', '${uid}')" title="Retirer">×</button>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function closeGroupDetail() {
+  document.getElementById('groupDetailModalOverlay').classList.remove('open');
+  currentViewingGroupId = null;
+  document.getElementById('groupsModalOverlay').classList.add('open');
+  renderGroupsList();
+}
+
+async function addFriendToGroup() {
+  if (!currentViewingGroupId) return;
+  const input = document.getElementById('groupAddFriendInput');
+  const username = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+
+  if (username.length < 3) {
+    showToast('⚠️ Pseudo invalide', 'error');
+    return;
+  }
+
+  const group = allGroups.find(g => g.id === currentViewingGroupId);
+  if (!group) return;
+
+  input.disabled = true;
+
+  try {
+    // Trouver l'ami par pseudo
+    const usersSnap = await db.collection('users')
+      .where('username', '==', username)
+      .limit(1)
+      .get({ source: 'server' });
+
+    if (usersSnap.empty) {
+      showToast('❌ Aucun utilisateur avec ce pseudo', 'error');
+      input.disabled = false;
+      return;
+    }
+
+    const targetUid = usersSnap.docs[0].id;
+
+    if (targetUid === currentUser.uid) {
+      showToast('⚠️ Tu es déjà dans ce groupe', 'error');
+      input.disabled = false;
+      return;
+    }
+
+    if (!myFriends.includes(targetUid)) {
+      showToast('⚠️ Cet utilisateur n\'est pas dans tes amis', 'error');
+      input.disabled = false;
+      return;
+    }
+
+    if ((group.members || []).includes(targetUid)) {
+      showToast('ℹ️ Cet ami est déjà dans le groupe', 'info');
+      input.disabled = false;
+      return;
+    }
+
+    const newMembers = [...(group.members || []), targetUid];
+    await db.collection('groups').doc(currentViewingGroupId).update({
+      members: newMembers
+    });
+
+    input.value = '';
+    showToast(`✅ @${username} ajouté au groupe !`, 'success');
+
+    // Rafraîchir la vue
+    setTimeout(() => {
+      const updatedGroup = allGroups.find(g => g.id === currentViewingGroupId);
+      if (updatedGroup) {
+        renderGroupMembers(updatedGroup);
+        const memberCount = (updatedGroup.members || []).length;
+        document.getElementById('detailGroupMeta').textContent = `${memberCount} membre${memberCount > 1 ? 's' : ''}`;
+      }
+    }, 500);
+  } catch (err) {
+    console.error('Erreur addFriendToGroup:', err);
+    showToast('❌ Erreur : ' + err.message, 'error');
+  } finally {
+    input.disabled = false;
+  }
+}
+
+async function removeMemberFromGroup(groupId, memberUid) {
+  const group = allGroups.find(g => g.id === groupId);
+  if (!group) return;
+
+  if (group.ownerId !== currentUser.uid) {
+    showToast('⚠️ Seul le créateur peut retirer des membres', 'error');
+    return;
+  }
+
+  if (!confirm('Retirer ce membre du groupe ?')) return;
+
+  try {
+    const newMembers = (group.members || []).filter(uid => uid !== memberUid);
+    await db.collection('groups').doc(groupId).update({
+      members: newMembers
+    });
+
+    showToast('✅ Membre retiré', 'info');
+
+    setTimeout(() => {
+      const updatedGroup = allGroups.find(g => g.id === groupId);
+      if (updatedGroup) {
+        renderGroupMembers(updatedGroup);
+        const memberCount = (updatedGroup.members || []).length;
+        document.getElementById('detailGroupMeta').textContent = `${memberCount} membre${memberCount > 1 ? 's' : ''}`;
+      }
+    }, 500);
+  } catch (err) {
+    console.error('Erreur removeMemberFromGroup:', err);
+    showToast('❌ Erreur : ' + err.message, 'error');
+  }
+}
+
+async function leaveGroup(groupId) {
+  if (!confirm('Quitter ce groupe ?')) return;
+
+  try {
+    const group = allGroups.find(g => g.id === groupId);
+    if (!group) return;
+    const newMembers = (group.members || []).filter(uid => uid !== currentUser.uid);
+
+    await db.collection('groups').doc(groupId).update({
+      members: newMembers
+    });
+
+    if (activeGroupId === groupId) {
+      clearGroupFilter();
+    }
+
+    showToast('🚪 Tu as quitté le groupe', 'info');
+    closeGroupDetail();
+  } catch (err) {
+    console.error('Erreur leaveGroup:', err);
+    showToast('❌ Erreur : ' + err.message, 'error');
+  }
+}
+
+async function confirmDeleteGroup(groupId) {
+  const group = allGroups.find(g => g.id === groupId);
+  if (!group) return;
+
+  if (group.ownerId !== currentUser.uid) {
+    showToast('⚠️ Seul le créateur peut supprimer le groupe', 'error');
+    return;
+  }
+
+  if (!confirm(`Supprimer définitivement le groupe "${group.name}" ?`)) return;
+
+  try {
+    await db.collection('groups').doc(groupId).delete();
+
+    if (activeGroupId === groupId) {
+      clearGroupFilter();
+    }
+
+    showToast('🗑️ Groupe supprimé', 'info');
+
+    // Fermer les modales éventuelles
+    document.getElementById('groupDetailModalOverlay').classList.remove('open');
+    document.getElementById('groupsModalOverlay').classList.add('open');
+  } catch (err) {
+    console.error('Erreur deleteGroup:', err);
+    showToast('❌ Erreur : ' + err.message, 'error');
+  }
+}
+/* 📁 FILTRE GROUPE */
+function applyGroupFilterFromDetail() {
+  if (!currentViewingGroupId) return;
+  const group = allGroups.find(g => g.id === currentViewingGroupId);
+  if (!group) return;
+
+  activeGroupId = currentViewingGroupId;
+  showToast(`${group.emoji || '📁'} Filtre "${group.name}" activé`, 'success');
+
+  // Met à jour la pastille
+  const badge = document.getElementById('groupFilterBadge');
+  const badgeText = document.getElementById('groupFilterText');
+  if (badge && badgeText) {
+    badgeText.textContent = `${group.emoji || '📁'} ${group.name}`;
+    badge.classList.add('show');
+  }
+
+  // Ferme la modale et retourne à la carte
+  document.getElementById('groupDetailModalOverlay').classList.remove('open');
+  document.getElementById('groupsModalOverlay').classList.remove('open');
+  currentViewingGroupId = null;
+
+  // Applique le filtre
+  renderAllMarkers();
+  updateFilters();
+}
+
+function applyGroupFilter(groupId) {
+  if (!groupId) return;
+  const group = allGroups.find(g => g.id === groupId);
+  if (!group) return;
+
+  activeGroupId = groupId;
+
+  const badge = document.getElementById('groupFilterBadge');
+  const badgeText = document.getElementById('groupFilterText');
+  if (badge && badgeText) {
+    badgeText.textContent = `${group.emoji || '📁'} ${group.name}`;
+    badge.classList.add('show');
+  }
+
+  renderAllMarkers();
+  updateFilters();
+}
+
+function clearGroupFilter() {
+  activeGroupId = null;
+  const badge = document.getElementById('groupFilterBadge');
+  if (badge) badge.classList.remove('show');
+  showToast('👁️ Filtre retiré', 'info');
+  renderAllMarkers();
+  updateFilters();
 }
 
 /* ⚠️ SUPPRESSION DE COMPTE */
@@ -1703,12 +2168,27 @@ function toggleSidebar() {
   sidebar.classList.toggle('open');
   if (window.innerWidth > 768) { if (isOpening) mapEl.classList.add('with-sidebar'); else mapEl.classList.remove('with-sidebar'); setTimeout(() => { if (map) map.invalidateSize(); }, 400); }
 }
-function setMapFilter(filter) { mapFilter = filter; document.querySelectorAll('.filter-btn').forEach(btn => { btn.classList.toggle('active', btn.dataset.filter === filter); }); renderAllMarkers(); }
+function setMapFilter(filter) {
+  mapFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(btn => { btn.classList.toggle('active', btn.dataset.filter === filter); });
+  renderAllMarkers();
+}
 function updateFilters() {
-  document.getElementById('countAll').textContent = allNotes.length;
-  document.getElementById('countMine').textContent = myNotes.length;
-  document.getElementById('countFriends').textContent = friendNotes.length;
-  document.getElementById('countFavorites').textContent = favoriteNotes.length;
+  let notesForCounts = allNotes;
+
+  // 📁 Si filtre groupe actif, on ne compte que ses notes
+  if (activeGroupId) {
+    const group = allGroups.find(g => g.id === activeGroupId);
+    if (group) {
+      const memberSet = new Set(group.members || []);
+      notesForCounts = allNotes.filter(n => memberSet.has(n.userId));
+    }
+  }
+
+  document.getElementById('countAll').textContent = notesForCounts.length;
+  document.getElementById('countMine').textContent = notesForCounts.filter(n => n.userId === currentUser.uid).length;
+  document.getElementById('countFriends').textContent = notesForCounts.filter(n => n.userId !== currentUser.uid).length;
+  document.getElementById('countFavorites').textContent = notesForCounts.filter(n => n.favorite === true).length;
   const friendsBtn = document.querySelector('.filter-btn[data-filter="friends"]'); if (friendsBtn) friendsBtn.style.display = myFriends.length > 0 ? 'flex' : 'none';
   const favBtn = document.querySelector('.filter-btn[data-filter="favorites"]'); if (favBtn) favBtn.style.display = favoriteNotes.length > 0 ? 'flex' : 'none';
 }
