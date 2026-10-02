@@ -3234,7 +3234,9 @@ function signInWithGoogle() {
 }
 
 auth.getRedirectResult().then((result) => {
-  if (result && result.user) console.log('✅ Connecté après redirection');
+  if (result && result.user) {
+    // Connecté après redirection
+  }
 }).catch((error) => console.error('❌ getRedirectResult:', error));
 
 function signOut() {
@@ -3259,7 +3261,6 @@ function cleanupListeners() {
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
-    console.log('🔐 Connecté - UID:', user.uid);
     showApp();
     await ensureUserProfile();
     loadProfile();
@@ -3388,7 +3389,6 @@ function loadProfile() {
     .onSnapshot(async (doc) => {
       if (!doc.exists) return;
       myProfile = doc.data();
-      console.log('👤 Profil chargé. Amis:', myProfile.friends);
 
       const avatarSrc = myProfile.photoURL || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
       document.getElementById('userAvatar').src = avatarSrc;
@@ -3622,10 +3622,7 @@ function loadFriends() {
       myFriends = newFriends;
 
       await loadFriendsProfiles();
-      if (changed) {
-        console.log('👥 Amis mis à jour, rechargement des notes');
-        loadAllNotes();
-      }
+      if (changed) loadAllNotes();
     });
 }
 
@@ -4002,22 +3999,9 @@ function loadAllNotes() {
     .limit(500)
     .onSnapshot(
       (snapshot) => {
-        console.log('📥 Snapshot notes reçu. Docs:', snapshot.size, '| fromCache:', snapshot.metadata.fromCache);
-
         const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        console.log('📋 Total notes dans Firestore:', all.length);
-
         const allowed = new Set([currentUser.uid, ...myFriends]);
-        console.log('🔑 UIDs autorisés:', [...allowed]);
-
         allNotes = all.filter(n => allowed.has(n.userId));
-        console.log('✅ Notes après filtre:', allNotes.length);
-
-        // Debug des notes filtrées
-        all.forEach(n => {
-          const ok = allowed.has(n.userId);
-          console.log(`  ${ok ? '✅' : '❌'} "${n.place}" | userId=${n.userId?.substring(0,10)}...`);
-        });
 
         notesByIdCache = {};
         allNotes.forEach(n => { notesByIdCache[n.id] = n; });
@@ -4441,8 +4425,6 @@ function renderAllMarkers() {
     });
   }
 
-  console.log('🗺️ renderAllMarkers - notes à afficher:', notesToShow.length);
-
   const idsToShow = new Set(notesToShow.map(n => n.id));
 
   Object.keys(markers).forEach(id => {
@@ -4691,7 +4673,7 @@ function shareNote(noteId, event) {
       title: 'World Notes',
       text: 'Découvre ce souvenir sur World Notes !',
       url
-    }).catch(err => console.log('Partage annulé:', err));
+    }).catch(err => {});
   } else {
     navigator.clipboard.writeText(url).then(() => {
       showToast('🔗 Lien copié dans le presse-papier !', 'success');
@@ -5810,7 +5792,6 @@ async function saveNote() {
     const address = addressEl.classList.contains('visible') ? addressEl.textContent.replace('📍 Adresse détectée : ', '').trim() : null;
 
     if (editingNoteId) {
-      console.log('💾 Update note:', editingNoteId);
       await db.collection('notes').doc(editingNoteId).update({
         place, text, lat, lng,
         source: pendingSource,
@@ -5835,7 +5816,6 @@ async function saveNote() {
 
     } else {
       const now = Date.now();
-      console.log('💾 Création note - userId:', currentUser.uid);
       await db.collection('notes').add({
         userId: currentUser.uid,
         place, text, lat, lng,
@@ -5848,7 +5828,6 @@ async function saveNote() {
         address: address,
         tags: pendingTags
       });
-      console.log('✅ Note créée avec succès');
 
       closeAddModal();
       showToast('☁️ Souvenir enregistré !', 'success');
