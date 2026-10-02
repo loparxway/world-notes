@@ -35,51 +35,318 @@
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
   }
 
-  :root[data-theme="light"] {
-    --bg-primary: #f1f5f9;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #e2e8f0;
-    --bg-card: rgba(255, 255, 255, 0.85);
-    --bg-card-hover: rgba(241, 245, 249, 0.95);
-    --bg-overlay: rgba(255, 255, 255, 0.9);
-    --bg-modal: #ffffff;
-    --bg-input: #f8fafc;
-    --bg-header: rgba(255, 255, 255, 0.9);
-    --text-primary: #0f172a;
-    --text-secondary: #1e293b;
-    --text-muted: #475569;
-    --text-faint: #64748b;
-    --border-color: rgba(15, 23, 42, 0.15);
-    --border-subtle: rgba(15, 23, 42, 0.08);
-    --border-hover: rgba(15, 23, 42, 0.25);
-    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
-    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
-    --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.15);
-  }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    overflow: hidden;
-    height: 100vh;
-    transition: background 0.4s ease, color 0.4s ease;
+    background: #0f172a;
+    color: #e2e8f0;
+    overflow-x: hidden;
+    min-height: 100vh;
   }
+
+  /* =====================================================
+     🌍 LANDING PAGE (avant connexion)
+     ===================================================== */
+
+  #landingScreen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    overflow-y: auto;
+    z-index: 10000;
+    padding: 20px;
+  }
+
+  #landingScreen.hidden { display: none; }
+
+  .landing-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px 80px;
+    animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .landing-hero {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .landing-globe {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 20px;
+    animation: gentleFloat 4s ease-in-out infinite;
+  }
+
+  @keyframes gentleFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-10px) rotate(10deg); }
+  }
+
+  .landing-hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #f97316, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+  }
+
+  .landing-hero .tagline {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
+
+  .landing-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 50px;
+  }
+
+  .feature-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s;
+    animation: slideUp 0.6s ease backwards;
+  }
+
+  .feature-card:nth-child(1) { animation-delay: 0.1s; }
+  .feature-card:nth-child(2) { animation-delay: 0.2s; }
+  .feature-card:nth-child(3) { animation-delay: 0.3s; }
+  .feature-card:nth-child(4) { animation-delay: 0.4s; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(249, 115, 22, 0.4);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .feature-card h3 {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+    color: white;
+  }
+
+  .feature-card p {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  .landing-cta {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .btn-landing-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 40px;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
+  }
+
+  .btn-landing-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(249, 115, 22, 0.6);
+    filter: brightness(1.08);
+  }
+
+  .btn-landing-primary svg { width: 24px; height: 24px; }
+
+  .landing-footer {
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    text-align: center;
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+
+  .landing-footer a {
+    color: #f97316;
+    text-decoration: none;
+    cursor: pointer;
+    margin: 0 8px;
+    transition: all 0.2s;
+  }
+
+  .landing-footer a:hover {
+    text-decoration: underline;
+  }
+
+  /* =====================================================
+     📄 MODAL LÉGAL (Conditions / Confidentialité)
+     ===================================================== */
+
+  .legal-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20000;
+    padding: 20px;
+  }
+
+  .legal-modal.open { display: flex; }
+
+  .legal-modal-content {
+    background: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 18px;
+    padding: 32px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.92) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .legal-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  .legal-modal-header h2 {
+    font-size: 1.4rem;
+    color: white;
+  }
+
+  .legal-modal-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.2s;
+  }
+
+  .legal-modal-close:hover { color: #ef4444; transform: rotate(90deg); }
+
+  .legal-content {
+    color: #cbd5e1;
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+
+  .legal-content h3 {
+    font-size: 1.05rem;
+    color: #f97316;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .legal-content h3:first-child { margin-top: 0; }
+
+  .legal-content p {
+    margin-bottom: 12px;
+  }
+
+  .legal-content ul {
+    margin-left: 20px;
+    margin-bottom: 12px;
+  }
+
+  .legal-content li {
+    margin-bottom: 6px;
+  }
+
+  .legal-content a {
+    color: #f97316;
+    text-decoration: none;
+  }
+
+  .legal-content a:hover { text-decoration: underline; }
+
+  .legal-modal-footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .legal-modal-footer button {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .legal-modal-footer button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
+  }
+
+  /* =====================================================
+     🔐 ÉCRAN DE LOGIN (après avoir cliqué sur "Commencer")
+     ===================================================== */
 
   #loginScreen {
     position: fixed;
     inset: 0;
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     z-index: 10000;
     padding: 20px;
   }
 
-  #loginScreen.hidden { display: none; }
+  #loginScreen.visible { display: flex; }
 
   .login-card {
     background: rgba(30, 41, 59, 0.8);
@@ -98,11 +365,6 @@
     display: block;
     margin-bottom: 16px;
     animation: gentleFloat 4s ease-in-out infinite;
-  }
-
-  @keyframes gentleFloat {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50%      { transform: translateY(-6px) rotate(10deg); }
   }
 
   .login-card h1 {
@@ -152,13 +414,30 @@
     line-height: 1.5;
   }
 
+  .login-back {
+    display: block;
+    margin-top: 20px;
+    background: none;
+    border: none;
+    color: #f97316;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left: auto;
+    margin-right: auto;
+    transition: all 0.2s;
+  }
+
+  .login-back:hover { text-decoration: underline; }
+
+  /* Le reste du CSS est identique au site principal */
   header {
     position: fixed;
     top: 0; left: 0; right: 0;
     height: 64px;
-    background: var(--bg-header);
+    background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -174,7 +453,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--text-primary);
+    color: #e2e8f0;
   }
 
   .logo span.globe {
@@ -208,8 +487,8 @@
 
   .btn-ghost {
     background: rgba(148, 163, 184, 0.15);
-    color: var(--text-primary);
-    border: 1px solid var(--border-hover);
+    color: #e2e8f0;
+    border: 1px solid rgba(148, 163, 184, 0.3);
   }
   .btn-ghost:hover {
     background: rgba(148, 163, 184, 0.25);
@@ -255,12 +534,12 @@
     position: absolute;
     top: 50px;
     right: 0;
-    background: var(--bg-modal);
-    border: 1px solid var(--border-color);
+    background: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 12px;
     padding: 8px;
     min-width: 240px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     display: none;
     z-index: 10;
   }
@@ -269,14 +548,14 @@
 
   .user-info {
     padding: 10px 12px;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
     margin-bottom: 6px;
   }
 
   .user-name {
     font-weight: 700;
     font-size: 0.9rem;
-    color: var(--text-primary);
+    color: #e2e8f0;
     margin-bottom: 2px;
   }
 
@@ -299,7 +578,7 @@
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: #cbd5e1;
     transition: all 0.2s;
     border: none;
     background: none;
@@ -323,7 +602,7 @@
     top: calc(64px + env(safe-area-inset-top, 0));
     left: 0; right: 0; bottom: 0;
     z-index: 1;
-    background: var(--bg-tertiary);
+    background: #0b1220;
   }
 
   .sync-indicator {
@@ -331,13 +610,13 @@
     top: calc(76px + env(safe-area-inset-top, 0));
     left: 50%;
     transform: translateX(-50%) translateY(-100px);
-    background: var(--bg-modal);
-    border: 1px solid var(--border-color);
+    background: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 20px;
     padding: 8px 18px;
     font-size: 0.8rem;
-    color: var(--text-secondary);
-    box-shadow: var(--shadow-md);
+    color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     z-index: 999;
     transition: transform 0.35s;
     display: flex;
@@ -364,20 +643,20 @@
     position: fixed;
     bottom: 24px;
     left: 24px;
-    background: var(--bg-modal);
-    border: 1px solid var(--border-color);
+    background: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 12px;
     padding: 6px;
     display: flex;
     gap: 4px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     z-index: 500;
   }
 
   .filter-btn {
     background: transparent;
     border: none;
-    color: var(--text-muted);
+    color: #94a3b8;
     font-size: 0.78rem;
     font-weight: 600;
     padding: 8px 12px;
@@ -407,9 +686,9 @@
     top: calc(64px + env(safe-area-inset-top, 0));
     right: 0; bottom: 0;
     width: 340px;
-    background: var(--bg-overlay);
+    background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(16px);
-    border-left: 1px solid var(--border-color);
+    border-left: 1px solid rgba(148, 163, 184, 0.2);
     transform: translateX(100%);
     transition: transform 0.35s;
     z-index: 999;
@@ -420,17 +699,17 @@
 
   .sidebar-header {
     padding: 20px;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .sidebar-header h2 { font-size: 1.1rem; color: var(--text-primary); }
+  .sidebar-header h2 { font-size: 1.1rem; color: #e2e8f0; }
 
   .close-sidebar {
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: #94a3b8;
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0;
@@ -439,8 +718,8 @@
   .notes-list { flex: 1; overflow-y: auto; padding: 12px; }
 
   .note-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 12px;
     margin-bottom: 10px;
     cursor: pointer;
@@ -464,10 +743,10 @@
   }
 
   .note-card:hover {
-    background: var(--bg-card-hover);
+    background: rgba(51, 65, 85, 0.8);
     border-color: rgba(249, 115, 22, 0.5);
     transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   }
   .note-card:hover::before { opacity: 1; }
 
@@ -496,14 +775,14 @@
 
   .note-card .text {
     font-size: 0.88rem;
-    color: var(--text-secondary);
+    color: #cbd5e1;
     line-height: 1.4;
   }
 
   .note-card .meta {
     margin-top: 8px;
     font-size: 0.72rem;
-    color: var(--text-faint);
+    color: #64748b;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -518,7 +797,7 @@
     font-weight: 600;
     margin-top: 6px;
     padding-top: 6px;
-    border-top: 1px dashed var(--border-subtle);
+    border-top: 1px dashed rgba(148, 163, 184, 0.15);
   }
 
   .note-author img {
@@ -531,7 +810,7 @@
   .delete-note {
     background: none;
     border: none;
-    color: var(--text-faint);
+    color: #64748b;
     font-size: 1rem;
     cursor: pointer;
     padding: 2px 6px;
@@ -545,7 +824,7 @@
   .empty-state {
     text-align: center;
     padding: 40px 20px;
-    color: var(--text-faint);
+    color: #64748b;
     font-size: 0.9rem;
   }
 
@@ -563,24 +842,24 @@
   .modal-overlay.open { display: flex; }
 
   .modal {
-    background: var(--bg-modal);
-    border: 1px solid var(--border-color);
+    background: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 18px;
     padding: 28px;
     width: 100%;
     max-width: 500px;
     max-height: 92vh;
     overflow-y: auto;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   }
 
   .modal h2 {
     font-size: 1.3rem;
     margin-bottom: 6px;
-    color: var(--text-primary);
+    color: #e2e8f0;
   }
   .modal .subtitle {
-    color: var(--text-muted);
+    color: #94a3b8;
     font-size: 0.85rem;
     margin-bottom: 20px;
   }
@@ -591,7 +870,7 @@
     display: block;
     font-size: 0.82rem;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: #cbd5e1;
     margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -600,10 +879,10 @@
   input, textarea, select {
     width: 100%;
     padding: 12px 14px;
-    background: var(--bg-input);
-    border: 1px solid var(--border-hover);
+    background: #0f172a;
+    border: 1px solid rgba(148, 163, 184, 0.3);
     border-radius: 10px;
-    color: var(--text-primary);
+    color: #e2e8f0;
     font-family: inherit;
     font-size: 0.95rem;
     outline: none;
@@ -628,8 +907,8 @@
     align-items: center;
     justify-content: center;
     font-size: 1.3rem;
-    border: 2px solid var(--border-hover);
-    background: var(--bg-input);
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    background: #0f172a;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.25s;
@@ -642,12 +921,12 @@
   }
 
   .photo-upload-zone {
-    border: 2px dashed var(--border-hover);
+    border: 2px dashed rgba(148, 163, 184, 0.3);
     border-radius: 12px;
     padding: 20px;
     text-align: center;
     cursor: pointer;
-    background: var(--bg-input);
+    background: #0f172a;
   }
   .photo-upload-zone:hover {
     border-color: #f97316;
@@ -658,7 +937,7 @@
 
   .photo-upload-text {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: #94a3b8;
   }
   .photo-upload-text b { color: #f97316; }
 
@@ -705,7 +984,7 @@
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--text-muted);
+    color: #94a3b8;
   }
 
   .search-clear {
@@ -715,7 +994,7 @@
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: var(--text-faint);
+    color: #64748b;
     font-size: 1.1rem;
     cursor: pointer;
     padding: 4px 8px;
@@ -745,13 +1024,13 @@
     left: 0;
     right: 0;
     margin-top: 6px;
-    background: var(--bg-modal);
-    border: 1px solid var(--border-color);
+    background: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 10px;
     max-height: 260px;
     overflow-y: auto;
     z-index: 10;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     display: none;
   }
   .autocomplete-list.open { display: block; }
@@ -759,13 +1038,13 @@
   .autocomplete-item {
     padding: 11px 14px;
     cursor: pointer;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
     font-size: 0.88rem;
   }
   .autocomplete-item:hover { background: rgba(249, 115, 22, 0.15); }
-  .autocomplete-item .name { color: var(--text-primary); font-weight: 600; margin-bottom: 2px; }
+  .autocomplete-item .name { color: #e2e8f0; font-weight: 600; margin-bottom: 2px; }
   .autocomplete-item .details {
-    color: var(--text-muted);
+    color: #94a3b8;
     font-size: 0.78rem;
     white-space: nowrap;
     overflow: hidden;
@@ -777,11 +1056,11 @@
     align-items: center;
     gap: 10px;
     padding: 12px;
-    background: var(--bg-input);
-    border: 1px dashed var(--border-hover);
+    background: #0f172a;
+    border: 1px dashed rgba(148, 163, 184, 0.3);
     border-radius: 10px;
     font-size: 0.82rem;
-    color: var(--text-muted);
+    color: #94a3b8;
   }
   .location-box.gps {
     border-color: rgba(34, 197, 94, 0.6);
@@ -871,15 +1150,15 @@
   }
 
   .leaflet-popup-content-wrapper {
-    background: var(--bg-modal);
-    color: var(--text-primary);
+    background: #1e293b;
+    color: #e2e8f0;
     border-radius: 14px;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     padding: 0;
     overflow: hidden;
   }
-  .leaflet-popup-tip { background: var(--bg-modal); }
+  .leaflet-popup-tip { background: #1e293b; }
   .leaflet-popup-content { margin: 0; }
 
   .popup-photo {
@@ -908,7 +1187,7 @@
 
   .popup-text {
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: #cbd5e1;
     line-height: 1.4;
     margin-bottom: 8px;
   }
@@ -918,7 +1197,7 @@
     align-items: center;
     gap: 8px;
     padding: 8px 0;
-    border-top: 1px solid var(--border-subtle);
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
     margin-top: 8px;
     font-size: 0.78rem;
     color: #3b82f6;
@@ -938,12 +1217,12 @@
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    border-top: 1px solid var(--border-subtle);
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
     padding-top: 10px;
     margin-top: 8px;
   }
 
-  .popup-meta { font-size: 0.72rem; color: var(--text-faint); flex: 1; }
+  .popup-meta { font-size: 0.72rem; color: #64748b; flex: 1; }
 
   .popup-delete-btn {
     background: rgba(239, 68, 68, 0.12);
@@ -995,8 +1274,8 @@
   }
 
   .leaflet-control-recenter {
-    background: var(--bg-modal);
-    border: 1px solid var(--border-hover);
+    background: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.3);
     border-radius: 10px;
     width: 40px;
     height: 40px;
@@ -1005,8 +1284,8 @@
     justify-content: center;
     cursor: pointer;
     font-size: 1.2rem;
-    color: var(--text-primary);
-    box-shadow: var(--shadow-md);
+    color: #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     margin-bottom: 10px;
   }
 
@@ -1017,11 +1296,11 @@
     width: 360px;
     max-height: calc(100vh - 96px);
     overflow-y: auto;
-    background: var(--bg-modal);
-    border: 1px solid var(--border-color);
+    background: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 14px;
     padding: 22px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     z-index: 1500;
     display: none;
   }
@@ -1033,13 +1312,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: var(--text-primary);
+    color: #e2e8f0;
   }
 
   .settings-panel h3 button {
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: #94a3b8;
     font-size: 1.3rem;
     cursor: pointer;
   }
@@ -1047,7 +1326,7 @@
   .settings-panel label {
     font-size: 0.75rem;
     margin-bottom: 6px;
-    color: var(--text-secondary);
+    color: #cbd5e1;
   }
 
   .theme-choices {
@@ -1060,13 +1339,13 @@
   .theme-choice {
     padding: 12px 8px;
     border-radius: 10px;
-    border: 2px solid var(--border-hover);
-    background: var(--bg-input);
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    background: #0f172a;
     cursor: pointer;
     text-align: center;
     font-size: 0.72rem;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: #cbd5e1;
   }
   .theme-choice.active {
     border-color: #f97316;
@@ -1086,18 +1365,18 @@
   .backup-section {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid var(--border-subtle);
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
   }
 
   .backup-section h4 {
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: #cbd5e1;
     margin-bottom: 4px;
   }
 
   .backup-section .description {
     font-size: 0.72rem;
-    color: var(--text-faint);
+    color: #64748b;
     margin-bottom: 12px;
   }
 
@@ -1127,7 +1406,7 @@
   .notes-count-info {
     margin-top: 12px;
     font-size: 0.7rem;
-    color: var(--text-faint);
+    color: #64748b;
     text-align: center;
     font-style: italic;
   }
@@ -1137,7 +1416,7 @@
     flex-direction: column;
     align-items: center;
     padding: 20px 0;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
     margin-bottom: 20px;
     position: relative;
   }
@@ -1162,7 +1441,7 @@
     right: 0;
     background: linear-gradient(135deg, #f97316, #ea580c);
     color: white;
-    border: 3px solid var(--bg-modal);
+    border: 3px solid #1e293b;
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -1178,7 +1457,7 @@
   .profile-name {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: #e2e8f0;
     margin-bottom: 4px;
   }
 
@@ -1191,7 +1470,7 @@
 
   .profile-bio {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: #94a3b8;
     text-align: center;
     line-height: 1.4;
     max-width: 380px;
@@ -1203,7 +1482,7 @@
     align-items: center;
     gap: 6px;
     font-size: 0.8rem;
-    color: var(--text-faint);
+    color: #64748b;
     margin-top: 8px;
   }
 
@@ -1213,13 +1492,11 @@
     justify-content: center;
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid var(--border-subtle);
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
     width: 100%;
   }
 
-  .profile-stat {
-    text-align: center;
-  }
+  .profile-stat { text-align: center; }
 
   .profile-stat .value {
     font-size: 1.2rem;
@@ -1229,7 +1506,7 @@
 
   .profile-stat .label {
     font-size: 0.7rem;
-    color: var(--text-faint);
+    color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -1259,8 +1536,8 @@
   }
 
   .friend-card {
-    background: var(--bg-input);
-    border: 1px solid var(--border-subtle);
+    background: #0f172a;
+    border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 12px;
     padding: 14px;
     margin-bottom: 10px;
@@ -1272,10 +1549,9 @@
   }
 
   .friend-card:hover {
-    background: var(--bg-card-hover);
+    background: rgba(51, 65, 85, 0.8);
     border-color: rgba(59, 130, 246, 0.5);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
   }
 
   .friend-avatar {
@@ -1292,7 +1568,7 @@
   .friend-name {
     font-weight: 700;
     font-size: 0.95rem;
-    color: var(--text-primary);
+    color: #e2e8f0;
     margin-bottom: 2px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1308,7 +1584,7 @@
 
   .friend-bio-preview {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: #94a3b8;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1350,7 +1626,7 @@
     display: flex;
     gap: 4px;
     margin-bottom: 16px;
-    background: var(--bg-input);
+    background: #0f172a;
     padding: 4px;
     border-radius: 10px;
   }
@@ -1359,7 +1635,7 @@
     flex: 1;
     background: transparent;
     border: none;
-    color: var(--text-muted);
+    color: #94a3b8;
     font-size: 0.75rem;
     font-weight: 600;
     padding: 8px 6px;
@@ -1372,9 +1648,8 @@
   }
 
   .friends-tab.active {
-    background: var(--bg-modal);
+    background: #1e293b;
     color: #3b82f6;
-    box-shadow: var(--shadow-sm);
   }
 
   .friends-tab .tab-badge {
@@ -1404,7 +1679,7 @@
     padding: 14px;
     margin-bottom: 16px;
     font-size: 0.82rem;
-    color: var(--text-secondary);
+    color: #cbd5e1;
     display: flex;
     align-items: flex-start;
     gap: 10px;
@@ -1420,14 +1695,14 @@
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: var(--bg-modal);
+    background: #1e293b;
     border: 1px solid rgba(249, 115, 22, 0.4);
-    color: var(--text-primary);
+    color: #e2e8f0;
     padding: 12px 22px;
     border-radius: 12px;
     font-size: 0.9rem;
     font-weight: 500;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     transition: transform 0.35s;
     z-index: 3000;
     max-width: 90%;
@@ -1440,86 +1715,34 @@
 
   .btn-toggle-notes { display: none; }
 
-  /* 📱 MOBILE */
   @media (max-width: 768px) {
-    header {
-        padding: 0 12px;
-    }
+    .landing-hero h1 { font-size: 2.2rem; }
+    .landing-hero .tagline { font-size: 1rem; }
+    .landing-globe { font-size: 4rem; }
+    .landing-container { padding: 40px 16px 60px; }
+    .btn-landing-primary { padding: 16px 32px; font-size: 1rem; }
     
-    .logo {
-        font-size: 1rem;
-        gap: 6px;
-    }
+    header { padding: 0 12px; }
+    .logo { font-size: 1rem; gap: 6px; }
     .logo span.globe { font-size: 1.3rem; }
     .logo span:not(.globe) { display: none; }
-    
-    .actions {
-        gap: 6px;
-    }
-    
-    .actions button {
-        padding: 8px 10px;
-        font-size: 0.78rem;
-        height: 38px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .btn-icon {
-        padding: 8px 10px;
-        font-size: 1rem;
-        min-width: 38px;
-    }
-    
-    .user-avatar {
-        width: 34px;
-        height: 34px;
-    }
-    
+    .actions { gap: 6px; }
+    .actions button { padding: 8px 10px; font-size: 0.78rem; height: 38px; display: flex; align-items: center; justify-content: center; }
+    .btn-icon { padding: 8px 10px; font-size: 1rem; min-width: 38px; }
+    .user-avatar { width: 34px; height: 34px; }
     #sidebar { width: 100%; }
-    
     .btn-toggle-notes { display: inline-block; }
-    
     .modal { padding: 22px; }
     .settings-panel { width: calc(100% - 40px); right: 20px; left: 20px; }
     .icon-picker { grid-template-columns: repeat(4, 1fr); }
     .lightbox { padding: 20px; }
-    
-    /* 🎯 Décaler les boutons Zoom de Leaflet au-dessus du filtre */
-    .leaflet-bottom.leaflet-right {
-        bottom: 80px !important;
-    }
-    
-    .leaflet-bottom.leaflet-left {
-        bottom: 80px !important;
-    }
-    
-    /* Décaler le filtre pour ne pas chevaucher les boutons Leaflet */
-    .map-filter {
-        left: 12px;
-        right: 70px;
-        bottom: 16px;
-        padding: 5px;
-    }
-    
-    .filter-btn {
-        padding: 8px 10px;
-        font-size: 0.72rem;
-        flex-shrink: 0;
-    }
-    
-    .filter-btn .count {
-        min-width: 16px;
-        padding: 1px 5px;
-        font-size: 0.65rem;
-    }
-    
-    /* Décaler l'indicateur de sync */
-    .sync-indicator {
-        font-size: 0.75rem;
-        padding: 6px 14px;
-    }
+    .leaflet-bottom.leaflet-right { bottom: 80px !important; }
+    .leaflet-bottom.leaflet-left { bottom: 80px !important; }
+    .map-filter { left: 12px; right: 70px; bottom: 16px; padding: 5px; }
+    .filter-btn { padding: 8px 10px; font-size: 0.72rem; flex-shrink: 0; }
+    .filter-btn .count { min-width: 16px; padding: 1px 5px; font-size: 0.65rem; }
+    .sync-indicator { font-size: 0.75rem; padding: 6px 14px; }
+    .legal-modal-content { padding: 22px; }
   }
 
   .hint {
@@ -1527,13 +1750,13 @@
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--bg-overlay);
+    background: rgba(15, 23, 42, 0.9);
     backdrop-filter: blur(10px);
     padding: 10px 20px;
     border-radius: 30px;
     font-size: 0.82rem;
-    color: var(--text-muted);
-    border: 1px solid var(--border-color);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.2);
     z-index: 500;
     pointer-events: none;
     transition: opacity 0.5s;
@@ -1574,6 +1797,68 @@
 </head>
 <body>
 
+<!-- =====================================================
+     🌍 LANDING PAGE
+     ===================================================== -->
+<div id="landingScreen">
+  <div class="landing-container">
+    
+    <div class="landing-hero">
+      <span class="landing-globe">🌍</span>
+      <h1>WORLD NOTES</h1>
+      <p class="tagline">
+        Le carnet de voyage social sur une carte du monde.<br>
+        Épingle tes souvenirs, partage-les avec tes amis.
+      </p>
+    </div>
+
+    <div class="landing-features">
+      <div class="feature-card">
+        <span class="feature-icon">📍</span>
+        <h3>Épingle tes souvenirs</h3>
+        <p>Ajoute des anecdotes sur les lieux que tu as visités : photos, souvenirs, moments uniques.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🛰️</span>
+        <h3>Carte satellite</h3>
+        <p>Explore le monde en vue satellite réelle. Zoome, déplace-toi, ajoute tes notes où tu veux.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">👥</span>
+        <h3>Partage avec tes amis</h3>
+        <p>Ajoute des amis par pseudo et découvrez mutuellement vos voyages sur une carte commune.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3>Privé et sécurisé</h3>
+        <p>Tes souvenirs sont stockés dans ton compte Google. Seuls toi et tes amis y avez accès.</p>
+      </div>
+    </div>
+
+    <div class="landing-cta">
+      <button class="btn-landing-primary" onclick="goToLogin()">
+        <svg viewBox="0 0 48 48" style="width:24px;height:24px;">
+          <path fill="#fff" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34.2 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
+        </svg>
+        Commencer l'aventure
+      </button>
+    </div>
+
+    <div class="landing-footer">
+      <a onclick="openLegalModal('terms')">📄 Conditions d'utilisation</a>
+      <a onclick="openLegalModal('privacy')">🔒 Politique de confidentialité</a>
+      <a onclick="openLegalModal('about')">ℹ️ À propos</a>
+      <div style="margin-top: 16px;">
+        © 2025 World Notes — Fait avec ❤️ pour les voyageurs
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- =====================================================
+     🔐 ÉCRAN DE LOGIN
+     ===================================================== -->
 <div id="loginScreen">
   <div class="login-card">
     <span class="login-globe">🌍</span>
@@ -1590,13 +1875,38 @@
       Se connecter avec Google
     </button>
 
-    <p class="login-note">
-      🔒 Tes notes sont stockées dans ton compte Google.<br>
-      Personne d'autre n'y a accès.
+    <p class="login-note" style="margin-top: 20px;">
+      En te connectant tu acceptes nos<br>
+      <a style="color: #f97316; cursor: pointer; text-decoration: underline;" onclick="openLegalModal('terms')">Conditions d'utilisation</a>
+      et notre
+      <a style="color: #f97316; cursor: pointer; text-decoration: underline;" onclick="openLegalModal('privacy')">Politique de confidentialité</a>.
     </p>
+
+    <button class="login-back" onclick="goToLanding()">← Retour à l'accueil</button>
   </div>
 </div>
 
+<!-- =====================================================
+     📄 MODAL LÉGAL
+     ===================================================== -->
+<div class="legal-modal" id="legalModal" onclick="closeLegalModalIfOutside(event)">
+  <div class="legal-modal-content" onclick="event.stopPropagation()">
+    <div class="legal-modal-header">
+      <h2 id="legalModalTitle">Titre</h2>
+      <button class="legal-modal-close" onclick="closeLegalModal()">×</button>
+    </div>
+    <div class="legal-content" id="legalModalContent">
+      <!-- Contenu injecté par JS -->
+    </div>
+    <div class="legal-modal-footer">
+      <button onclick="closeLegalModal()">J'ai compris</button>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================
+     🌍 APP PRINCIPALE
+     ===================================================== -->
 <div id="app" style="display: none;">
 
   <header>
@@ -1630,6 +1940,9 @@
           <button class="dropdown-item" onclick="openFriendsModal()">
             👥 Mes amis
           </button>
+          <button class="dropdown-item" onclick="openLegalModal('terms')">
+            📄 Conditions
+          </button>
           <button class="dropdown-item danger" onclick="signOut()">
             🚪 Se déconnecter
           </button>
@@ -1661,7 +1974,7 @@
       <button onclick="toggleSettings()">×</button>
     </h3>
 
-    <label>🎨 Thème de l'interface</label>
+    <label>🎨 Thème</label>
     <div class="theme-choices" id="themeChoices">
       <div class="theme-choice" data-theme="dark" onclick="chooseTheme('dark')">
         <span class="emoji">🌙</span>Sombre
@@ -1672,7 +1985,6 @@
     </div>
 
     <div class="settings-actions">
-      <button class="btn-ghost" onclick="resetSettings()">🗑️ Reset</button>
       <button class="btn-primary" onclick="applySettings()">✓ Appliquer</button>
     </div>
 
@@ -1686,7 +1998,6 @@
       </div>
 
       <input type="file" id="importFileInput" accept=".json,application/json" style="display: none;" />
-
       <div class="notes-count-info" id="notesCountInfo"></div>
     </div>
   </div>
@@ -1833,7 +2144,7 @@
           <button class="profile-avatar-edit" onclick="document.getElementById('profilePhotoInput').click()">📷</button>
         </div>
         <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;" />
-        <div style="font-size: 0.72rem; color: var(--text-faint); margin-top: 6px;">
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 6px;">
           Clique sur 📷 pour changer ta photo
         </div>
       </div>
@@ -1841,7 +2152,7 @@
       <div class="form-group">
         <label for="editUsername">Pseudo unique</label>
         <input type="text" id="editUsername" placeholder="ex: matheo_paris" maxlength="20" />
-        <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px;">
+        <div style="font-size: 0.7rem; color: #64748b; margin-top: 4px;">
           Ton pseudo permet à tes amis de t'ajouter.
         </div>
       </div>
@@ -1849,7 +2160,7 @@
       <div class="form-group">
         <label for="editBio">Bio</label>
         <textarea id="editBio" placeholder="Ex: Voyageur passionné ✈️" maxlength="150" style="min-height: 70px;"></textarea>
-        <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px; text-align: right;">
+        <div style="font-size: 0.7rem; color: #64748b; margin-top: 4px; text-align: right;">
           <span id="bioCounter">0</span> / 150
         </div>
       </div>
@@ -1928,6 +2239,215 @@ const db = firebase.firestore();
 
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch((err) => console.warn('Persistance:', err));
 db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.warn('Persistance offline:', err.code));
+
+/* =========================================================
+   🌍 LANDING & LOGIN FLOW
+   ========================================================= */
+
+function goToLogin() {
+  document.getElementById('landingScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.add('visible');
+}
+
+function goToLanding() {
+  document.getElementById('loginScreen').classList.remove('visible');
+  document.getElementById('landingScreen').classList.remove('hidden');
+}
+
+/* =========================================================
+   📄 CONTENU DES PAGES LÉGALES
+   ========================================================= */
+
+const LEGAL_CONTENT = {
+  terms: {
+    title: '📄 Conditions d\'utilisation',
+    content: `
+      <h3>1. Acceptation des conditions</h3>
+      <p>
+        En créant un compte sur World Notes, tu acceptes les présentes conditions d'utilisation dans leur intégralité. Si tu n'acceptes pas ces conditions, tu ne dois pas utiliser le service.
+      </p>
+
+      <h3>2. Description du service</h3>
+      <p>
+        World Notes est une application web gratuite permettant d'épingler des souvenirs géolocalisés sur une carte du monde et de les partager avec des amis. Le service est fourni "tel quel", sans garantie de disponibilité permanente.
+      </p>
+
+      <h3>3. Compte utilisateur</h3>
+      <p>
+        Pour utiliser World Notes, tu dois te connecter via ton compte Google. Tu es seul responsable de la confidentialité de ton compte et de toutes les activités qui y sont liées.
+      </p>
+      <ul>
+        <li>Tu dois avoir au moins 13 ans pour utiliser le service.</li>
+        <li>Tu t'engages à fournir des informations exactes.</li>
+        <li>Un compte par personne est recommandé.</li>
+      </ul>
+
+      <h3>4. Contenu publié</h3>
+      <p>
+        Tu restes propriétaire de tous les contenus (textes, photos) que tu publies sur World Notes. En publiant, tu nous accordes une licence limitée pour stocker et afficher ces contenus aux personnes autorisées (toi et tes amis).
+      </p>
+      <p>Il est interdit de publier :</p>
+      <ul>
+        <li>Du contenu illégal, violent, haineux ou discriminatoire</li>
+        <li>Du contenu sexuellement explicite</li>
+        <li>Du contenu portant atteinte aux droits d'autrui</li>
+        <li>Du spam ou des publicités non sollicitées</li>
+      </ul>
+
+      <h3>5. Partage avec des amis</h3>
+      <p>
+        En ajoutant un ami, tu acceptes que cette personne voie tous tes souvenirs (lieux, anecdotes, photos). Tu peux retirer un ami à tout moment, ce qui supprime immédiatement son accès à tes contenus.
+      </p>
+
+      <h3>6. Responsabilité</h3>
+      <p>
+        World Notes est un projet personnel. Nous ne pouvons être tenus responsables :
+      </p>
+      <ul>
+        <li>De la perte de données (nous te recommandons d'exporter régulièrement)</li>
+        <li>De l'indisponibilité temporaire du service</li>
+        <li>De l'utilisation faite par des tiers de tes données si tu les partages</li>
+      </ul>
+
+      <h3>7. Modification des conditions</h3>
+      <p>
+        Ces conditions peuvent être modifiées à tout moment. Les utilisateurs seront informés des changements majeurs.
+      </p>
+
+      <h3>8. Suppression de compte</h3>
+      <p>
+        Tu peux supprimer ton compte à tout moment en nous contactant. Toutes tes données seront effacées des serveurs sous 30 jours.
+      </p>
+    `
+  },
+  privacy: {
+    title: '🔒 Politique de confidentialité',
+    content: `
+      <h3>1. Données collectées</h3>
+      <p>World Notes collecte les données suivantes :</p>
+      <ul>
+        <li><b>Identité Google</b> : nom, email, photo de profil (via Google Sign-In)</li>
+        <li><b>Contenu</b> : lieux, anecdotes, photos que tu publies</li>
+        <li><b>Données techniques</b> : rien de plus que ce que Firebase enregistre par défaut</li>
+      </ul>
+
+      <h3>2. Utilisation des données</h3>
+      <p>Tes données sont utilisées uniquement pour :</p>
+      <ul>
+        <li>Afficher tes souvenirs sur ta carte personnelle</li>
+        <li>Permettre à tes amis de voir tes souvenirs (si tu les ajoutes)</li>
+        <li>Faire fonctionner le service</li>
+      </ul>
+      <p><b>Nous ne vendons ni ne partageons jamais tes données à des fins publicitaires ou commerciales.</b></p>
+
+      <h3>3. Stockage des données</h3>
+      <p>
+        Tes données sont stockées chez <b>Google Firebase</b> (Firestore), un service cloud sécurisé. Les serveurs sont situés en Europe.
+      </p>
+      <p>
+        <b>Important :</b> ton email est stocké mais n'est <b>jamais</b> visible par les autres utilisateurs. Seuls ton pseudo, ta photo et ta bio sont publics auprès de tes amis.
+      </p>
+
+      <h3>4. Partage avec des tiers</h3>
+      <p>Nous n'utilisons aucun outil de tracking publicitaire. Les services tiers utilisés sont :</p>
+      <ul>
+        <li><b>Google Firebase</b> (authentification + base de données)</li>
+        <li><b>Esri</b> (fond de carte satellite)</li>
+        <li><b>Vercel</b> (hébergement du site)</li>
+      </ul>
+
+      <h3>5. Tes droits (RGPD)</h3>
+      <p>Conformément au Règlement Général sur la Protection des Données, tu as le droit de :</p>
+      <ul>
+        <li><b>Accéder</b> à toutes tes données (via le bouton "Exporter" dans les réglages)</li>
+        <li><b>Rectifier</b> tes données (en modifiant ton profil ou tes notes)</li>
+        <li><b>Supprimer</b> tes données (en supprimant tes notes ou en nous contactant pour supprimer ton compte)</li>
+        <li><b>Portabilité</b> : exporter tes données dans un fichier JSON</li>
+      </ul>
+
+      <h3>6. Sécurité</h3>
+      <p>
+        Toutes les communications sont chiffrées (HTTPS). L'accès à ta base de données est protégé par des règles de sécurité Firestore : seul toi et tes amis pouvez voir tes notes.
+      </p>
+
+      <h3>7. Cookies</h3>
+      <p>
+        World Notes utilise uniquement des cookies techniques nécessaires à l'authentification Google et au stockage local de tes préférences (thème, dernière carte). <b>Aucun cookie publicitaire.</b>
+      </p>
+
+      <h3>8. Contact</h3>
+      <p>
+        Pour toute question concernant tes données personnelles ou pour exercer tes droits, tu peux nous contacter par email.
+      </p>
+    `
+  },
+  about: {
+    title: 'ℹ️ À propos de World Notes',
+    content: `
+      <h3>🌍 Le projet</h3>
+      <p>
+        World Notes est né de l'envie de créer un <b>carnet de voyage social</b> : un endroit simple où épingler ses souvenirs sur une carte du monde et les partager avec ses amis.
+      </p>
+      <p>
+        Plutôt qu'un énième réseau social, World Notes se concentre sur <b>l'essentiel</b> : tes lieux, tes anecdotes, tes photos. Rien de plus.
+      </p>
+
+      <h3>✨ Fonctionnalités clés</h3>
+      <ul>
+        <li>📍 Épingler des souvenirs sur une carte satellite</li>
+        <li>📸 Ajouter une photo à chaque note (compressée automatiquement)</li>
+        <li>🔎 Rechercher des lieux par nom</li>
+        <li>🎯 Se géolocaliser pour ajouter un souvenir à sa position</li>
+        <li>👥 Système d'amis avec pseudos uniques</li>
+        <li>🔀 Filtre : Tous / Moi / Amis</li>
+        <li>💾 Export / Import de tes données</li>
+        <li>🌙 Thème clair et sombre</li>
+      </ul>
+
+      <h3>🛠️ Technologie</h3>
+      <p>
+        World Notes est développé en <b>HTML, CSS et JavaScript</b> vanilla. Il utilise :
+      </p>
+      <ul>
+        <li><b>Firebase</b> pour l'authentification et la base de données</li>
+        <li><b>Leaflet</b> pour la carte interactive</li>
+        <li><b>Esri</b> pour les tuiles satellite</li>
+        <li><b>Vercel</b> pour l'hébergement</li>
+      </ul>
+
+      <h3>🔒 Vie privée</h3>
+      <p>
+        Tes données t'appartiennent. Aucune publicité. Aucun tracking. Ton email n'est jamais visible par les autres utilisateurs. Tu peux exporter ou supprimer toutes tes données à tout moment.
+      </p>
+
+      <h3>💡 Un projet ouvert</h3>
+      <p>
+        World Notes est un <b>projet personnel</b>, mais il évolue constamment selon les idées et retours. Si tu as une suggestion, n'hésite pas à la partager !
+      </p>
+
+      <h3>❤️ Remerciements</h3>
+      <p>
+        Merci aux communautés <b>OpenStreetMap</b>, <b>Firebase</b> et <b>Leaflet</b> qui rendent ce genre de projet possible avec des outils gratuits et ouverts.
+      </p>
+    `
+  }
+};
+
+function openLegalModal(type) {
+  const data = LEGAL_CONTENT[type];
+  if (!data) return;
+  document.getElementById('legalModalTitle').textContent = data.title;
+  document.getElementById('legalModalContent').innerHTML = data.content;
+  document.getElementById('legalModal').classList.add('open');
+}
+
+function closeLegalModal() {
+  document.getElementById('legalModal').classList.remove('open');
+}
+
+function closeLegalModalIfOutside(event) {
+  if (event.target.id === 'legalModal') closeLegalModal();
+}
 
 /* =========================================================
    ÉTAT GLOBAL
@@ -2043,7 +2563,8 @@ auth.onAuthStateChanged(async (user) => {
 });
 
 function showLogin() {
-  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('landingScreen').classList.remove('hidden');
+  document.getElementById('loginScreen').classList.remove('visible');
   document.getElementById('app').style.display = 'none';
   const btn = document.getElementById('googleBtn');
   if (btn) {
@@ -2061,7 +2582,8 @@ function showLogin() {
 }
 
 function showApp() {
-  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('landingScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('visible');
   document.getElementById('app').style.display = 'block';
 
   document.getElementById('userAvatar').src = currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
@@ -3215,15 +3737,6 @@ function applySettings() {
   showToast('✅ Réglages appliqués', 'success');
 }
 
-function resetSettings() {
-  if (!confirm('Réinitialiser le thème par défaut ?')) return;
-  uiTheme = DEFAULT_THEME;
-  localStorage.setItem('worldnotes_theme', uiTheme);
-  document.documentElement.setAttribute('data-theme', uiTheme);
-  updateThemeChoices();
-  showToast('🔄 Réinitialisé', 'success');
-}
-
 /* =========================================================
    💾 EXPORT / IMPORT
    ========================================================= */
@@ -3658,7 +4171,8 @@ function escapeHtml(str) {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (document.getElementById('lightbox').classList.contains('open')) closeLightbox();
+    if (document.getElementById('legalModal').classList.contains('open')) closeLegalModal();
+    else if (document.getElementById('lightbox').classList.contains('open')) closeLightbox();
     else if (autocompleteList.classList.contains('open')) closeAutocomplete();
     else if (document.getElementById('settingsPanel').classList.contains('open')) toggleSettings();
     else if (document.getElementById('editProfileModalOverlay').classList.contains('open')) closeEditProfile();
