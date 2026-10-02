@@ -75,7 +75,6 @@
     min-height: 100vh;
   }
 
-  /* LANDING */
   #landingScreen {
     position: fixed;
     inset: 0;
@@ -189,7 +188,6 @@
     margin: 0 8px;
   }
 
-  /* MODAL LÉGAL */
   .legal-modal {
     position: fixed;
     inset: 0;
@@ -260,7 +258,6 @@
     cursor: pointer;
   }
 
-  /* LOGIN */
   #loginScreen {
     position: fixed;
     inset: 0;
@@ -331,7 +328,6 @@
     margin-right: auto;
   }
 
-  /* APP */
   header {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -1421,7 +1417,6 @@
     color: white;
   }
 
-  /* 🆕 RÉACTIONS EMOJI */
   .reactions-bar {
     display: flex;
     gap: 6px;
@@ -1466,7 +1461,6 @@
     flex-wrap: wrap;
   }
 
-  /* 🆕 COMMENTAIRES */
   .comments-section {
     margin-top: 12px;
     padding-top: 12px;
@@ -1590,7 +1584,6 @@
     padding: 6px 0;
   }
 
-  /* 🆕 PARTAGE */
   .btn-share {
     background: rgba(34, 197, 94, 0.12);
     border: 1px solid rgba(34, 197, 94, 0.3);
@@ -2044,7 +2037,6 @@
 
   .info-banner .icon { font-size: 1.2rem; flex-shrink: 0; }
 
-  /* RANDOM NOTE MODAL */
   .random-note-modal {
     position: fixed;
     inset: 0;
@@ -2107,7 +2099,6 @@
     font-size: 0.85rem;
   }
 
-  /* STATS MODAL */
   .stats-modal {
     position: fixed;
     inset: 0;
@@ -2558,7 +2549,6 @@
 </head>
 <body>
 
-<!-- LANDING -->
 <div id="landingScreen">
   <div class="landing-container">
     <div class="landing-hero">
@@ -2611,7 +2601,6 @@
   </div>
 </div>
 
-<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-card">
     <span class="login-globe">🌍</span>
@@ -2639,7 +2628,6 @@
   </div>
 </div>
 
-<!-- MODAL LÉGAL -->
 <div class="legal-modal" id="legalModal" onclick="closeLegalModalIfOutside(event)">
   <div class="legal-modal-content" onclick="event.stopPropagation()">
     <div class="legal-modal-header">
@@ -2653,7 +2641,6 @@
   </div>
 </div>
 
-<!-- APP -->
 <div id="app" style="display: none;">
   <header>
     <div class="logo">
@@ -3185,6 +3172,9 @@ let currentRandomNoteId = null;
 let currentStatsTab = 'dashboard';
 let pendingNoteId = null;
 
+// Cache des notes par ID (pour aller vite)
+let notesByIdCache = {};
+
 let unsubscribeProfile = null;
 let unsubscribeNotes = null;
 let unsubscribeFriends = null;
@@ -3205,6 +3195,8 @@ let userLocationCircle = null;
 let tempMarker = null;
 
 const REACTION_EMOJIS = ['❤️', '😂', '😍', '🔥', '👏', '😮'];
+// Limite Firestore pour l'opérateur "in"
+const FIRESTORE_IN_LIMIT = 30;
 
 /* =========================================================
    🔐 AUTH
@@ -3272,8 +3264,8 @@ auth.onAuthStateChanged(async (user) => {
     loadOutgoingRequests();
     loadFriends();
     loadAllNotes();
-    loadAllReactions();
-    loadAllComments();
+    // ⚠️ Les listeners reactions et comments seront chargés
+    // APRÈS le premier loadAllNotes (voir dans loadAllNotes)
     updateFriendBadge();
     handleUrlParams();
   } else {
@@ -3288,7 +3280,7 @@ function handleUrlParams() {
   const noteId = params.get('note');
   if (noteId) {
     setTimeout(() => {
-      const note = allNotes.find(n => n.id === noteId);
+      const note = notesByIdCache[noteId];
       if (note) {
         map.flyTo([note.lat, note.lng], 14, { duration: 1.5 });
         setTimeout(() => {
@@ -3634,15 +3626,26 @@ function loadFriends() {
 
 async function loadFriendsProfiles() {
   friendsProfiles = {};
-  for (const friendUid of myFriends) {
-    try {
-      const doc = await db.collection('users').doc(friendUid).get();
-      if (doc.exists) {
-        friendsProfiles[friendUid] = { uid: friendUid, ...doc.data() };
-      }
-    } catch (err) {
-      console.error('Erreur chargement ami:', err);
+  if (myFriends.length === 0) {
+    renderFriendsContent();
+    return;
+  }
+  // Optimisation : 1 seule requête au lieu de N
+  try {
+    const chunks = [];
+    for (let i = 0; i < myFriends.length; i += 10) {
+      chunks.push(myFriends.slice(i, i + 10));
     }
+    for (const chunk of chunks) {
+      const snap = await db.collection('users')
+        .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+        .get();
+      snap.forEach(doc => {
+        friendsProfiles[doc.id] = { uid: doc.id, ...doc.data() };
+      });
+    }
+  } catch (err) {
+    console.error('Erreur chargement amis:', err);
   }
   renderFriendsContent();
 }
@@ -3998,9 +4001,19 @@ function loadAllNotes() {
         const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         const allowed = new Set([currentUser.uid, ...myFriends]);
         allNotes = all.filter(n => allowed.has(n.userId));
+
+        // Met à jour le cache par ID
+        notesByIdCache = {};
+        allNotes.forEach(n => { notesByIdCache[n.id] = n; });
+
         myNotes = allNotes.filter(n => n.userId === currentUser.uid);
         friendNotes = allNotes.filter(n => n.userId !== currentUser.uid);
         favoriteNotes = allNotes.filter(n => n.favorite === true);
+
+        // Charge (ou recharge) les listeners filtrés
+        loadAllReactions();
+        loadAllComments();
+
         renderAllMarkers();
         updateFilters();
         showSyncIndicator('Synchronisé', true);
@@ -4012,46 +4025,96 @@ function loadAllNotes() {
     );
 }
 
+/**
+ * Charge les réactions UNIQUEMENT pour les notes visibles.
+ * Filtre par noteId (max 30 par requête Firestore), fait plusieurs requêtes si besoin.
+ */
 function loadAllReactions() {
   if (unsubscribeReactions) unsubscribeReactions();
 
-  unsubscribeReactions = db.collection('reactions')
-    .onSnapshot(
-      (snapshot) => {
-        allReactions = {};
-        snapshot.docs.forEach(doc => {
-          const r = { id: doc.id, ...doc.data() };
-          if (!allReactions[r.noteId]) allReactions[r.noteId] = [];
-          allReactions[r.noteId].push(r);
-        });
-        renderAllMarkers();
-      },
-      (error) => {
-        console.error('Erreur réactions:', error);
-      }
-    );
+  const visibleNoteIds = allNotes.map(n => n.id);
+  allReactions = {};
+
+  if (visibleNoteIds.length === 0) {
+    renderAllMarkers();
+    return;
+  }
+
+  // Regroupe par 30 (limite Firestore pour l'opérateur "in")
+  const chunks = [];
+  for (let i = 0; i < visibleNoteIds.length; i += FIRESTORE_IN_LIMIT) {
+    chunks.push(visibleNoteIds.slice(i, i + FIRESTORE_IN_LIMIT));
+  }
+
+  // On doit créer plusieurs listeners (un par chunk), donc on stocke les unsubscribers
+  const unsubs = [];
+  unsubscribeReactions = () => unsubs.forEach(u => { try { u(); } catch(e){} });
+
+  chunks.forEach(chunk => {
+    const unsub = db.collection('reactions')
+      .where('noteId', 'in', chunk)
+      .onSnapshot(
+        (snapshot) => {
+          // Reset des réactions pour ce chunk
+          chunk.forEach(id => { delete allReactions[id]; });
+          snapshot.docs.forEach(doc => {
+            const r = { id: doc.id, ...doc.data() };
+            if (!allReactions[r.noteId]) allReactions[r.noteId] = [];
+            allReactions[r.noteId].push(r);
+          });
+          // Rafraîchit uniquement la popup ouverte
+          refreshOpenPopup();
+        },
+        (error) => {
+          console.error('Erreur réactions:', error);
+        }
+      );
+    unsubs.push(unsub);
+  });
 }
 
+/**
+ * Charge les commentaires UNIQUEMENT pour les notes visibles.
+ */
 function loadAllComments() {
   if (unsubscribeComments) unsubscribeComments();
 
-  unsubscribeComments = db.collection('comments')
-    .orderBy('createdAt', 'asc')
-    .limit(1000)
-    .onSnapshot(
-      (snapshot) => {
-        allComments = {};
-        snapshot.docs.forEach(doc => {
-          const c = { id: doc.id, ...doc.data() };
-          if (!allComments[c.noteId]) allComments[c.noteId] = [];
-          allComments[c.noteId].push(c);
-        });
-        renderAllMarkers();
-      },
-      (error) => {
-        console.error('Erreur commentaires:', error);
-      }
-    );
+  const visibleNoteIds = allNotes.map(n => n.id);
+  allComments = {};
+
+  if (visibleNoteIds.length === 0) {
+    renderAllMarkers();
+    return;
+  }
+
+  const chunks = [];
+  for (let i = 0; i < visibleNoteIds.length; i += FIRESTORE_IN_LIMIT) {
+    chunks.push(visibleNoteIds.slice(i, i + FIRESTORE_IN_LIMIT));
+  }
+
+  const unsubs = [];
+  unsubscribeComments = () => unsubs.forEach(u => { try { u(); } catch(e){} });
+
+  chunks.forEach(chunk => {
+    const unsub = db.collection('comments')
+      .where('noteId', 'in', chunk)
+      .orderBy('createdAt', 'asc')
+      .onSnapshot(
+        (snapshot) => {
+          chunk.forEach(id => { delete allComments[id]; });
+          snapshot.docs.forEach(doc => {
+            const c = { id: doc.id, ...doc.data() };
+            if (!allComments[c.noteId]) allComments[c.noteId] = [];
+            allComments[c.noteId].push(c);
+          });
+          refreshOpenPopup();
+        },
+        (error) => {
+          console.error('Erreur commentaires:', error);
+        }
+      );
+    unsubs.push(unsub);
+  });
 }
 
 /* =========================================================
@@ -4225,7 +4288,7 @@ function renderReactionsHtml(noteId) {
 
 function renderCommentsHtml(noteId) {
   const comments = allComments[noteId] || [];
-  const note = allNotes.find(n => n.id === noteId);
+  const note = notesByIdCache[noteId];
   const isMyNote = note && note.userId === currentUser.uid;
 
   let commentsListHtml = '';
@@ -4357,10 +4420,12 @@ function buildPopupContent(note) {
   `;
 }
 
+/**
+ * 🚀 VERSION OPTIMISÉE :
+ * - Ne recrée PAS les marqueurs déjà présents (identiques)
+ * - Ne ferme PAS la popup ouverte inutilement
+ */
 function renderAllMarkers() {
-  Object.values(markers).forEach(m => map.removeLayer(m));
-  markers = {};
-
   let notesToShow = [];
   if (mapFilter === 'all') notesToShow = allNotes;
   else if (mapFilter === 'mine') notesToShow = myNotes;
@@ -4377,9 +4442,70 @@ function renderAllMarkers() {
     });
   }
 
-  notesToShow.forEach(addMarkerToMap);
+  // IDs des notes à afficher
+  const idsToShow = new Set(notesToShow.map(n => n.id));
+
+  // Supprime les marqueurs qui ne doivent plus être affichés
+  Object.keys(markers).forEach(id => {
+    if (!idsToShow.has(id)) {
+      map.removeLayer(markers[id]);
+      delete markers[id];
+    }
+  });
+
+  // Ajoute les nouveaux marqueurs (ceux qui n'existent pas encore)
+  notesToShow.forEach(note => {
+    if (!markers[note.id]) {
+      addMarkerToMap(note);
+    }
+  });
+
+  // Rafraîchit la popup ouverte si elle existe
+  refreshOpenPopup();
+
   renderSidebar();
   updateNotesCountInfo();
+}
+
+/**
+ * Reconstruit le contenu de la popup actuellement ouverte (sans la fermer)
+ */
+function refreshOpenPopup() {
+  if (!map) return;
+  const openPopup = map._popup;
+  if (!openPopup) return;
+  const marker = openPopup._source;
+  if (!marker) return;
+  const noteId = Object.keys(markers).find(id => markers[id] === marker);
+  if (!noteId) return;
+  const note = notesByIdCache[noteId];
+  if (!note) return;
+
+  // Sauvegarde le focus et la position du curseur dans le champ commentaire
+  let savedFocus = null;
+  let savedValue = '';
+  let savedSelection = null;
+  const activeEl = document.activeElement;
+  if (activeEl && activeEl.id && activeEl.id.startsWith('commentInput_')) {
+    savedFocus = activeEl.id;
+    savedValue = activeEl.value;
+    try { savedSelection = [activeEl.selectionStart, activeEl.selectionEnd]; } catch(e) {}
+  }
+
+  // Remplace le contenu sans fermer la popup
+  openPopup.setContent(buildPopupContent(note));
+
+  // Restaure le focus
+  if (savedFocus) {
+    const newEl = document.getElementById(savedFocus);
+    if (newEl) {
+      newEl.value = savedValue;
+      newEl.focus();
+      if (savedSelection) {
+        try { newEl.setSelectionRange(savedSelection[0], savedSelection[1]); } catch(e) {}
+      }
+    }
+  }
 }
 
 function renderSidebar() {
@@ -4471,7 +4597,7 @@ function renderSidebar() {
 }
 
 function focusNote(id) {
-  const note = allNotes.find(n => n.id === id);
+  const note = notesByIdCache[id];
   if (!note) return;
   map.flyTo([note.lat, note.lng], 14, { duration: 1.2 });
   const marker = markers[id];
@@ -4516,13 +4642,7 @@ async function toggleReaction(noteId, emoji, event) {
         createdAt: Date.now()
       });
     }
-
-    setTimeout(() => {
-      const marker = markers[noteId];
-      if (marker && map.hasLayer(marker)) {
-        marker.openPopup();
-      }
-    }, 200);
+    // Le listener va automatiquement rafraîchir la popup
   } catch (err) {
     console.error('Erreur réaction:', err);
     showToast('❌ Erreur', 'error');
@@ -4551,17 +4671,11 @@ async function addComment(noteId) {
     });
 
     input.value = '';
-    
-    setTimeout(() => {
-      const marker = markers[noteId];
-      if (marker && map.hasLayer(marker)) {
-        marker.openPopup();
-      }
-    }, 300);
+    // Le listener va rafraîchir la popup, mais on désactive le champ pour éviter le double-envoi
+    // La restauration se fera via refreshOpenPopup
   } catch (err) {
     console.error('Erreur commentaire:', err);
     showToast('❌ Erreur', 'error');
-  } finally {
     input.disabled = false;
   }
 }
@@ -4573,13 +4687,7 @@ async function deleteComment(commentId, noteId, event) {
   try {
     await db.collection('comments').doc(commentId).delete();
     showToast('🗑️ Commentaire supprimé', 'info');
-
-    setTimeout(() => {
-      const marker = markers[noteId];
-      if (marker && map.hasLayer(marker)) {
-        marker.openPopup();
-      }
-    }, 300);
+    // Le listener va rafraîchir la popup automatiquement
   } catch (err) {
     console.error('Erreur suppression commentaire:', err);
     showToast('❌ Erreur', 'error');
@@ -4608,25 +4716,15 @@ function shareNote(noteId, event) {
 
 async function toggleFavorite(id, event) {
   if (event) event.stopPropagation();
-  const note = allNotes.find(n => n.id === id);
+  const note = notesByIdCache[id];
   if (!note || note.userId !== currentUser.uid) return;
 
   const newVal = !note.favorite;
 
   try {
     await db.collection('notes').doc(id).update({ favorite: newVal });
-
-    const idx = allNotes.findIndex(n => n.id === id);
-    if (idx !== -1) allNotes[idx].favorite = newVal;
-    const myIdx = myNotes.findIndex(n => n.id === id);
-    if (myIdx !== -1) myNotes[myIdx].favorite = newVal;
-
-    favoriteNotes = allNotes.filter(n => n.favorite === true);
-
-    renderAllMarkers();
-    updateFilters();
-
     showToast(newVal ? '⭐ Ajouté aux favoris !' : 'Retiré des favoris', newVal ? 'success' : 'info');
+    // Le listener va tout rafraîchir automatiquement
   } catch (err) {
     console.error('Erreur favori:', err);
     showToast('❌ Erreur', 'error');
@@ -4635,29 +4733,13 @@ async function toggleFavorite(id, event) {
 
 async function toggleFavoriteFromPopup(id, event) {
   if (event) event.stopPropagation();
-  const note = allNotes.find(n => n.id === id);
+  const note = notesByIdCache[id];
   if (!note || note.userId !== currentUser.uid) return;
 
   const newVal = !note.favorite;
 
   try {
     await db.collection('notes').doc(id).update({ favorite: newVal });
-
-    const idx = allNotes.findIndex(n => n.id === id);
-    if (idx !== -1) allNotes[idx].favorite = newVal;
-    const myIdx = myNotes.findIndex(n => n.id === id);
-    if (myIdx !== -1) myNotes[myIdx].favorite = newVal;
-
-    favoriteNotes = allNotes.filter(n => n.favorite === true);
-
-    renderAllMarkers();
-    updateFilters();
-
-    setTimeout(() => {
-      const marker = markers[id];
-      if (marker) marker.openPopup();
-    }, 100);
-
     showToast(newVal ? '⭐ Ajouté aux favoris !' : 'Retiré des favoris', newVal ? 'success' : 'info');
   } catch (err) {
     console.error('Erreur favori:', err);
@@ -4900,11 +4982,11 @@ function calculateStats() {
     totalDistance: 0,
     totalTags: myNotes.reduce((acc, n) => acc + (n.tags?.length || 0), 0),
     totalReactions: Object.values(allReactions).flat().filter(r => {
-      const note = allNotes.find(n => n.id === r.noteId);
+      const note = notesByIdCache[r.noteId];
       return note && note.userId === currentUser.uid;
     }).length,
     totalComments: Object.values(allComments).flat().filter(c => {
-      const note = allNotes.find(n => n.id === c.noteId);
+      const note = notesByIdCache[c.noteId];
       return note && note.userId === currentUser.uid;
     }).length,
     tagCounts: {},
@@ -5095,7 +5177,7 @@ function renderStatsContent(tab) {
 
 function editNoteFromPopup(id, event) {
   if (event) event.stopPropagation();
-  const note = allNotes.find(n => n.id === id);
+  const note = notesByIdCache[id];
   if (!note || note.userId !== currentUser.uid) return;
 
   editingNoteId = id;
@@ -5238,7 +5320,7 @@ function hideAddress() {
 
 function openLightbox(noteId, event) {
   if (event) event.stopPropagation();
-  const note = allNotes.find(n => n.id === noteId);
+  const note = notesByIdCache[noteId];
   if (!note || !note.photo) return;
   document.getElementById('lightboxImg').src = note.photo;
   document.getElementById('lightbox').classList.add('open');
@@ -5754,30 +5836,6 @@ async function saveNote() {
         updatedAt: Date.now()
       });
 
-      const idx = allNotes.findIndex(n => n.id === editingNoteId);
-      if (idx !== -1) {
-        allNotes[idx] = {
-          ...allNotes[idx],
-          place, text, lat, lng,
-          source: pendingSource,
-          icon: pendingIcon,
-          photo: pendingPhoto,
-          favorite: pendingIsFavorite,
-          userDate: userDate || null,
-          address: address,
-          tags: pendingTags,
-          updatedAt: Date.now()
-        };
-      }
-      const myIdx = myNotes.findIndex(n => n.id === editingNoteId);
-      if (myIdx !== -1 && idx !== -1) {
-        myNotes[myIdx] = allNotes[idx];
-      }
-      favoriteNotes = allNotes.filter(n => n.favorite === true);
-
-      renderAllMarkers();
-      updateFilters();
-
       const updatedId = editingNoteId;
       editingNoteId = null;
       closeAddModal();
@@ -5790,7 +5848,7 @@ async function saveNote() {
 
     } else {
       const now = Date.now();
-      const newNoteRef = await db.collection('notes').add({
+      await db.collection('notes').add({
         userId: currentUser.uid,
         place, text, lat, lng,
         createdAt: now,
@@ -5803,37 +5861,9 @@ async function saveNote() {
         tags: pendingTags
       });
 
-      const newNote = {
-        id: newNoteRef.id,
-        userId: currentUser.uid,
-        place, text, lat, lng,
-        createdAt: now,
-        source: pendingSource,
-        icon: pendingIcon,
-        photo: pendingPhoto,
-        favorite: pendingIsFavorite,
-        userDate: userDate || null,
-        address: address,
-        tags: pendingTags
-      };
-
-      if (!allNotes.some(n => n.id === newNote.id)) {
-        allNotes.unshift(newNote);
-        myNotes.unshift(newNote);
-        if (pendingIsFavorite) favoriteNotes.unshift(newNote);
-      }
-
-      renderAllMarkers();
-      updateFilters();
-
       closeAddModal();
       showToast('☁️ Souvenir enregistré !', 'success');
       map.flyTo([lat, lng], 15, { duration: 1.2 });
-
-      setTimeout(() => {
-        const marker = markers[newNote.id];
-        if (marker) marker.openPopup();
-      }, 800);
     }
 
   } catch (err) {
