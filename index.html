@@ -33,6 +33,7 @@
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+    --favorite: #fbbf24;
   }
 
   :root[data-theme="light"] {
@@ -55,6 +56,7 @@
     --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
     --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
     --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.15);
+    --favorite: #d97706;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -68,7 +70,7 @@
   }
 
   /* =====================================================
-     🌍 LANDING PAGE
+     🌍 LANDING
      ===================================================== */
 
   #landingScreen {
@@ -86,12 +88,6 @@
     max-width: 900px;
     margin: 0 auto;
     padding: 60px 20px 80px;
-    animation: fadeIn 0.6s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
   }
 
   .landing-hero {
@@ -143,23 +139,11 @@
     border-radius: 16px;
     padding: 24px;
     transition: all 0.3s;
-    animation: slideUp 0.6s ease backwards;
-  }
-
-  .feature-card:nth-child(1) { animation-delay: 0.1s; }
-  .feature-card:nth-child(2) { animation-delay: 0.2s; }
-  .feature-card:nth-child(3) { animation-delay: 0.3s; }
-  .feature-card:nth-child(4) { animation-delay: 0.4s; }
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
   }
 
   .feature-card:hover {
     transform: translateY(-4px);
     border-color: rgba(249, 115, 22, 0.4);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
   }
 
   .feature-icon {
@@ -180,10 +164,7 @@
     line-height: 1.5;
   }
 
-  .landing-cta {
-    text-align: center;
-    margin-top: 40px;
-  }
+  .landing-cta { text-align: center; margin-top: 40px; }
 
   .btn-landing-primary {
     display: inline-flex;
@@ -222,8 +203,6 @@
     margin: 0 8px;
   }
 
-  .landing-footer a:hover { text-decoration: underline; }
-
   /* =====================================================
      📄 MODAL LÉGAL
      ===================================================== */
@@ -243,15 +222,15 @@
   .legal-modal.open { display: flex; }
 
   .legal-modal-content {
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: 18px;
     padding: 32px;
     max-width: 700px;
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    box-shadow: var(--shadow-lg);
   }
 
   .legal-modal-header {
@@ -260,49 +239,30 @@
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 16px;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    border-bottom: 1px solid var(--border-subtle);
   }
 
-  .legal-modal-header h2 {
-    font-size: 1.4rem;
-    color: white;
-  }
+  .legal-modal-header h2 { font-size: 1.4rem; color: var(--text-primary); }
 
   .legal-modal-close {
     background: none;
     border: none;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 1.8rem;
     cursor: pointer;
-    padding: 0;
     line-height: 1;
   }
 
-  .legal-modal-close:hover { color: #ef4444; }
-
-  .legal-content {
-    color: #cbd5e1;
-    font-size: 0.92rem;
-    line-height: 1.7;
-  }
-
-  .legal-content h3 {
-    font-size: 1.05rem;
-    color: #f97316;
-    margin-top: 20px;
-    margin-bottom: 8px;
-    font-weight: 700;
-  }
-
+  .legal-content { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.7; }
+  .legal-content h3 { font-size: 1.05rem; color: #f97316; margin-top: 20px; margin-bottom: 8px; font-weight: 700; }
   .legal-content h3:first-child { margin-top: 0; }
   .legal-content p { margin-bottom: 12px; }
   .legal-content ul { margin-left: 20px; margin-bottom: 12px; }
-  .legal-content li { margin-bottom: 6px; }
 
   .legal-modal-footer {
     margin-top: 24px;
     padding-top: 16px;
-    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    border-top: 1px solid var(--border-subtle);
     display: flex;
     justify-content: flex-end;
   }
@@ -353,18 +313,8 @@
     animation: gentleFloat 4s ease-in-out infinite;
   }
 
-  .login-card h1 {
-    font-size: 1.8rem;
-    margin-bottom: 8px;
-    color: white;
-  }
-
-  .login-card p {
-    color: #94a3b8;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin-bottom: 32px;
-  }
+  .login-card h1 { font-size: 1.8rem; margin-bottom: 8px; color: white; }
+  .login-card p { color: #94a3b8; font-size: 0.95rem; line-height: 1.5; margin-bottom: 32px; }
 
   .btn-google {
     width: 100%;
@@ -384,21 +334,11 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
-  .btn-google:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  }
-
+  .btn-google:hover { transform: translateY(-2px); }
   .btn-google:disabled { opacity: 0.6; cursor: wait; }
   .btn-google svg { width: 22px; height: 22px; }
 
-  .login-note {
-    margin-top: 24px;
-    font-size: 0.78rem;
-    color: #64748b;
-    line-height: 1.5;
-  }
-
+  .login-note { margin-top: 24px; font-size: 0.78rem; color: #64748b; line-height: 1.5; }
   .login-back {
     display: block;
     margin-top: 20px;
@@ -410,8 +350,6 @@
     margin-left: auto;
     margin-right: auto;
   }
-
-  .login-back:hover { text-decoration: underline; }
 
   /* =====================================================
      🗺️ APP
@@ -511,10 +449,7 @@
     transition: all 0.25s;
   }
 
-  .user-avatar:hover {
-    transform: scale(1.08);
-    border-color: #f97316;
-  }
+  .user-avatar:hover { transform: scale(1.08); border-color: #f97316; }
 
   .user-dropdown {
     position: absolute;
@@ -658,6 +593,10 @@
     color: white;
   }
 
+  .filter-btn.favorites.active {
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+  }
+
   .filter-btn .count {
     background: rgba(255, 255, 255, 0.25);
     padding: 1px 6px;
@@ -724,6 +663,11 @@
     transition: opacity 0.3s;
   }
 
+  .note-card.favorite::before {
+    background: linear-gradient(180deg, #fbbf24, #d97706);
+    opacity: 1;
+  }
+
   .note-card.friend-note::before {
     background: linear-gradient(180deg, #3b82f6, #2563eb);
   }
@@ -754,10 +698,27 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    justify-content: space-between;
   }
 
   .note-card.friend-note .place { color: #3b82f6; }
+  .note-card .place .place-left { display: flex; align-items: center; gap: 6px; }
+
   .note-card .place .category-icon { font-size: 1.1rem; }
+
+  .fav-star {
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    padding: 2px 4px;
+    border-radius: 6px;
+  }
+
+  .fav-star:hover {
+    transform: scale(1.2);
+    background: rgba(251, 191, 36, 0.15);
+  }
 
   .note-card .text {
     font-size: 0.88rem;
@@ -772,6 +733,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .note-card .note-date-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .note-author {
@@ -874,7 +841,7 @@
     outline: none;
     transition: all 0.25s;
   }
-  input:focus, textarea:focus {
+  input:focus, textarea:focus, select:focus {
     border-color: #f97316;
     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
   }
@@ -921,10 +888,7 @@
 
   .photo-upload-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
 
-  .photo-upload-text {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
+  .photo-upload-text { font-size: 0.85rem; color: var(--text-muted); }
   .photo-upload-text b { color: #f97316; }
 
   .photo-preview-wrapper {
@@ -1073,6 +1037,8 @@
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 0.78rem;
     font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .btn-gps-inline {
@@ -1085,7 +1051,63 @@
     flex-shrink: 0;
   }
 
+  .address-display {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 6px 10px;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    display: none;
+    line-height: 1.4;
+  }
+
+  .address-display.visible { display: block; }
+
   .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+
+  .fav-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    background: var(--bg-input);
+    border: 2px solid var(--border-hover);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+    user-select: none;
+  }
+
+  .fav-toggle:hover {
+    border-color: var(--favorite);
+  }
+
+  .fav-toggle.active {
+    border-color: var(--favorite);
+    background: rgba(251, 191, 36, 0.12);
+  }
+
+  .fav-toggle .fav-icon {
+    font-size: 1.5rem;
+    transition: all 0.3s;
+  }
+
+  .fav-toggle.active .fav-icon {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.7));
+  }
+
+  .fav-toggle .fav-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .fav-toggle.active .fav-label {
+    color: var(--favorite);
+  }
 
   .custom-marker {
     background: linear-gradient(135deg, #f97316, #ea580c);
@@ -1117,6 +1139,11 @@
 
   .custom-marker.friend-marker {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
+  }
+
+  .custom-marker.is-favorite {
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.7), 0 0 0 3px rgba(251, 191, 36, 0.3);
   }
 
   .user-location-marker {
@@ -1166,10 +1193,25 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    justify-content: space-between;
   }
 
   .popup-place.friend-place { color: #3b82f6; }
+  .popup-place .place-left { display: flex; align-items: center; gap: 8px; }
   .popup-place .category-icon { font-size: 1.2rem; }
+
+  .popup-fav {
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .popup-fav:hover {
+    background: rgba(251, 191, 36, 0.15);
+    transform: scale(1.15);
+  }
 
   .popup-text {
     font-size: 0.9rem;
@@ -1666,14 +1708,9 @@
     text-align: center;
   }
 
-  .friends-content {
-    max-height: 400px;
-    overflow-y: auto;
-  }
+  .friends-content { max-height: 400px; overflow-y: auto; }
 
-  .modal.modal-friends {
-    max-width: 520px;
-  }
+  .modal.modal-friends { max-width: 520px; }
 
   .info-banner {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
@@ -1688,10 +1725,7 @@
     gap: 10px;
   }
 
-  .info-banner .icon {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-  }
+  .info-banner .icon { font-size: 1.2rem; flex-shrink: 0; }
 
   .toast {
     position: fixed;
@@ -1720,7 +1754,6 @@
 
   @media (max-width: 768px) {
     .landing-hero h1 { font-size: 2.2rem; }
-    .landing-hero .tagline { font-size: 1rem; }
     .landing-globe { font-size: 4rem; }
     .landing-container { padding: 40px 16px 60px; }
     .btn-landing-primary { padding: 16px 32px; font-size: 1rem; }
@@ -1742,7 +1775,7 @@
     .leaflet-bottom.leaflet-right { bottom: 80px !important; }
     .leaflet-bottom.leaflet-left { bottom: 80px !important; }
     .map-filter { left: 12px; right: 70px; bottom: 16px; padding: 5px; }
-    .filter-btn { padding: 8px 10px; font-size: 0.72rem; flex-shrink: 0; }
+    .filter-btn { padding: 8px 10px; font-size: 0.7rem; flex-shrink: 0; }
     .filter-btn .count { min-width: 16px; padding: 1px 5px; font-size: 0.65rem; }
     .sync-indicator { font-size: 0.75rem; padding: 6px 14px; }
     .legal-modal-content { padding: 22px; }
@@ -1800,12 +1833,9 @@
 </head>
 <body>
 
-<!-- =====================================================
-     🌍 LANDING
-     ===================================================== -->
+<!-- LANDING -->
 <div id="landingScreen">
   <div class="landing-container">
-    
     <div class="landing-hero">
       <span class="landing-globe">🌍</span>
       <h1>WORLD NOTES</h1>
@@ -1822,9 +1852,9 @@
         <p>Ajoute des anecdotes sur les lieux que tu as visités : photos, souvenirs, moments uniques.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon">🛰️</span>
-        <h3>Carte satellite</h3>
-        <p>Explore le monde en vue satellite réelle. Zoome, déplace-toi, ajoute tes notes où tu veux.</p>
+        <span class="feature-icon">⭐</span>
+        <h3>Marque tes favoris</h3>
+        <p>Mets en avant tes souvenirs préférés et retrouve-les instantanément grâce au filtre dédié.</p>
       </div>
       <div class="feature-card">
         <span class="feature-icon">👥</span>
@@ -1848,20 +1878,15 @@
     </div>
 
     <div class="landing-footer">
-      <a onclick="openLegalModal('terms')">📄 Conditions d'utilisation</a>
-      <a onclick="openLegalModal('privacy')">🔒 Politique de confidentialité</a>
+      <a onclick="openLegalModal('terms')">📄 Conditions</a>
+      <a onclick="openLegalModal('privacy')">🔒 Confidentialité</a>
       <a onclick="openLegalModal('about')">ℹ️ À propos</a>
-      <div style="margin-top: 16px;">
-        © 2025 World Notes — Fait avec ❤️ pour les voyageurs
-      </div>
+      <div style="margin-top: 16px;">© 2025 World Notes — Fait avec ❤️</div>
     </div>
-
   </div>
 </div>
 
-<!-- =====================================================
-     🔐 LOGIN
-     ===================================================== -->
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-card">
     <span class="login-globe">🌍</span>
@@ -1880,7 +1905,7 @@
 
     <p class="login-note">
       En te connectant tu acceptes nos<br>
-      <a style="color: #f97316; cursor: pointer; text-decoration: underline;" onclick="openLegalModal('terms')">Conditions d'utilisation</a>
+      <a style="color: #f97316; cursor: pointer; text-decoration: underline;" onclick="openLegalModal('terms')">Conditions</a>
       et notre
       <a style="color: #f97316; cursor: pointer; text-decoration: underline;" onclick="openLegalModal('privacy')">Politique de confidentialité</a>.
     </p>
@@ -1889,9 +1914,7 @@
   </div>
 </div>
 
-<!-- =====================================================
-     📄 MODAL LÉGAL
-     ===================================================== -->
+<!-- MODAL LÉGAL -->
 <div class="legal-modal" id="legalModal" onclick="closeLegalModalIfOutside(event)">
   <div class="legal-modal-content" onclick="event.stopPropagation()">
     <div class="legal-modal-header">
@@ -1905,11 +1928,8 @@
   </div>
 </div>
 
-<!-- =====================================================
-     🌍 APP
-     ===================================================== -->
+<!-- APP -->
 <div id="app" style="display: none;">
-
   <header>
     <div class="logo">
       <span class="globe">🌍</span>
@@ -1932,21 +1952,11 @@
               @<span id="userUsername">—</span> <span style="font-size: 0.65rem;">📋</span>
             </div>
           </div>
-          <button class="dropdown-item" onclick="openMyProfile()">
-            👤 Mon profil
-          </button>
-          <button class="dropdown-item" onclick="openEditProfileFromMenu()">
-            ✏️ Modifier mon profil
-          </button>
-          <button class="dropdown-item" onclick="openFriendsModal()">
-            👥 Mes amis
-          </button>
-          <button class="dropdown-item" onclick="openLegalModal('terms')">
-            📄 Conditions
-          </button>
-          <button class="dropdown-item danger" onclick="signOut()">
-            🚪 Se déconnecter
-          </button>
+          <button class="dropdown-item" onclick="openMyProfile()">👤 Mon profil</button>
+          <button class="dropdown-item" onclick="openEditProfileFromMenu()">✏️ Modifier mon profil</button>
+          <button class="dropdown-item" onclick="openFriendsModal()">👥 Mes amis</button>
+          <button class="dropdown-item" onclick="openLegalModal('terms')">📄 Conditions</button>
+          <button class="dropdown-item danger" onclick="signOut()">🚪 Se déconnecter</button>
         </div>
       </div>
     </div>
@@ -1966,6 +1976,9 @@
     </button>
     <button class="filter-btn" data-filter="friends" onclick="setMapFilter('friends')">
       👥 Amis <span class="count" id="countFriends">0</span>
+    </button>
+    <button class="filter-btn favorites" data-filter="favorites" onclick="setMapFilter('favorites')">
+      ⭐ Favoris <span class="count" id="countFavorites">0</span>
     </button>
   </div>
 
@@ -2024,6 +2037,14 @@
       <p class="subtitle" id="modalSubtitle">Cherche un lieu, clique sur la carte, ou utilise ton GPS.</p>
 
       <div class="form-group">
+        <label>⭐ Favori</label>
+        <div class="fav-toggle" id="favToggle" onclick="toggleFavInModal()">
+          <span class="fav-icon" id="favIcon">🤍</span>
+          <span class="fav-label" id="favLabel">Marquer comme favori</span>
+        </div>
+      </div>
+
+      <div class="form-group">
         <label>Catégorie</label>
         <div class="icon-picker" id="iconPicker">
           <div class="icon-choice active" data-icon="📍" onclick="chooseIcon(this)">📍</div>
@@ -2061,11 +2082,20 @@
           <span class="coords" id="coordsText">Aucune position sélectionnée</span>
           <button class="btn-gps-inline" id="gpsBtn" onclick="useMyLocation()">🎯 Ma position</button>
         </div>
+        <div class="address-display" id="addressDisplay"></div>
       </div>
 
       <div class="form-group">
         <label for="placeName">Lieu</label>
         <input type="text" id="placeName" placeholder="Ex: Paris, France" />
+      </div>
+
+      <div class="form-group">
+        <label for="noteDate">📅 Date du souvenir</label>
+        <input type="date" id="noteDate" />
+        <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px;">
+          Laisse vide pour utiliser la date du jour
+        </div>
       </div>
 
       <div class="form-group">
@@ -2215,7 +2245,6 @@
   </div>
 
   <div class="toast" id="toast"></div>
-
 </div>
 
 <script>
@@ -2262,100 +2291,60 @@ const LEGAL_CONTENT = {
     title: '📄 Conditions d\'utilisation',
     content: `
       <h3>1. Acceptation des conditions</h3>
-      <p>En créant un compte sur World Notes, tu acceptes les présentes conditions d'utilisation dans leur intégralité.</p>
+      <p>En créant un compte sur World Notes, tu acceptes les présentes conditions d'utilisation.</p>
       <h3>2. Description du service</h3>
       <p>World Notes est une application web gratuite permettant d'épingler des souvenirs géolocalisés sur une carte du monde et de les partager avec des amis.</p>
       <h3>3. Compte utilisateur</h3>
-      <p>Pour utiliser World Notes, tu dois te connecter via ton compte Google. Tu es seul responsable de la confidentialité de ton compte.</p>
-      <ul>
-        <li>Tu dois avoir au moins 13 ans pour utiliser le service.</li>
-        <li>Un compte par personne est recommandé.</li>
-      </ul>
+      <p>Pour utiliser World Notes, tu dois te connecter via ton compte Google.</p>
       <h3>4. Contenu publié</h3>
-      <p>Tu restes propriétaire de tous les contenus que tu publies sur World Notes. En publiant, tu nous accordes une licence limitée pour stocker et afficher ces contenus aux personnes autorisées.</p>
-      <p>Il est interdit de publier :</p>
-      <ul>
-        <li>Du contenu illégal, violent, haineux ou discriminatoire</li>
-        <li>Du contenu sexuellement explicite</li>
-        <li>Du contenu portant atteinte aux droits d'autrui</li>
-        <li>Du spam ou des publicités non sollicitées</li>
-      </ul>
+      <p>Tu restes propriétaire de tous les contenus que tu publies. Il est interdit de publier du contenu illégal, violent, haineux ou discriminatoire.</p>
       <h3>5. Partage avec des amis</h3>
-      <p>En ajoutant un ami, tu acceptes que cette personne voie tous tes souvenirs. Tu peux retirer un ami à tout moment.</p>
+      <p>En ajoutant un ami, tu acceptes que cette personne voie tous tes souvenirs.</p>
       <h3>6. Responsabilité</h3>
-      <p>World Notes est un projet personnel. Nous ne pouvons être tenus responsables :</p>
-      <ul>
-        <li>De la perte de données (nous te recommandons d'exporter régulièrement)</li>
-        <li>De l'indisponibilité temporaire du service</li>
-      </ul>
+      <p>World Notes est un projet personnel. Nous ne pouvons être tenus responsables de la perte de données.</p>
       <h3>7. Suppression de compte</h3>
-      <p>Tu peux supprimer ton compte à tout moment. Toutes tes données seront effacées des serveurs sous 30 jours.</p>
+      <p>Tu peux supprimer ton compte à tout moment. Toutes tes données seront effacées sous 30 jours.</p>
     `
   },
   privacy: {
     title: '🔒 Politique de confidentialité',
     content: `
       <h3>1. Données collectées</h3>
-      <p>World Notes collecte les données suivantes :</p>
-      <ul>
-        <li><b>Identité Google</b> : nom, email, photo de profil</li>
-        <li><b>Contenu</b> : lieux, anecdotes, photos que tu publies</li>
-      </ul>
+      <p>World Notes collecte : identité Google (nom, email, photo), contenu (lieux, anecdotes, photos).</p>
       <h3>2. Utilisation des données</h3>
-      <p>Tes données sont utilisées uniquement pour :</p>
-      <ul>
-        <li>Afficher tes souvenirs sur ta carte personnelle</li>
-        <li>Permettre à tes amis de voir tes souvenirs (si tu les ajoutes)</li>
-      </ul>
+      <p>Tes données sont utilisées uniquement pour afficher tes souvenirs et permettre à tes amis de les voir.</p>
       <p><b>Nous ne vendons ni ne partageons jamais tes données à des fins publicitaires.</b></p>
       <h3>3. Stockage des données</h3>
-      <p>Tes données sont stockées chez <b>Google Firebase</b> (Firestore). Les serveurs sont situés en Europe.</p>
-      <p><b>Important :</b> ton email est stocké mais n'est <b>jamais</b> visible par les autres utilisateurs.</p>
-      <h3>4. Partage avec des tiers</h3>
-      <p>Les services tiers utilisés sont :</p>
-      <ul>
-        <li><b>Google Firebase</b> (authentification + base de données)</li>
-        <li><b>Esri</b> (fond de carte satellite)</li>
-        <li><b>Vercel</b> (hébergement du site)</li>
-      </ul>
-      <h3>5. Tes droits (RGPD)</h3>
-      <p>Conformément au RGPD, tu as le droit de :</p>
-      <ul>
-        <li><b>Accéder</b> à toutes tes données (via "Exporter")</li>
-        <li><b>Rectifier</b> tes données</li>
-        <li><b>Supprimer</b> tes données</li>
-        <li><b>Portabilité</b> : exporter en JSON</li>
-      </ul>
-      <h3>6. Cookies</h3>
-      <p>World Notes utilise uniquement des cookies techniques nécessaires à l'authentification. <b>Aucun cookie publicitaire.</b></p>
+      <p>Tes données sont stockées chez <b>Google Firebase</b>. Les serveurs sont situés en Europe.</p>
+      <p><b>Ton email n'est jamais visible par les autres utilisateurs.</b></p>
+      <h3>4. Tes droits (RGPD)</h3>
+      <p>Tu as le droit d'accéder, rectifier, supprimer et exporter toutes tes données.</p>
+      <h3>5. Cookies</h3>
+      <p>Aucun cookie publicitaire. Seuls des cookies techniques sont utilisés.</p>
     `
   },
   about: {
     title: 'ℹ️ À propos de World Notes',
     content: `
       <h3>🌍 Le projet</h3>
-      <p>World Notes est né de l'envie de créer un <b>carnet de voyage social</b> : un endroit simple où épingler ses souvenirs sur une carte du monde et les partager avec ses amis.</p>
+      <p>World Notes est né de l'envie de créer un carnet de voyage social : épingler ses souvenirs sur une carte et les partager avec ses amis.</p>
       <h3>✨ Fonctionnalités clés</h3>
       <ul>
         <li>📍 Épingler des souvenirs sur une carte satellite</li>
+        <li>⭐ Système de favoris</li>
+        <li>📅 Date personnalisée</li>
+        <li>📍 Adresse auto-complétée</li>
         <li>📸 Ajouter une photo à chaque note</li>
-        <li>🔎 Rechercher des lieux par nom</li>
-        <li>🎯 Se géolocaliser pour ajouter un souvenir</li>
-        <li>👥 Système d'amis avec pseudos uniques</li>
-        <li>🔀 Filtre : Tous / Moi / Amis</li>
-        <li>💾 Export / Import de tes données</li>
-        <li>🌙 Thème clair et sombre</li>
+        <li>👥 Système d'amis</li>
+        <li>💾 Export / Import</li>
       </ul>
       <h3>🛠️ Technologie</h3>
-      <p>World Notes utilise :</p>
       <ul>
-        <li><b>Firebase</b> pour l'authentification et la base de données</li>
-        <li><b>Leaflet</b> pour la carte interactive</li>
+        <li><b>Firebase</b> pour l'auth et la base de données</li>
+        <li><b>Leaflet</b> pour la carte</li>
         <li><b>Esri</b> pour les tuiles satellite</li>
         <li><b>Vercel</b> pour l'hébergement</li>
       </ul>
-      <h3>❤️ Remerciements</h3>
-      <p>Merci aux communautés <b>OpenStreetMap</b>, <b>Firebase</b> et <b>Leaflet</b> qui rendent ce projet possible.</p>
     `
   }
 };
@@ -2397,9 +2386,11 @@ let outgoingRequests = [];
 let allNotes = [];
 let myNotes = [];
 let friendNotes = [];
+let favoriteNotes = [];
 let mapFilter = 'all';
 let pendingProfilePhoto = null;
-let editingNoteId = null;  // 🆕 Mode édition
+let editingNoteId = null;
+let pendingIsFavorite = false;
 
 let unsubscribeProfile = null;
 let unsubscribeNotes = null;
@@ -2601,9 +2592,7 @@ function copyUsername() {
 function openMyProfile() {
   document.getElementById('userDropdown').classList.remove('open');
   if (!myProfile) {
-    setTimeout(() => {
-      if (myProfile) showViewProfile(myProfile, true);
-    }, 1000);
+    setTimeout(() => { if (myProfile) showViewProfile(myProfile, true); }, 1000);
     return;
   }
   showViewProfile(myProfile, true);
@@ -2621,9 +2610,7 @@ function openEditProfileFromModal() {
 
 function openEditProfile() {
   if (!myProfile) {
-    setTimeout(() => {
-      if (myProfile) openEditProfile();
-    }, 1000);
+    setTimeout(() => { if (myProfile) openEditProfile(); }, 1000);
     return;
   }
 
@@ -3187,6 +3174,7 @@ function loadAllNotes() {
         allNotes = all.filter(n => allowed.has(n.userId));
         myNotes = allNotes.filter(n => n.userId === currentUser.uid);
         friendNotes = allNotes.filter(n => n.userId !== currentUser.uid);
+        favoriteNotes = allNotes.filter(n => n.favorite === true);
         renderAllMarkers();
         updateFilters();
         showSyncIndicator('Synchronisé', true);
@@ -3293,11 +3281,13 @@ function createMarkerIcon(note) {
   const hasCustom = icon !== '📍';
   const hasPhoto = !!(note && note.photo);
   const isFriend = note.userId !== currentUser.uid;
+  const isFav = note && note.favorite === true;
 
   const classes = ['custom-marker'];
   if (hasCustom) classes.push('has-icon');
   if (hasPhoto) classes.push('has-photo');
   if (isFriend) classes.push('friend-marker');
+  if (isFav && !isFriend) classes.push('is-favorite');
 
   return L.divIcon({
     className: '',
@@ -3342,6 +3332,7 @@ function buildPopupContent(note) {
   });
   const icon = note.icon || '📍';
   const isMine = note.userId === currentUser.uid;
+  const isFav = note.favorite === true;
 
   let photoHtml = '';
   if (note.photo) {
@@ -3366,7 +3357,10 @@ function buildPopupContent(note) {
     `;
   }
 
-  // 🆕 Boutons d'action
+  const favStar = isMine
+    ? `<span class="popup-fav" onclick="toggleFavoriteFromPopup('${note.id}', event)" title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">${isFav ? '⭐' : '🤍'}</span>`
+    : (isFav ? '<span class="popup-fav" style="cursor:default;">⭐</span>' : '');
+
   let actionBtns = '';
   if (isMine) {
     actionBtns = `
@@ -3381,13 +3375,16 @@ function buildPopupContent(note) {
     ${photoHtml}
     <div class="popup-body">
       <div class="popup-place ${isMine ? '' : 'friend-place'}">
-        <span class="category-icon">${icon}</span>
-        ${escapeHtml(note.place)}
+        <div class="place-left">
+          <span class="category-icon">${icon}</span>
+          ${escapeHtml(note.place)}
+        </div>
+        ${favStar}
       </div>
       <div class="popup-text">${escapeHtml(note.text)}</div>
       ${authorHtml}
       <div class="popup-footer">
-        <span class="popup-meta">${date}</span>
+        <span class="popup-meta">📅 ${date}</span>
         ${actionBtns}
       </div>
     </div>
@@ -3402,6 +3399,7 @@ function renderAllMarkers() {
   if (mapFilter === 'all') notesToShow = allNotes;
   else if (mapFilter === 'mine') notesToShow = myNotes;
   else if (mapFilter === 'friends') notesToShow = friendNotes;
+  else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
 
   notesToShow.forEach(addMarkerToMap);
   renderSidebar();
@@ -3414,6 +3412,7 @@ function renderSidebar() {
   if (mapFilter === 'all') notesToShow = allNotes;
   else if (mapFilter === 'mine') notesToShow = myNotes;
   else if (mapFilter === 'friends') notesToShow = friendNotes;
+  else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
 
   if (notesToShow.length === 0) {
     list.innerHTML = `<div class="empty-state">Aucun souvenir pour l'instant.<br>Cliquez sur la carte pour commencer ✨</div>`;
@@ -3424,6 +3423,7 @@ function renderSidebar() {
     const date = new Date(note.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
     const icon = note.icon || '📍';
     const isMine = note.userId === currentUser.uid;
+    const isFav = note.favorite === true;
 
     const photoHtml = note.photo
       ? `<img class="note-thumb" src="${note.photo}" alt="Photo" onclick="openLightbox('${note.id}', event)" />`
@@ -3446,24 +3446,31 @@ function renderSidebar() {
       `;
     }
 
+    const favStar = isMine
+      ? `<span class="fav-star" onclick="toggleFavorite('${note.id}', event)" title="${isFav ? 'Retirer' : 'Ajouter aux favoris'}">${isFav ? '⭐' : '🤍'}</span>`
+      : (isFav ? '<span class="fav-star" style="cursor:default;">⭐</span>' : '');
+
     const deleteBtn = isMine
       ? `<button class="delete-note" onclick="deleteNote('${note.id}', event)">🗑️</button>`
       : '';
 
     return `
-      <div class="note-card ${isMine ? '' : 'friend-note'}">
+      <div class="note-card ${isMine ? '' : 'friend-note'} ${isFav ? 'favorite' : ''}">
         ${photoHtml}
         <div class="note-body">
           <div onclick="focusNote('${note.id}')">
             <div class="place">
-              <span class="category-icon">${icon}</span>
-              ${escapeHtml(note.place)}
+              <div class="place-left">
+                <span class="category-icon">${icon}</span>
+                ${escapeHtml(note.place)}
+              </div>
+              ${favStar}
             </div>
             <div class="text">${escapeHtml(note.text)}</div>
           </div>
           ${authorHtml}
           <div class="meta">
-            <span>${date}</span>
+            <span class="note-date-badge">📅 ${date}</span>
             ${deleteBtn}
           </div>
         </div>
@@ -3500,7 +3507,68 @@ async function deleteNoteFromPopup(id, event) {
   } catch (err) { showToast('❌ Erreur', 'error'); }
 }
 
-/* 🆕 MODIFIER UNE NOTE */
+/* 🆕 FAVORIS */
+async function toggleFavorite(id, event) {
+  if (event) event.stopPropagation();
+  const note = allNotes.find(n => n.id === id);
+  if (!note || note.userId !== currentUser.uid) return;
+
+  const newVal = !note.favorite;
+
+  try {
+    await db.collection('notes').doc(id).update({ favorite: newVal });
+
+    const idx = allNotes.findIndex(n => n.id === id);
+    if (idx !== -1) allNotes[idx].favorite = newVal;
+    const myIdx = myNotes.findIndex(n => n.id === id);
+    if (myIdx !== -1) myNotes[myIdx].favorite = newVal;
+
+    favoriteNotes = allNotes.filter(n => n.favorite === true);
+
+    renderAllMarkers();
+    updateFilters();
+
+    showToast(newVal ? '⭐ Ajouté aux favoris !' : 'Retiré des favoris', newVal ? 'success' : 'info');
+  } catch (err) {
+    console.error('Erreur favori:', err);
+    showToast('❌ Erreur', 'error');
+  }
+}
+
+async function toggleFavoriteFromPopup(id, event) {
+  if (event) event.stopPropagation();
+  const note = allNotes.find(n => n.id === id);
+  if (!note || note.userId !== currentUser.uid) return;
+
+  const newVal = !note.favorite;
+
+  try {
+    await db.collection('notes').doc(id).update({ favorite: newVal });
+
+    const idx = allNotes.findIndex(n => n.id === id);
+    if (idx !== -1) allNotes[idx].favorite = newVal;
+    const myIdx = myNotes.findIndex(n => n.id === id);
+    if (myIdx !== -1) myNotes[myIdx].favorite = newVal;
+
+    favoriteNotes = allNotes.filter(n => n.favorite === true);
+
+    renderAllMarkers();
+    updateFilters();
+
+    // Rouvrir la popup
+    setTimeout(() => {
+      const marker = markers[id];
+      if (marker) marker.openPopup();
+    }, 100);
+
+    showToast(newVal ? '⭐ Ajouté aux favoris !' : 'Retiré des favoris', newVal ? 'success' : 'info');
+  } catch (err) {
+    console.error('Erreur favori:', err);
+    showToast('❌ Erreur', 'error');
+  }
+}
+
+/* 🆕 ÉDITER UNE NOTE */
 function editNoteFromPopup(id, event) {
   if (event) event.stopPropagation();
   const note = allNotes.find(n => n.id === id);
@@ -3509,24 +3577,34 @@ function editNoteFromPopup(id, event) {
   editingNoteId = id;
   map.closePopup();
 
-  // Changer le titre
   document.getElementById('modalTitle').textContent = '✏️ Modifier le souvenir';
   document.getElementById('modalSubtitle').textContent = 'Modifie les infos puis enregistre.';
 
-  // Pré-remplir les champs
   document.getElementById('placeName').value = note.place;
   document.getElementById('noteText').value = note.text;
   pendingLatLng = { lat: note.lat, lng: note.lng };
   pendingSource = note.source || 'manual';
   pendingIcon = note.icon || '📍';
   pendingPhoto = note.photo || null;
+  pendingIsFavorite = note.favorite === true;
 
-  // Sélectionner l'icône
+  // Date
+  const dateInput = document.getElementById('noteDate');
+  if (note.userDate) {
+    dateInput.value = note.userDate;
+  } else {
+    dateInput.value = '';
+  }
+
+  // Favori
+  updateFavToggle();
+
+  // Icône
   document.querySelectorAll('.icon-choice').forEach(c => {
     c.classList.toggle('active', c.dataset.icon === (note.icon || '📍'));
   });
 
-  // Prévisualiser la photo
+  // Photo
   if (note.photo) {
     document.getElementById('photoPreview').src = note.photo;
     document.getElementById('photoPreviewWrapper').classList.add('visible');
@@ -3537,9 +3615,14 @@ function editNoteFromPopup(id, event) {
     document.getElementById('photoUploadZone').style.display = '';
   }
 
-  updateLocationBox();
+  // Adresse
+  if (note.address) {
+    showAddress(note.address);
+  } else {
+    hideAddress();
+  }
 
-  // Changer le bouton Enregistrer
+  updateLocationBox();
   document.getElementById('saveNoteBtn').innerHTML = '💾 Mettre à jour';
 
   document.getElementById('modalOverlay').classList.add('open');
@@ -3566,9 +3649,73 @@ function updateFilters() {
   document.getElementById('countAll').textContent = allNotes.length;
   document.getElementById('countMine').textContent = myNotes.length;
   document.getElementById('countFriends').textContent = friendNotes.length;
+  document.getElementById('countFavorites').textContent = favoriteNotes.length;
 
   const friendsBtn = document.querySelector('.filter-btn[data-filter="friends"]');
   if (friendsBtn) friendsBtn.style.display = myFriends.length > 0 ? 'flex' : 'none';
+
+  const favBtn = document.querySelector('.filter-btn[data-filter="favorites"]');
+  if (favBtn) favBtn.style.display = favoriteNotes.length > 0 ? 'flex' : 'none';
+}
+
+/* =========================================================
+   ⭐ FAVORIS DANS LE MODAL
+   ========================================================= */
+
+function toggleFavInModal() {
+  pendingIsFavorite = !pendingIsFavorite;
+  updateFavToggle();
+}
+
+function updateFavToggle() {
+  const toggle = document.getElementById('favToggle');
+  const icon = document.getElementById('favIcon');
+  const label = document.getElementById('favLabel');
+
+  if (pendingIsFavorite) {
+    toggle.classList.add('active');
+    icon.textContent = '⭐';
+    label.textContent = 'Favori !';
+  } else {
+    toggle.classList.remove('active');
+    icon.textContent = '🤍';
+    label.textContent = 'Marquer comme favori';
+  }
+}
+
+/* =========================================================
+   📍 ADRESSE AUTO-COMPLÉTÉE
+   ========================================================= */
+
+async function reverseGeocode(lat, lng) {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=fr`;
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error('Erreur réseau');
+    const data = await res.json();
+
+    if (data && data.display_name) {
+      // Nettoyer l'adresse : garder les 3 premiers éléments
+      const parts = data.display_name.split(',').slice(0, 3).map(s => s.trim());
+      return parts.join(', ');
+    }
+    return null;
+  } catch (err) {
+    console.error('Erreur reverse geocoding:', err);
+    return null;
+  }
+}
+
+function showAddress(address) {
+  const el = document.getElementById('addressDisplay');
+  el.innerHTML = `📍 <b>Adresse détectée :</b> ${escapeHtml(address)}`;
+  el.classList.add('visible');
+}
+
+function hideAddress() {
+  const el = document.getElementById('addressDisplay');
+  el.classList.remove('visible');
+  el.innerHTML = '';
 }
 
 /* =========================================================
@@ -3713,16 +3860,17 @@ function applySettings() {
   showToast('✅ Réglages appliqués', 'success');
 }
 
-/* =========================================================   💾 EXPORT / IMPORT
+/* =========================================================
+   💾 EXPORT / IMPORT
    ========================================================= */
 
 function updateNotesCountInfo() {
   const info = document.getElementById('notesCountInfo');
   if (!info) return;
   const n = myNotes.length;
-  const photos = myNotes.filter(x => x.photo).length;
+  const favs = favoriteNotes.length;
   let txt = n === 0 ? 'Aucun souvenir' : `${n} souvenir${n > 1 ? 's' : ''}`;
-  if (photos > 0) txt += ` • ${photos} photo${photos > 1 ? 's' : ''}`;
+  if (favs > 0) txt += ` • ${favs} ⭐`;
   info.textContent = txt;
 }
 
@@ -3733,7 +3881,7 @@ function exportNotes() {
   }
   const exportData = {
     app: 'World Notes',
-    version: 9,
+    version: 10,
     exportedAt: new Date().toISOString(),
     notesCount: myNotes.length,
     notes: myNotes.map(n => {
@@ -3757,8 +3905,7 @@ function exportNotes() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  const sizeMo = (blob.size / 1024 / 1024).toFixed(2);
-  showToast(`💾 Export réussi (${sizeMo} Mo)`, 'success');
+  showToast(`💾 Export réussi`, 'success');
 }
 
 function triggerImport() {
@@ -3805,7 +3952,10 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
         createdAt: note.createdAt || Date.now(),
         source: note.source || 'import',
         icon: note.icon || '📍',
-        photo: note.photo || null
+        photo: note.photo || null,
+        favorite: note.favorite || false,
+        userDate: note.userDate || null,
+        address: note.address || null
       });
     });
 
@@ -3829,11 +3979,14 @@ function chooseIcon(el) {
 }
 
 function openAddModal() {
-  // Reset du mode édition si on ouvre un nouveau
   editingNoteId = null;
+  pendingIsFavorite = false;
+  updateFavToggle();
   document.getElementById('modalTitle').textContent = '📍 Nouveau souvenir';
   document.getElementById('modalSubtitle').textContent = 'Cherche un lieu, clique sur la carte, ou utilise ton GPS.';
   document.getElementById('saveNoteBtn').innerHTML = '💾 Enregistrer';
+  document.getElementById('noteDate').value = '';
+  hideAddress();
 
   if (!pendingLatLng) {
     const c = map.getCenter();
@@ -3850,12 +4003,16 @@ function closeAddModal() {
   document.getElementById('placeName').value = '';
   document.getElementById('noteText').value = '';
   document.getElementById('searchInput').value = '';
+  document.getElementById('noteDate').value = '';
   closeAutocomplete();
   clearSearchButton();
+  hideAddress();
   pendingLatLng = null;
   pendingSource = null;
   pendingIcon = '📍';
-  editingNoteId = null;  // Reset
+  pendingIsFavorite = false;
+  editingNoteId = null;
+  updateFavToggle();
   removePhoto();
   document.querySelectorAll('.icon-choice').forEach(c => {
     c.classList.toggle('active', c.dataset.icon === '📍');
@@ -3865,7 +4022,6 @@ function closeAddModal() {
   btn.disabled = false;
   btn.innerHTML = '🎯 Ma position';
 
-  // Reset du titre
   document.getElementById('modalTitle').textContent = '📍 Nouveau souvenir';
   document.getElementById('modalSubtitle').textContent = 'Cherche un lieu, clique sur la carte, ou utilise ton GPS.';
   document.getElementById('saveNoteBtn').innerHTML = '💾 Enregistrer';
@@ -3894,7 +4050,7 @@ function useMyLocation() {
   btn.innerHTML = '<span class="spinner"></span>...';
 
   navigator.geolocation.getCurrentPosition(
-    (position) => {
+    async (position) => {
       const { latitude: lat, longitude: lng, accuracy } = position.coords;
       if (userLocationMarker) map.removeLayer(userLocationMarker);
       if (userLocationCircle) map.removeLayer(userLocationCircle);
@@ -3910,6 +4066,21 @@ function useMyLocation() {
       pendingSource = 'gps';
       updateLocationBox();
       showToast(`🎯 Position trouvée (±${Math.round(accuracy)}m)`, 'success');
+
+      // 🆕 REVERSE GEOCODING : récupérer l'adresse
+      showToast('🔎 Recherche de l\'adresse...', 'info');
+      const address = await reverseGeocode(lat, lng);
+      if (address) {
+        showAddress(address);
+        // Pré-remplir le lieu si vide
+        const placeInput = document.getElementById('placeName');
+        if (!placeInput.value.trim()) {
+          placeInput.value = address;
+        }
+      } else {
+        showToast('⚠️ Adresse non trouvée', 'info');
+      }
+
       btn.disabled = false;
       btn.innerHTML = '✅ OK';
       setTimeout(() => { btn.innerHTML = '🎯 Ma position'; }, 2000);
@@ -4034,6 +4205,9 @@ function selectSearchResult(result) {
   const placeInput = document.getElementById('placeName');
   if (!placeInput.value.trim()) placeInput.value = fullName;
 
+  // Adresse aussi
+  showAddress(fullName);
+
   if (tempMarker) map.removeLayer(tempMarker);
   tempMarker = L.marker([lat, lng], { icon: createTempMarkerIcon(), zIndexOffset: 900 })
     .addTo(map).bindPopup(`🔎 ${escapeHtml(shortName)}`).openPopup();
@@ -4070,12 +4244,13 @@ function clearSearchButton() {
 }
 
 /* =========================================================
-   💾 SAUVEGARDE NOTE (CRÉATION + ÉDITION)
+   💾 SAUVEGARDE NOTE
    ========================================================= */
 
 async function saveNote() {
   const place = document.getElementById('placeName').value.trim();
   const text = document.getElementById('noteText').value.trim();
+  const userDate = document.getElementById('noteDate').value;
 
   if (!pendingLatLng) { showToast('⚠️ Choisis une position', 'error'); return; }
   if (!place) { showToast('⚠️ Donne un nom à ce lieu !', 'error'); return; }
@@ -4090,35 +4265,41 @@ async function saveNote() {
   try {
     const lat = pendingLatLng.lat;
     const lng = pendingLatLng.lng;
+    const addressEl = document.getElementById('addressDisplay');
+    const address = addressEl.classList.contains('visible') ? addressEl.textContent.replace('📍 Adresse détectée : ', '').trim() : null;
 
-    // 🆕 MODE ÉDITION
     if (editingNoteId) {
+      // ÉDITION
       await db.collection('notes').doc(editingNoteId).update({
-        place,
-        text,
-        lat, lng,
+        place, text, lat, lng,
         source: pendingSource,
         icon: pendingIcon,
         photo: pendingPhoto,
+        favorite: pendingIsFavorite,
+        userDate: userDate || null,
+        address: address,
         updatedAt: Date.now()
       });
 
-      // Mettre à jour localement
-      const noteIndex = allNotes.findIndex(n => n.id === editingNoteId);
-      if (noteIndex !== -1) {
-        allNotes[noteIndex] = {
-          ...allNotes[noteIndex],
+      const idx = allNotes.findIndex(n => n.id === editingNoteId);
+      if (idx !== -1) {
+        allNotes[idx] = {
+          ...allNotes[idx],
           place, text, lat, lng,
           source: pendingSource,
           icon: pendingIcon,
           photo: pendingPhoto,
+          favorite: pendingIsFavorite,
+          userDate: userDate || null,
+          address: address,
           updatedAt: Date.now()
         };
       }
-      const myIndex = myNotes.findIndex(n => n.id === editingNoteId);
-      if (myIndex !== -1 && noteIndex !== -1) {
-        myNotes[myIndex] = allNotes[noteIndex];
+      const myIdx = myNotes.findIndex(n => n.id === editingNoteId);
+      if (myIdx !== -1 && idx !== -1) {
+        myNotes[myIdx] = allNotes[idx];
       }
+      favoriteNotes = allNotes.filter(n => n.favorite === true);
 
       renderAllMarkers();
       updateFilters();
@@ -4134,7 +4315,7 @@ async function saveNote() {
       }, 800);
 
     } else {
-      // MODE CRÉATION
+      // CRÉATION
       const now = Date.now();
       const newNoteRef = await db.collection('notes').add({
         userId: currentUser.uid,
@@ -4142,7 +4323,10 @@ async function saveNote() {
         createdAt: now,
         source: pendingSource,
         icon: pendingIcon,
-        photo: pendingPhoto
+        photo: pendingPhoto,
+        favorite: pendingIsFavorite,
+        userDate: userDate || null,
+        address: address
       });
 
       const newNote = {
@@ -4152,12 +4336,16 @@ async function saveNote() {
         createdAt: now,
         source: pendingSource,
         icon: pendingIcon,
-        photo: pendingPhoto
+        photo: pendingPhoto,
+        favorite: pendingIsFavorite,
+        userDate: userDate || null,
+        address: address
       };
 
       if (!allNotes.some(n => n.id === newNote.id)) {
         allNotes.unshift(newNote);
         myNotes.unshift(newNote);
+        if (pendingIsFavorite) favoriteNotes.unshift(newNote);
       }
 
       renderAllMarkers();
