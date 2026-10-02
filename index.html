@@ -501,6 +501,14 @@
     left: 0; right: 0; bottom: 0;
     z-index: 1;
     background: var(--bg-tertiary);
+    transition: right 0.35s;
+  }
+
+  /* 🆕 Sur PC : la carte se décale quand la sidebar est ouverte */
+  @media (min-width: 769px) {
+    #map.with-sidebar {
+      right: 340px;
+    }
   }
 
   .sync-indicator {
@@ -585,7 +593,7 @@
     text-align: center;
   }
 
-  /* 🆕 RANDOM BUTTON */
+  /* RANDOM BUTTON */
   .btn-random {
     position: fixed;
     bottom: 24px;
@@ -609,10 +617,6 @@
   .btn-random:hover {
     transform: scale(1.1) rotate(15deg);
     box-shadow: 0 12px 32px rgba(139, 92, 246, 0.7);
-  }
-
-  .btn-random:active {
-    transform: scale(0.95);
   }
 
   .btn-random.loading {
@@ -658,7 +662,7 @@
     padding: 0;
   }
 
-  /* 🆕 RECHERCHE DANS LA SIDEBAR */
+  /* RECHERCHE DANS LA SIDEBAR */
   .sidebar-search {
     padding: 12px 16px;
     border-bottom: 1px solid var(--border-subtle);
@@ -797,7 +801,6 @@
     line-height: 1.4;
   }
 
-  /* 🆕 TAGS DANS LES CARTES */
   .note-tags {
     display: flex;
     flex-wrap: wrap;
@@ -1001,7 +1004,6 @@
     justify-content: center;
   }
 
-  /* 🆕 INPUT TAGS */
   .tags-input-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -1040,7 +1042,6 @@
     line-height: 1;
     padding: 0 2px;
     border-radius: 4px;
-    transition: all 0.2s;
   }
 
   .tags-input-wrapper .tag-chip-modal .remove-tag:hover {
@@ -1397,7 +1398,6 @@
     padding: 6px 10px;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.25s;
   }
 
   .popup-action-btn:hover {
@@ -1414,7 +1414,6 @@
     padding: 6px 10px;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.25s;
   }
 
   .popup-delete-btn:hover {
@@ -1859,7 +1858,7 @@
 
   .info-banner .icon { font-size: 1.2rem; flex-shrink: 0; }
 
-  /* 🆕 RANDOM NOTE MODAL */
+  /* RANDOM NOTE MODAL */
   .random-note-modal {
     position: fixed;
     inset: 0;
@@ -1945,7 +1944,8 @@
   .toast.error   { border-color: rgba(239, 68, 68, 0.6); }
   .toast.info    { border-color: rgba(59, 130, 246, 0.6); }
 
-  .btn-toggle-notes { display: none; }
+  /* 🆕 BOUTON SIDEBAR TOUJOURS VISIBLE */
+  .btn-toggle-notes { display: inline-block; }
 
   @media (max-width: 768px) {
     .landing-hero h1 { font-size: 2.2rem; }
@@ -1962,7 +1962,6 @@
     .btn-icon { padding: 8px 10px; font-size: 1rem; min-width: 38px; }
     .user-avatar { width: 34px; height: 34px; }
     #sidebar { width: 100%; }
-    .btn-toggle-notes { display: inline-block; }
     .modal { padding: 22px; }
     .settings-panel { width: calc(100% - 40px); right: 20px; left: 20px; }
     .icon-picker { grid-template-columns: repeat(4, 1fr); }
@@ -1975,6 +1974,8 @@
     .sync-indicator { font-size: 0.75rem; padding: 6px 14px; }
     .legal-modal-content { padding: 22px; }
     .btn-random { bottom: 80px; right: 12px; width: 48px; height: 48px; font-size: 1.3rem; }
+    /* Sur mobile : la carte prend tout l'écran */
+    #map.with-sidebar { right: 0; }
   }
 
   .hint {
@@ -2178,7 +2179,6 @@
     </button>
   </div>
 
-  <!-- 🆕 BOUTON RANDOM -->
   <button class="btn-random" id="btnRandom" onclick="showRandomNote()" title="Souvenir aléatoire">🎲</button>
 
   <div class="settings-panel" id="settingsPanel">
@@ -2225,7 +2225,6 @@
       <button class="close-sidebar" onclick="toggleSidebar()">×</button>
     </div>
 
-    <!-- 🆕 RECHERCHE -->
     <div class="sidebar-search">
       <span class="search-icon-sm">🔍</span>
       <input type="text" id="sidebarSearch" placeholder="Rechercher un souvenir..." />
@@ -2269,7 +2268,6 @@
         </div>
       </div>
 
-      <!-- 🆕 TAGS -->
       <div class="form-group">
         <label>🏷️ Tags</label>
         <div class="tags-input-wrapper" id="tagsInputWrapper" onclick="document.getElementById('tagInputField').focus()">
@@ -2457,11 +2455,8 @@
     </div>
   </div>
 
-  <!-- 🆕 MODAL RANDOM -->
   <div class="random-note-modal" id="randomNoteModal" onclick="closeRandomNoteIfOutside(event)">
-    <div class="random-note-content" id="randomNoteContent" onclick="event.stopPropagation()">
-      <!-- Contenu injecté -->
-    </div>
+    <div class="random-note-content" id="randomNoteContent" onclick="event.stopPropagation()"></div>
   </div>
 
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -2557,21 +2552,14 @@ const LEGAL_CONTENT = {
       <ul>
         <li>📍 Épingler des souvenirs sur une carte satellite</li>
         <li>⭐ Système de favoris</li>
-        <li>🏷️ Tags personnalisés pour organiser</li>
-        <li>🔍 Recherche dans tes souvenirs</li>
+        <li>🏷️ Tags personnalisés</li>
+        <li>🔍 Recherche dans les souvenirs</li>
         <li>🎲 Souvenir aléatoire</li>
         <li>📅 Date personnalisée</li>
         <li>📍 Adresse auto-complétée</li>
         <li>📸 Photos</li>
         <li>👥 Système d'amis</li>
         <li>💾 Export / Import</li>
-      </ul>
-      <h3>🛠️ Technologie</h3>
-      <ul>
-        <li><b>Firebase</b> pour l'auth et la base de données</li>
-        <li><b>Leaflet</b> pour la carte</li>
-        <li><b>Esri</b> pour les tuiles satellite</li>
-        <li><b>Vercel</b> pour l'hébergement</li>
       </ul>
     `
   }
@@ -2740,6 +2728,15 @@ function showApp() {
   document.getElementById('userName').textContent = currentUser.displayName || 'Utilisateur';
 
   if (!map) initMap();
+
+  // 🆕 Ouvrir la sidebar par défaut sur PC
+  if (window.innerWidth > 768) {
+    setTimeout(() => {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('map').classList.add('with-sidebar');
+      if (map) map.invalidateSize();
+    }, 300);
+  }
 }
 
 function showSyncIndicator(text, synced) {
@@ -3638,7 +3635,6 @@ function renderAllMarkers() {
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
 
-  // Filtre recherche
   if (sidebarSearchQuery.trim()) {
     const q = sidebarSearchQuery.toLowerCase().trim();
     notesToShow = notesToShow.filter(n => {
@@ -3662,7 +3658,6 @@ function renderSidebar() {
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
 
-  // Filtre recherche
   if (sidebarSearchQuery.trim()) {
     const q = sidebarSearchQuery.toLowerCase().trim();
     notesToShow = notesToShow.filter(n => {
@@ -3771,10 +3766,7 @@ async function deleteNoteFromPopup(id, event) {
   } catch (err) { showToast('❌ Erreur', 'error'); }
 }
 
-/* =========================================================
-   ⭐ FAVORIS
-   ========================================================= */
-
+/* FAVORIS */
 async function toggleFavorite(id, event) {
   if (event) event.stopPropagation();
   const note = allNotes.find(n => n.id === id);
@@ -3834,18 +3826,13 @@ async function toggleFavoriteFromPopup(id, event) {
   }
 }
 
-/* =========================================================
-   🏷️ TAGS
-   ========================================================= */
-
+/* TAGS */
 function renderTagsInModal() {
   const wrapper = document.getElementById('tagsInputWrapper');
   const input = document.getElementById('tagInputField');
 
-  // Retirer les anciens chips
   wrapper.querySelectorAll('.tag-chip-modal').forEach(c => c.remove());
 
-  // Ajouter les chips
   pendingTags.forEach(tag => {
     const chip = document.createElement('div');
     chip.className = 'tag-chip-modal';
@@ -3853,7 +3840,6 @@ function renderTagsInModal() {
     wrapper.insertBefore(chip, input);
   });
 
-  // Écouter les clics sur remove
   wrapper.querySelectorAll('.remove-tag').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -3880,7 +3866,6 @@ function removeTag(tag) {
   renderTagsInModal();
 }
 
-// Écouter les touches dans l'input tags
 const tagInputField = document.getElementById('tagInputField');
 tagInputField.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' || e.key === ',') {
@@ -3888,7 +3873,6 @@ tagInputField.addEventListener('keydown', (e) => {
     addTag(tagInputField.value);
     tagInputField.value = '';
   } else if (e.key === 'Backspace' && tagInputField.value === '' && pendingTags.length > 0) {
-    // Supprimer le dernier tag
     pendingTags.pop();
     renderTagsInModal();
   }
@@ -3901,10 +3885,7 @@ tagInputField.addEventListener('blur', () => {
   }
 });
 
-/* =========================================================
-   🔍 RECHERCHE DANS LA SIDEBAR
-   ========================================================= */
-
+/* RECHERCHE SIDEBAR */
 const sidebarSearchInput = document.getElementById('sidebarSearch');
 const clearSidebarSearchBtn = document.getElementById('clearSidebarSearch');
 
@@ -3921,15 +3902,11 @@ function clearSidebarSearch() {
   renderAllMarkers();
 }
 
-/* =========================================================
-   🎲 SOUVENIR ALÉATOIRE
-   ========================================================= */
-
+/* RANDOM */
 function showRandomNote() {
   const btn = document.getElementById('btnRandom');
   btn.classList.add('loading');
 
-  // Notes dispo selon le filtre
   let available = [];
   if (mapFilter === 'all') available = allNotes;
   else if (mapFilter === 'mine') available = myNotes;
@@ -3942,7 +3919,6 @@ function showRandomNote() {
     return;
   }
 
-  // Petit délai pour l'effet
   setTimeout(() => {
     btn.classList.remove('loading');
 
@@ -4032,10 +4008,7 @@ function rollAnotherRandom() {
   setTimeout(showRandomNote, 200);
 }
 
-/* =========================================================
-   ✏️ ÉDITER UNE NOTE
-   ========================================================= */
-
+/* ÉDITER */
 function editNoteFromPopup(id, event) {
   if (event) event.stopPropagation();
   const note = allNotes.find(n => n.id === id);
@@ -4056,23 +4029,16 @@ function editNoteFromPopup(id, event) {
   pendingIsFavorite = note.favorite === true;
   pendingTags = note.tags ? [...note.tags] : [];
 
-  // Date
   const dateInput = document.getElementById('noteDate');
-  if (note.userDate) {
-    dateInput.value = note.userDate;
-  } else {
-    dateInput.value = '';
-  }
+  if (note.userDate) dateInput.value = note.userDate;
+  else dateInput.value = '';
 
-  // Favori
   updateFavToggle();
 
-  // Icône
   document.querySelectorAll('.icon-choice').forEach(c => {
     c.classList.toggle('active', c.dataset.icon === (note.icon || '📍'));
   });
 
-  // Photo
   if (note.photo) {
     document.getElementById('photoPreview').src = note.photo;
     document.getElementById('photoPreviewWrapper').classList.add('visible');
@@ -4083,15 +4049,10 @@ function editNoteFromPopup(id, event) {
     document.getElementById('photoUploadZone').style.display = '';
   }
 
-  // Tags
   renderTagsInModal();
 
-  // Adresse
-  if (note.address) {
-    showAddress(note.address);
-  } else {
-    hideAddress();
-  }
+  if (note.address) showAddress(note.address);
+  else hideAddress();
 
   updateLocationBox();
   document.getElementById('saveNoteBtn').innerHTML = '💾 Mettre à jour';
@@ -4100,14 +4061,29 @@ function editNoteFromPopup(id, event) {
   setTimeout(() => document.getElementById('placeName').focus(), 100);
 }
 
+/* 🆕 TOGGLE SIDEBAR */
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar = document.getElementById('sidebar');
+  const mapEl = document.getElementById('map');
+  const isOpening = !sidebar.classList.contains('open');
+
+  sidebar.classList.toggle('open');
+
+  // Sur PC : ajuster la carte
+  if (window.innerWidth > 768) {
+    if (isOpening) {
+      mapEl.classList.add('with-sidebar');
+    } else {
+      mapEl.classList.remove('with-sidebar');
+    }
+    // Rafraîchir la carte
+    setTimeout(() => {
+      if (map) map.invalidateSize();
+    }, 400);
+  }
 }
 
-/* =========================================================
-   🔀 FILTRE
-   ========================================================= */
-
+/* FILTRE */
 function setMapFilter(filter) {
   mapFilter = filter;
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -4129,10 +4105,7 @@ function updateFilters() {
   if (favBtn) favBtn.style.display = favoriteNotes.length > 0 ? 'flex' : 'none';
 }
 
-/* =========================================================
-   ⭐ FAVORIS DANS LE MODAL
-   ========================================================= */
-
+/* FAVORIS MODAL */
 function toggleFavInModal() {
   pendingIsFavorite = !pendingIsFavorite;
   updateFavToggle();
@@ -4154,10 +4127,7 @@ function updateFavToggle() {
   }
 }
 
-/* =========================================================
-   📍 ADRESSE AUTO-COMPLÉTÉE
-   ========================================================= */
-
+/* ADRESSE */
 async function reverseGeocode(lat, lng) {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=fr`;
@@ -4188,10 +4158,7 @@ function hideAddress() {
   el.innerHTML = '';
 }
 
-/* =========================================================
-   🖼️ LIGHTBOX
-   ========================================================= */
-
+/* LIGHTBOX */
 function openLightbox(noteId, event) {
   if (event) event.stopPropagation();
   const note = allNotes.find(n => n.id === noteId);
@@ -4205,10 +4172,7 @@ function closeLightbox(event) {
   document.getElementById('lightbox').classList.remove('open');
 }
 
-/* =========================================================
-   📸 PHOTO
-   ========================================================= */
-
+/* PHOTO */
 const photoInput = document.getElementById('photoInput');
 const photoUploadZone = document.getElementById('photoUploadZone');
 const photoPreviewWrapper = document.getElementById('photoPreviewWrapper');
@@ -4287,10 +4251,7 @@ function removePhoto(event) {
   photoInput.value = '';
 }
 
-/* =========================================================
-   ⚙️ RÉGLAGES
-   ========================================================= */
-
+/* RÉGLAGES */
 function toggleUserMenu(event) {
   if (event) event.stopPropagation();
   document.getElementById('userDropdown').classList.toggle('open');
@@ -4330,10 +4291,7 @@ function applySettings() {
   showToast('✅ Réglages appliqués', 'success');
 }
 
-/* =========================================================
-   💾 EXPORT / IMPORT
-   ========================================================= */
-
+/* EXPORT / IMPORT */
 function updateNotesCountInfo() {
   const info = document.getElementById('notesCountInfo');
   if (!info) return;
@@ -4351,7 +4309,7 @@ function exportNotes() {
   }
   const exportData = {
     app: 'World Notes',
-    version: 11,
+    version: 12,
     exportedAt: new Date().toISOString(),
     notesCount: myNotes.length,
     notes: myNotes.map(n => {
@@ -4439,10 +4397,7 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
   e.target.value = '';
 });
 
-/* =========================================================
-   MODAL AJOUT / ÉDITION
-   ========================================================= */
-
+/* MODAL AJOUT */
 function chooseIcon(el) {
   document.querySelectorAll('.icon-choice').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
@@ -4571,10 +4526,7 @@ function useMyLocation() {
   );
 }
 
-/* =========================================================
-   🔎 RECHERCHE
-   ========================================================= */
-
+/* RECHERCHE */
 const searchInput = document.getElementById('searchInput');
 const autocompleteList = document.getElementById('autocompleteList');
 const searchSpinner = document.getElementById('searchSpinner');
@@ -4717,10 +4669,7 @@ function clearSearchButton() {
   closeAutocomplete();
 }
 
-/* =========================================================
-   💾 SAUVEGARDE NOTE
-   ========================================================= */
-
+/* SAUVEGARDE */
 async function saveNote() {
   const place = document.getElementById('placeName').value.trim();
   const text = document.getElementById('noteText').value.trim();
@@ -4731,7 +4680,6 @@ async function saveNote() {
   if (!text) { showToast('⚠️ Écris une anecdote !', 'error'); return; }
   if (!currentUser) { showToast('⚠️ Tu dois être connecté', 'error'); return; }
 
-  // Ajouter le tag en cours s'il y en a un
   if (tagInputField.value.trim()) {
     addTag(tagInputField.value);
     tagInputField.value = '';
@@ -4749,7 +4697,6 @@ async function saveNote() {
     const address = addressEl.classList.contains('visible') ? addressEl.textContent.replace('📍 Adresse détectée : ', '').trim() : null;
 
     if (editingNoteId) {
-      // ÉDITION
       await db.collection('notes').doc(editingNoteId).update({
         place, text, lat, lng,
         source: pendingSource,
@@ -4797,7 +4744,6 @@ async function saveNote() {
       }, 800);
 
     } else {
-      // CRÉATION
       const now = Date.now();
       const newNoteRef = await db.collection('notes').add({
         userId: currentUser.uid,
@@ -4854,10 +4800,7 @@ async function saveNote() {
   }
 }
 
-/* =========================================================
-   TOAST / UTILS
-   ========================================================= */
-
+/* TOAST */
 let toastTimer;
 function showToast(msg, type = '') {
   const toast = document.getElementById('toast');
@@ -4886,7 +4829,6 @@ document.addEventListener('keydown', (e) => {
     else if (document.getElementById('friendsModalOverlay').classList.contains('open')) closeFriendsModal();
     else closeAddModal();
   }
-  // Raccourci R pour random
   if (e.key === 'r' && !e.ctrlKey && !e.metaKey && !e.altKey && 
       document.activeElement.tagName !== 'INPUT' && 
       document.activeElement.tagName !== 'TEXTAREA') {
