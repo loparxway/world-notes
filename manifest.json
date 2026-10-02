@@ -3,23 +3,38 @@
   "short_name": "World Notes",
   "description": "La carte du monde de tes souvenirs",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#0f172a",
   "theme_color": "#f97316",
   "lang": "fr",
+  "dir": "ltr",
+  "categories": ["travel", "social", "lifestyle"],
   "icons": [
     {
-      "src": "https://res.cloudinary.com/cifcliyv/image/upload/worldnotes/icon-192.png",
+      "src": "https://res.cloudinary.com/cifcliyv/image/upload/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "https://res.cloudinary.com/cifcliyv/image/upload/worldnotes/icon-512.png",
+      "src": "https://res.cloudinary.com/cifcliyv/image/upload/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://res.cloudinary.com/cifcliyv/image/upload/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "https://res.cloudinary.com/cifcliyv/image/upload/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
