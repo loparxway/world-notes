@@ -10,13 +10,13 @@
   "lang": "fr",
   "icons": [
     {
-      "src": "https://res.cloudinary.com/cifcliyv/image/upload/w_192,h_192,c_fill/v1/worldnotes/icon-192.png",
+      "src": "https://res.cloudinary.com/cifcliyv/image/upload/worldnotes/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://res.cloudinary.com/cifcliyv/image/upload/w_512,h_512,c_fill/v1/worldnotes/icon-512.png",
+      "src": "https://res.cloudinary.com/cifcliyv/image/upload/worldnotes/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
