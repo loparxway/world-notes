@@ -770,6 +770,98 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
       <button class="banner-close" onclick="closeIOSBanner()">×</button>
     </div>
   </div>
+  <!-- 📁 Modale Groupes (liste) -->
+  <div class="modal-overlay" id="groupsModalOverlay">
+    <div class="modal modal-friends">
+      <h2>📁 Mes groupes</h2>
+      <p class="subtitle">Regroupe tes amis par contexte (voyage, famille, etc.).</p>
+
+      <button class="btn-full edit-profile" onclick="openCreateGroup()" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+        ➕ Créer un groupe
+      </button>
+
+      <div class="groups-list" id="groupsList">
+        <div class="empty-state">Aucun groupe pour l'instant.<br>Crée ton premier groupe !</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeGroupsModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📁 Modale Créer/Éditer un groupe -->
+  <div class="modal-overlay" id="editGroupModalOverlay">
+    <div class="modal">
+      <h2 id="groupModalTitle">➕ Nouveau groupe</h2>
+      <p class="subtitle" id="groupModalSubtitle">Donne-lui un nom et un emoji.</p>
+
+      <div class="form-group">
+        <label>Emoji</label>
+        <div class="emoji-picker-group" id="groupEmojiPicker">
+          <div class="emoji-choice-group active" data-emoji="🏖️" onclick="chooseGroupEmoji(this)">🏖️</div>
+          <div class="emoji-choice-group" data-emoji="✈️" onclick="chooseGroupEmoji(this)">✈️</div>
+          <div class="emoji-choice-group" data-emoji="🏔️" onclick="chooseGroupEmoji(this)">🏔️</div>
+          <div class="emoji-choice-group" data-emoji="🎉" onclick="chooseGroupEmoji(this)">🎉</div>
+          <div class="emoji-choice-group" data-emoji="👨‍👩‍👧" onclick="chooseGroupEmoji(this)">👨‍👩‍👧</div>
+          <div class="emoji-choice-group" data-emoji="🎓" onclick="chooseGroupEmoji(this)">🎓</div>
+          <div class="emoji-choice-group" data-emoji="⚽" onclick="chooseGroupEmoji(this)">⚽</div>
+          <div class="emoji-choice-group" data-emoji="🎮" onclick="chooseGroupEmoji(this)">🎮</div>
+          <div class="emoji-choice-group" data-emoji="🍕" onclick="chooseGroupEmoji(this)">🍕</div>
+          <div class="emoji-choice-group" data-emoji="🎵" onclick="chooseGroupEmoji(this)">🎵</div>
+          <div class="emoji-choice-group" data-emoji="💼" onclick="chooseGroupEmoji(this)">💼</div>
+          <div class="emoji-choice-group" data-emoji="❤️" onclick="chooseGroupEmoji(this)">❤️</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="groupName">Nom du groupe</label>
+        <input type="text" id="groupName" placeholder="Ex: Vacances été 2025" maxlength="40" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeEditGroupModal()">Annuler</button>
+        <button class="btn-primary" id="saveGroupBtn" onclick="saveGroup()">💾 Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📁 Modale Vue détail d'un groupe -->
+  <div class="modal-overlay" id="groupDetailModalOverlay">
+    <div class="modal modal-friends">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
+        <div class="group-emoji" id="detailGroupEmoji" style="font-size: 2.5rem; width: 65px; height: 65px;">🏖️</div>
+        <div style="flex: 1; min-width: 0;">
+          <h2 id="detailGroupName" style="font-size: 1.4rem; margin-bottom: 4px;">Nom</h2>
+          <p id="detailGroupMeta" style="font-size: 0.8rem; color: var(--text-muted);">0 membres</p>
+        </div>
+      </div>
+
+      <button class="btn-full" onclick="applyGroupFilterFromDetail()" style="background: linear-gradient(135deg, #f97316, #ea580c); color: white; margin-bottom: 16px;">
+        👁️ Voir les souvenirs du groupe sur la carte
+      </button>
+
+      <label style="margin-top: 10px;">Membres du groupe</label>
+      <div class="group-members-list" id="groupMembersList"></div>
+
+      <label style="margin-top: 16px;">➕ Ajouter un ami</label>
+      <div style="display: flex; gap: 6px; margin-bottom: 16px;">
+        <input type="text" id="groupAddFriendInput" placeholder="pseudo de ton ami" maxlength="20" style="flex: 1;" />
+        <button class="btn-primary" style="background: linear-gradient(135deg, #22c55e, #16a34a);" onclick="addFriendToGroup()">➕</button>
+      </div>
+
+      <div class="modal-actions" style="justify-content: space-between;">
+        <button class="btn-ghost" id="deleteOrLeaveGroupBtn" onclick="deleteOrLeaveGroup()">🗑️ Supprimer</button>
+        <button class="btn-ghost" onclick="closeGroupDetail()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📁 Pastille filtre groupe (sur la carte) -->
+  <div class="group-filter-badge" id="groupFilterBadge">
+    <span class="badge-text" id="groupFilterText">🏖️ Groupe</span>
+    <button class="badge-close" onclick="clearGroupFilter()" title="Retirer le filtre">×</button>
+  </div>
 
   <!-- ⚠️ Modal suppression compte -->
   <div class="modal-overlay" id="deleteAccountModal">
