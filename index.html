@@ -640,6 +640,15 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
       <h2 id="modalTitle">📍 Nouveau souvenir</h2>
       <p class="subtitle" id="modalSubtitle">Cherche un lieu, clique sur la carte, ou utilise ton GPS.</p>
       <div class="draft-restored-banner" id="draftBanner"><span>💾 Brouillon restauré</span><button onclick="clearDraft()">Effacer le brouillon</button></div>
+            <div class="form-group" id="visibilityGroupContainer" style="display: none;">
+        <label>👁️ Visible par</label>
+        <select id="noteVisibility">
+          <option value="all">🌍 Tout le monde (mes amis)</option>
+        </select>
+        <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px;">
+          Choisis un groupe pour restreindre la visibilité
+        </div>
+      </div>
       <div class="form-group"><label>⭐ Favori</label><div class="fav-toggle" id="favToggle" onclick="toggleFavInModal()"><span class="fav-icon" id="favIcon">🤍</span><span class="fav-label" id="favLabel">Marquer comme favori</span></div></div>
       <div class="form-group"><label>Catégorie</label><div class="icon-picker" id="iconPicker">
         <div class="icon-choice active" data-icon="📍" onclick="chooseIcon(this)">📍</div>
@@ -969,6 +978,7 @@ let markers = {}, markersCluster = null, userLocationMarker = null, userLocation
 const REACTION_EMOJIS = ['❤️', '😂', '😍', '🔥', '👏', '😮'];
 const FIRESTORE_IN_LIMIT = 30;
 let currentShareNoteId = null;
+let pendingVisibility = 'all';
 let allGroups = [];
 let activeGroupId = null;
 let currentEditingGroupId = null;
@@ -1166,7 +1176,17 @@ async function loadFriendsProfiles() {
       snap.forEach(doc => { friendsProfiles[doc.id] = { uid: doc.id, ...doc.data() }; });
     }
   } catch (err) { console.error('Erreur loadFriendsProfiles:', err); }
+  
+  Object.assign(allProfiles, friendsProfiles);
+  
   renderFriendsContent();
+  
+  // Rafraîchir aussi la modale groupe si ouverte
+  const activeDetail = document.getElementById('groupDetailModalOverlay');
+  if (activeDetail && activeDetail.classList.contains('open') && currentViewingGroupId) {
+    const group = allGroups.find(g => g.id === currentViewingGroupId);
+    if (group) renderGroupMembers(group);
+  }
 }
 async function refreshFriendsData() {
   if (!currentUser) return;
@@ -1634,6 +1654,21 @@ function loadGroups() {
       }
     );
 }
+// 🆕 Charge les profils des membres d'un groupe (même s'ils ne sont pas amis)
+async function loadGroupMembersProfiles(group) {
+  if (!group || !group.members) return;
+  const missingUids = group.members.filter(uid => !allProfiles[uid] && uid !== currentUser.uid);
+  if (missingUids.length === 0) return;
+  try {
+    const chunks = [];
+    for (let i = 0; i < missingUids.length; i += 10) chunks.push(missingUids.slice(i, i + 10));
+    for (const chunk of chunks) {
+      const snap = await db.collection('users').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
+      snap.forEach(doc => { allProfiles[doc.id] = { uid: doc.id, ...doc.data() }; });
+    }
+  } catch (err) { console.error('Erreur loadGroupMembersProfiles:', err); }
+}
+
 /* 📁 GROUPES - FONCTIONS */
 function renderGroupsList() {
   const list = document.getElementById('groupsList');
@@ -1741,12 +1776,12 @@ async function saveGroup() {
   }
 }
 
-function openGroupDetail(groupId) {
+async function openGroupDetail(groupId) {
   const group = allGroups.find(g => g.id === groupId);
   if (!group) return;
 
   currentViewingGroupId = groupId;
-
+  await loadGroupMembersProfiles(group);
   document.getElementById('detailGroupEmoji').textContent = group.emoji || '📁';
   document.getElementById('detailGroupName').textContent = group.name || 'Sans nom';
   const memberCount = (group.members || []).length;
@@ -1782,9 +1817,15 @@ function renderGroupMembers(group) {
     let avatar = myProfile?.photoURL || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
 
     if (!isMe) {
-      profile = friendsProfiles[uid];
+            profile = allProfiles[uid];
       if (!profile) {
         name = 'Chargement...';
+        // Charger le profil en arrière-plan
+        if (group) {
+          loadGroupMembersProfiles(group).then(() => {
+            setTimeout(() => renderGroupMembers(group), 200);
+          });
+        }
       } else {
         name = profile.displayName || 'Utilisateur';
         username = profile.username ? '@' + profile.username : '';
@@ -2242,6 +2283,7 @@ function editNoteFromPopup(id, event) {
   pendingPhoto = note.photo || null;
   pendingIsFavorite = note.favorite === true;
   pendingTags = note.tags ? [...note.tags] : [];
+    pendingVisibility = note.visibility || 'all';
   const dateInput = document.getElementById('noteDate');
   if (note.userDate) dateInput.value = note.userDate; else dateInput.value = '';
   updateFavToggle();
@@ -2355,6 +2397,29 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
 
 /* ➕ AJOUT */
 function chooseIcon(el) { document.querySelectorAll('.icon-choice').forEach(c => c.classList.remove('active')); el.classList.add('active'); pendingIcon = el.dataset.icon; }
+function updateVisibilityOptions() {
+  const container = document.getElementById('visibilityGroupContainer');
+  const select = document.getElementById('noteVisibility');
+  if (!container || !select) return;
+  
+  if (allGroups.length === 0) {
+    container.style.display = 'none';
+    pendingVisibility = 'all';
+    return;
+  }
+  
+  container.style.display = 'block';
+  select.innerHTML = '<option value="all">🌍 Tout le monde (mes amis)</option>';
+  
+  allGroups.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g.id;
+    opt.textContent = `${g.emoji || '📁'} ${g.name} (groupe)`;
+    select.appendChild(opt);
+  });
+  
+  select.value = pendingVisibility;
+}
 function openAddModal() {
   editingNoteId = null; pendingIsFavorite = false; pendingTags = [];
   updateFavToggle(); renderTagsInModal();
@@ -2364,6 +2429,7 @@ function openAddModal() {
   document.getElementById('saveNoteBtn').innerHTML = '💾 Enregistrer';
   document.getElementById('noteDate').value = '';
   hideAddress();
+    updateVisibilityOptions();
   if (!pendingLatLng) { const c = map.getCenter(); pendingLatLng = { lat: c.lat, lng: c.lng }; pendingSource = 'manual'; }
   updateLocationBox();
   document.getElementById('modalOverlay').classList.add('open');
@@ -2380,7 +2446,7 @@ function closeAddModal() {
   document.getElementById('noteDate').value = '';
   document.getElementById('tagInputField').value = '';
   closeAutocomplete(); clearSearchButton(); hideAddress();
-  pendingLatLng = null; pendingSource = null; pendingIcon = '📍'; pendingIsFavorite = false; pendingTags = []; editingNoteId = null;
+    pendingLatLng = null; pendingSource = null; pendingIcon = '📍'; pendingIsFavorite = false; pendingTags = []; editingNoteId = null; pendingVisibility = 'all';
   updateFavToggle(); renderTagsInModal(); removePhoto();
   document.querySelectorAll('.icon-choice').forEach(c => { c.classList.toggle('active', c.dataset.icon === '📍'); });
   if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
@@ -2512,7 +2578,7 @@ async function saveNote() {
       setTimeout(() => { const m = markers[updatedId]; if (m) m.openPopup(); }, 800);
     } else {
       const now = Date.now();
-      await db.collection('notes').add({ userId: currentUser.uid, place, text, lat, lng, createdAt: now, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, tags: pendingTags });
+            await db.collection('notes').add({ userId: currentUser.uid, place, text, lat, lng, createdAt: now, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, tags: pendingTags, visibility: pendingVisibility });
       closeAddModal();
       showToast('☁️ Souvenir enregistré !', 'success');
       map.flyTo([lat, lng], 15, { duration: 1.2 });
@@ -2550,6 +2616,9 @@ document.addEventListener('keydown', (e) => {
 updateThemeChoices();
 setTimeout(() => { const hint = document.getElementById('hint'); if (hint) hint.style.opacity = '0'; }, 10000);
 showIOSBannerIfNeeded();
+document.getElementById('noteVisibility')?.addEventListener('change', (e) => {
+  pendingVisibility = e.target.value;
+});
 </script>
 
 </body>
