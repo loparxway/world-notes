@@ -716,6 +716,48 @@ header {
 .leaflet-tile-pane {
   z-index: 100 !important;
 }
+/* ===== FIX Z-INDEX ULTIME ===== */
+header {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+.actions {
+  position: relative !important;
+  z-index: 2147483647 !important;
+}
+.user-menu {
+  position: relative !important;
+  z-index: 2147483647 !important;
+  isolation: auto !important;
+}
+.user-dropdown {
+  position: fixed !important;
+  top: 70px !important;
+  right: 16px !important;
+  z-index: 2147483647 !important;
+  display: none;
+  pointer-events: auto !important;
+}
+.user-dropdown.open {
+  display: block !important;
+}
+#map {
+  z-index: 0 !important;
+}
+.leaflet-container,
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-control {
+  z-index: 1 !important;
+}
+.leaflet-popup-pane,
+.leaflet-marker-pane,
+.leaflet-tile-pane,
+.leaflet-shadow-pane,
+.leaflet-overlay-pane {
+  z-index: 100 !important;
+}
 </style>
 </head><body>
 
