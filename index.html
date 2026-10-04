@@ -971,6 +971,9 @@ const LEGAL_CONTENT = {
 function openLegalModal(type) { const d = LEGAL_CONTENT[type]; if (!d) return; document.getElementById('legalModalTitle').textContent = d.title; document.getElementById('legalModalContent').innerHTML = d.content; document.getElementById('legalModal').classList.add('open'); }
 function closeLegalModal() { document.getElementById('legalModal').classList.remove('open'); }
 function closeLegalModalIfOutside(e) { if (e.target.id === 'legalModal') closeLegalModal(); }
+document.getElementById('noteDetailModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'noteDetailModal') closeNoteDetail();
+});
 
 /* ÉTAT GLOBAL */
 const SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
@@ -1579,8 +1582,12 @@ function addMarkerToMap(note) {
   closeOnClick: false      // 🆕 Ne ferme pas au clic ailleurs
 });
   marker.on('click', (e) => { 
-  L.DomEvent.stopPropagation(e); 
-  // 🆕 Set AVANT que popupopen ne se déclenche (fix iOS timing)
+  L.DomEvent.stopPropagation(e);
+  if (isMobile()) {
+    if (e.originalEvent && e.originalEvent.preventDefault) e.originalEvent.preventDefault();
+    openNoteDetail(note.id);
+    return;
+  }
   openPopupNoteId = note.id;
   window._popupOpenedAt = Date.now();
 });
@@ -1623,6 +1630,57 @@ function renderCommentsHtml(noteId) {
     }).join('');
   }
   return `<div class="comments-section"><div class="comments-header">💬 Commentaires (${comments.length})</div><div class="comments-list">${commentsListHtml}</div><div class="comment-input-wrapper"><input type="text" id="commentInput_${noteId}" placeholder="Écrire un commentaire..." maxlength="300" onkeydown="if(event.key==='Enter'){event.preventDefault();addComment('${noteId}');}" /><button class="comment-send" onclick="addComment('${noteId}')" title="Envoyer">➤</button></div></div>`;
+}
+/* 📝 MODALE DÉTAIL NOTE (mobile) */
+function isMobile() { return window.innerWidth <= 768; }
+
+function openNoteDetail(noteId) {
+  const note = notesByIdCache[noteId]; if (!note) return;
+  const isMine = note.userId === currentUser.uid;
+  const isFav = note.favorite === true;
+  const icon = note.icon || '📍';
+  const date = new Date(note.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  let photoHtml = '';
+  if (note.photo) {
+    photoHtml = `<img src="${cloudinaryThumb(note.photo, 800)}" alt="Photo" style="width:100%;max-height:240px;object-fit:cover;border-radius:12px;margin-bottom:16px;cursor:pointer" onclick="openLightbox('${note.id}', event)" />`;
+  }
+  let authorHtml = '';
+  if (!isMine) {
+    const authorProfile = friendsProfiles[note.userId];
+    const authorName = authorProfile ? (authorProfile.username ? '@' + authorProfile.username : authorProfile.displayName) : 'Un ami';
+    const authorAvatar = cloudinaryThumb(authorProfile?.photoURL, 60) || 'https://www.gravatar.com/avatar/?d=mp';
+    authorHtml = `<div class="popup-author" onclick="closeNoteDetail(); viewFriendProfile('${note.userId}')"><img src="${authorAvatar}" alt="${escapeAttr(authorName)}" loading="lazy" /><span>${escapeHtml(authorName)}</span></div>`;
+  }
+  const favStar = isMine ? `<span class="popup-fav" onclick="toggleFavoriteFromPopup('${note.id}', event); setTimeout(() => openNoteDetail('${note.id}'), 100);" style="font-size:1.5rem">${isFav ? '⭐' : '🤍'}</span>` : (isFav ? '<span class="popup-fav" style="cursor:default;font-size:1.5rem">⭐</span>' : '');
+  let actionBtns = '';
+  if (isMine) {
+    actionBtns = `
+      <button class="share-action-btn" onclick="closeNoteDetail(); shareNote('${note.id}', event)" style="flex:1;justify-content:center"><span class="icon">🔗</span> Partager</button>
+      <button class="share-action-btn" onclick="closeNoteDetail(); setTimeout(() => editNoteFromPopup('${note.id}', event), 200)" style="flex:1;justify-content:center"><span class="icon">✏️</span> Modifier</button>
+      <button class="share-action-btn" onclick="deleteNoteFromPopup('${note.id}', event); closeNoteDetail();" style="flex:1;justify-content:center;color:#ef4444"><span class="icon">🗑️</span> Suppr.</button>
+    `;
+  } else {
+    actionBtns = `<button class="share-action-btn" onclick="closeNoteDetail(); shareNote('${note.id}', event)" style="flex:1;justify-content:center"><span class="icon">🔗</span> Partager</button>`;
+  }
+  const html = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:12px">
+      <h2 style="font-size:1.15rem;display:flex;align-items:center;gap:10px;flex:1;min-width:0"><span style="font-size:1.3rem">${icon}</span><span>${escapeHtml(note.place)}</span></h2>
+      <button onclick="closeNoteDetail()" style="background:none;border:none;color:var(--text-muted);font-size:1.8rem;cursor:pointer;padding:0;line-height:1;flex-shrink:0">×</button>
+    </div>
+    ${photoHtml}
+    <div style="font-size:0.95rem;color:var(--text-secondary);line-height:1.5;margin-bottom:12px">${escapeHtml(note.text)}</div>
+    ${renderTagsHtml(note.tags)}
+    ${renderReactionsHtml(note.id)}
+    ${authorHtml}
+    <div class="popup-footer" style="margin-top:12px"><span class="popup-meta">📅 ${date}</span>${favStar}</div>
+    <div class="comments-section" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${renderCommentsHtml(note.id)}</div>
+    <div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${actionBtns}</div>
+  `;
+  document.getElementById('noteDetailContent').innerHTML = html;
+  document.getElementById('noteDetailModal').classList.add('open');
+}
+function closeNoteDetail() {
+  document.getElementById('noteDetailModal').classList.remove('open');
 }
 function buildPopupContent(note) {
   const date = new Date(note.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -1784,14 +1842,18 @@ function renderSidebar() {
 function focusNote(id) {
   const note = notesByIdCache[id]; if (!note) return;
   map.flyTo([note.lat, note.lng], 14, { duration: 1.2 });
-  const marker = markers[id]; 
-  if (marker) {
-    setTimeout(() => {
-      openPopupNoteId = id;
-      marker.openPopup();
-    }, 700);
+  if (isMobile()) {
+    if (window.innerWidth <= 768) toggleSidebar();
+    setTimeout(() => openNoteDetail(id), 500);
+  } else {
+    const marker = markers[id]; 
+    if (marker) {
+      setTimeout(() => {
+        openPopupNoteId = id;
+        marker.openPopup();
+      }, 700);
+    }
   }
-  if (window.innerWidth <= 768) toggleSidebar();
 }
 
 async function deleteNote(id, event) { event.stopPropagation(); if (!confirm('Supprimer ce souvenir ?')) return; try { await db.collection('notes').doc(id).delete(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
@@ -2719,6 +2781,7 @@ document.addEventListener('keydown', (e) => {
     else if (document.getElementById('shareMenu').classList.contains('open')) closeShareMenu();
     else if (document.getElementById('qrModal').classList.contains('open')) closeQRModal();
     else if (document.getElementById('deleteAccountModal').classList.contains('open')) closeDeleteAccountModal();
+        else if (document.getElementById('noteDetailModal').classList.contains('open')) closeNoteDetail();
     else closeAddModal();
   }
   if (e.key === 'r' && !e.ctrlKey && !e.metaKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') showRandomNote();
