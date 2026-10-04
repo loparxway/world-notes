@@ -1547,7 +1547,6 @@ function showApp() {
   setTimeout(() => {
     updateLiveFriendsBtn();
     checkLocationConsent();
-    attachAvatarListeners();
   }, 800);
 }
 function showSyncIndicator(text, synced) {
@@ -2820,7 +2819,7 @@ async function handlePhotoFile(file) {
 }
 function removePhoto(event) { if (event) event.stopPropagation(); pendingPhoto = null; photoPreview.src = ''; photoPreviewWrapper.classList.remove('visible'); photoUploadZone.style.display = ''; photoInput.value = ''; }
 
-/* ===== FIX USER MENU (mobile-friendly définitif) ===== */
+/* ===== FIX USER MENU V3 : délégation globale ===== */
 function toggleUserMenu(event) {
   if (event && event.stopPropagation) event.stopPropagation();
   const dropdown = document.getElementById('userDropdown');
@@ -2828,24 +2827,15 @@ function toggleUserMenu(event) {
   dropdown.classList.toggle('open');
 }
 
-function attachAvatarListeners() {
-  const avatarEl = document.getElementById('userAvatar');
-  if (!avatarEl) return;
-  if (avatarEl.dataset.listenerAttached === '1') return;
-  avatarEl.removeAttribute('onclick');
-  avatarEl.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleUserMenu(e);
-  });
-  avatarEl.addEventListener('touchend', (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toggleUserMenu(e);
-  }, { passive: false });
-  avatarEl.dataset.listenerAttached = '1';
-}
-
+// ⚡ Délégation sur document — ne se perd jamais même si l'avatar est recréé
 document.addEventListener('click', (e) => {
+  const avatar = e.target.closest('#userAvatar');
+  if (avatar) {
+    e.stopPropagation();
+    toggleUserMenu(e);
+    return;
+  }
+  // Fermer le menu si clic ailleurs
   const userMenu = document.querySelector('.user-menu');
   if (userMenu && !userMenu.contains(e.target)) {
     const dd = document.getElementById('userDropdown');
@@ -2856,9 +2846,14 @@ document.addEventListener('click', (e) => {
   }
 }, true);
 
-document.addEventListener('DOMContentLoaded', attachAvatarListeners);
-document.addEventListener('touchstart', () => attachAvatarListeners(), { once: true, passive: true });
-window.addEventListener('load', attachAvatarListeners);
+// Fallback iOS anciens
+document.addEventListener('touchend', (e) => {
+  const avatar = e.target.closest('#userAvatar');
+  if (avatar) {
+    e.stopPropagation();
+    toggleUserMenu(e);
+  }
+}, true);
 
 function toggleSettings() { const panel = document.getElementById('settingsPanel'); const isOpening = !panel.classList.contains('open'); panel.classList.toggle('open'); if (isOpening) { updateThemeChoices(); updateNotesCountInfo(); updateSettingsLiveBtn(); } }
 function updateThemeChoices() { document.querySelectorAll('.theme-choice').forEach(el => { el.classList.toggle('active', el.dataset.theme === uiTheme); }); }
