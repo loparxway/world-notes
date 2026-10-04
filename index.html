@@ -987,14 +987,23 @@ let pendingGroupEmoji = '🏖️';
 let unsubscribeGroups = null;
 
 /* 🔐 AUTH */
-function isMobileDevice() { return /iPhone|iPad|iPod|Android|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
   const btn = document.getElementById('googleBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Connexion...'; }
-  if (isMobileDevice()) { auth.signInWithRedirect(provider).catch(() => { if (btn) btn.disabled = false; }); }
-  else { auth.signInWithPopup(provider).catch((err) => { if (btn) btn.disabled = false; if (err.code === 'auth/popup-blocked') alert('Autorise les popups.'); else if (err.code === 'auth/unauthorized-domain') alert('Domaine non autorisé.'); }); }
+  auth.signInWithPopup(provider).catch((err) => {
+    console.error('Erreur auth:', err);
+    if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+      auth.signInWithRedirect(provider).catch(() => { if (btn) { btn.disabled = false; btn.innerHTML = 'Se connecter avec Google'; } });
+    } else if (err.code === 'auth/unauthorized-domain') {
+      alert('Domaine non autorisé. Ajoute ' + window.location.hostname + ' dans Firebase Auth > Authorized domains');
+      if (btn) { btn.disabled = false; btn.innerHTML = 'Se connecter avec Google'; }
+    } else {
+      alert('Erreur : ' + err.message);
+      if (btn) { btn.disabled = false; btn.innerHTML = 'Se connecter avec Google'; }
+    }
+  });
 }
 auth.getRedirectResult().catch(() => {});
 function signOut() { if (!confirm('Se déconnecter ?')) return; cleanupListeners(); auth.signOut().catch(() => {}); }
