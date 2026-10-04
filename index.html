@@ -526,7 +526,7 @@ textarea{resize:vertical;min-height:90px}
 
 #modalOverlay{padding:0;align-items:flex-end}
 @media (min-width:769px){#modalOverlay{align-items:center;padding:20px}}
-.wizard-modal{background:var(--bg-modal);border:1px solid var(--border-color);width:100%;max-width:560px;height:100vh;max-height:100vh;display:flex;flex-direction:column;overflow:hidden;animation:wizardSlideUp 0.35s cubic-bezier(0.34,1.2,0.64,1);border-radius:0;box-shadow:var(--shadow-lg)}
+.wizard-modal{background:var(--bg-modal);border:1px solid var(--border-color);width:100%;max-width:560px;height:100vh;max-height:100vh;display:flex;flex-direction:column;overflow:hidden;animation:wizardSlideUp 0.35s cubic-bezier(0.34,1.2,0.64,1);border-radius:0;box-shadow:var(--shadow-lg);position:relative;transition:height 0.2s ease,top 0.2s ease}
 @media (min-width:769px){.wizard-modal{max-height:92vh;height:auto;border-radius:22px;animation:onboardingIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}}
 .wizard-header{flex-shrink:0;padding:calc(16px + env(safe-area-inset-top,0)) 20px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border-subtle);background:var(--bg-modal);position:relative}
 .wizard-back{background:rgba(148,163,184,0.1);border:none;color:var(--text-primary);width:38px;height:38px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;padding:0;line-height:1}
@@ -590,25 +590,38 @@ textarea{resize:vertical;min-height:90px}
   .filter-btn .label-text{display:none}
   .filter-btn .count{font-size:0.6rem;padding:1px 5px}
 }
-/* 📱 Fix : clavier mobile qui cache les inputs */
-.wizard-body {
-  scroll-padding-bottom: 320px; /* Laisse de la place au clavier */
-  padding-bottom: env(safe-area-inset-bottom, 0);
-}
 
-/* Quand un input est focus, on lui met un peu d'air */
-.wizard-body input:focus,
-.wizard-body textarea:focus {
-  scroll-margin-bottom: 320px;
-}
-
-/* Sur iOS, le wizard footer peut être poussé par le clavier */
+/* ═══════════════════════════════════════════
+   📱 FIX CLAVIER MOBILE iOS (efficace)
+   ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
   .wizard-modal {
-    height: 100dvh; /* dvh = dynamic viewport height, s'adapte au clavier */
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
   }
+
   .wizard-body {
-    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 40vh;
+  }
+
+  .wizard-body input,
+  .wizard-body textarea {
+    scroll-margin-top: 100px;
+    scroll-margin-bottom: 40vh;
+  }
+
+  .wizard-modal.keyboard-open .wizard-footer {
+    display: none;
+  }
+
+  .wizard-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 }
 </style>
@@ -2411,8 +2424,6 @@ function clearGroupFilter() {
   renderAllMarkers();
   updateFilters();
 }
-
-/* ⚠️ SUPPRESSION DE COMPTE */
 function confirmDeleteAccount() {
   if (!currentUser) { showToast('⚠️ Tu dois être connecté', 'error'); return; }
   document.getElementById('deleteNotesCount').textContent = myNotes.length;
@@ -2432,18 +2443,13 @@ async function deleteMyAccount() {
   if (input.value.trim().toUpperCase() !== 'SUPPRIMER') return;
   const btn = document.getElementById('confirmDeleteBtn');
   btn.disabled = true; btn.innerHTML = '<span class="cloud-loader"></span>Suppression...';
-
-  // 🔑 ÉTAPE CRUCIALE : couper TOUS les listeners temps réel AVANT de commencer
   console.log('🛑 Arrêt des listeners Firestore...');
   cleanupListeners();
   await new Promise(resolve => setTimeout(resolve, 400));
-
   const uid = currentUser.uid;
   const totalSteps = 7; let step = 0;
   const updateProgress = (label) => { step++; btn.innerHTML = `<span class="cloud-loader"></span>${label} (${step}/${totalSteps})`; };
-
   try {
-    // ═══ 1. Retirer mon UID des listes friends de mes amis ═══
     updateProgress('Retrait des amitiés');
     console.log('📘 Étape 1: retrait des amitiés (' + myFriends.length + ')');
     for (const friendUid of myFriends) {
@@ -2453,12 +2459,9 @@ async function deleteMyAccount() {
         if (friendDoc.exists) {
           const friendFriends = (friendDoc.data().friends || []).filter(id => id !== uid);
           await friendRef.update({ friends: friendFriends });
-          console.log('  ✅ retiré de', friendUid);
         }
       } catch (err) { console.warn('  ⚠️ skip ami', friendUid, err.message); }
     }
-
-    // ═══ 2. Réactions & commentaires sur MES notes ═══
     updateProgress('Nettoyage interactions');
     console.log('📘 Étape 2: nettoyage des interactions');
     const myNoteIds = myNotes.map(n => n.id);
@@ -2469,19 +2472,14 @@ async function deleteMyAccount() {
         const batch = db.batch();
         reactionsOnMyNotes.forEach(doc => batch.delete(doc.ref));
         if (!reactionsOnMyNotes.empty) await batch.commit();
-        console.log('  ✅ réactions sur mes notes:', reactionsOnMyNotes.size);
       } catch (err) { console.warn('  ⚠️ skip reactions:', err.message); }
-
       try {
         const commentsOnMyNotes = await db.collection('comments').where('noteId', 'in', chunk).get();
         const batch = db.batch();
         commentsOnMyNotes.forEach(doc => batch.delete(doc.ref));
         if (!commentsOnMyNotes.empty) await batch.commit();
-        console.log('  ✅ commentaires sur mes notes:', commentsOnMyNotes.size);
       } catch (err) { console.warn('  ⚠️ skip comments:', err.message); }
     }
-
-    // ═══ 3. Mes propres réactions ═══
     updateProgress('Mes réactions');
     console.log('📘 Étape 3: mes réactions');
     try {
@@ -2489,10 +2487,7 @@ async function deleteMyAccount() {
       const batch = db.batch();
       reactionsSnap.forEach(doc => batch.delete(doc.ref));
       if (!reactionsSnap.empty) await batch.commit();
-      console.log('  ✅ mes réactions:', reactionsSnap.size);
     } catch (err) { console.warn('  ⚠️ skip mes reactions:', err.message); }
-
-    // ═══ 4. Mes propres commentaires ═══
     updateProgress('Mes commentaires');
     console.log('📘 Étape 4: mes commentaires');
     try {
@@ -2500,10 +2495,7 @@ async function deleteMyAccount() {
       const batch = db.batch();
       commentsSnap.forEach(doc => batch.delete(doc.ref));
       if (!commentsSnap.empty) await batch.commit();
-      console.log('  ✅ mes commentaires:', commentsSnap.size);
     } catch (err) { console.warn('  ⚠️ skip mes comments:', err.message); }
-
-    // ═══ 5. Demandes d'amis ═══
     updateProgress('Demandes d\'amis');
     console.log('📘 Étape 5: demandes d\'amis');
     try {
@@ -2513,22 +2505,15 @@ async function deleteMyAccount() {
       sentReq.forEach(doc => batch.delete(doc.ref));
       recvReq.forEach(doc => batch.delete(doc.ref));
       if (!sentReq.empty || !recvReq.empty) await batch.commit();
-      console.log('  ✅ demandes supprimées:', sentReq.size + recvReq.size);
     } catch (err) { console.warn('  ⚠️ skip requests:', err.message); }
-
-    // ═══ 6. Mes notes ═══
     updateProgress('Mes souvenirs');
     console.log('📘 Étape 6: mes notes (' + myNotes.length + ')');
     for (const note of myNotes) {
       try { await db.collection('notes').doc(note.id).delete(); } catch (err) { console.warn('  ⚠️ skip note', note.id); }
     }
-
-    // ═══ 7. Mon profil ═══
     updateProgress('Mon profil');
     console.log('📘 Étape 7: profil user');
     try { await db.collection('users').doc(uid).delete(); } catch (err) { console.warn('  ⚠️ skip profile:', err.message); }
-
-    // ═══ 8. Compte Firebase Auth ═══
     console.log('📘 Étape finale: compte auth');
     try {
       await currentUser.delete();
@@ -2541,7 +2526,6 @@ async function deleteMyAccount() {
       }
       throw err;
     }
-
     console.log('✅ SUCCÈS TOTAL');
     btn.innerHTML = '✅ Compte supprimé';
     showToast('🗑️ Ton compte a été supprimé', 'success');
@@ -3051,49 +3035,66 @@ showIOSBannerIfNeeded();
 document.getElementById('noteVisibility')?.addEventListener('change', (e) => { pendingVisibility = e.target.value; });
 document.getElementById('placeName')?.addEventListener('input', updateWizardNextState);
 document.getElementById('noteText')?.addEventListener('input', updateWizardNextState);
+
 /* ═══════════════════════════════════════════
-   📱 FIX CLAVIER MOBILE (iOS/Android)
+   📱 FIX CLAVIER MOBILE iOS (actif)
    ═══════════════════════════════════════════ */
-function scrollInputIntoView(inputEl) {
-  if (!inputEl) return;
-  // On attend que le clavier soit bien ouvert
-  setTimeout(() => {
-    try {
-      inputEl.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-    } catch (e) {
-      // Fallback pour vieux navigateurs
-      inputEl.scrollIntoView(false);
-    }
-  }, 350);
-}
+(function() {
+  const wizardModal = () => document.querySelector('.wizard-modal');
+  const wizardBody = () => document.getElementById('wizardBody');
 
-// Écoute les focus sur TOUS les inputs/textarea de l'app
-document.addEventListener('focusin', (e) => {
-  const el = e.target;
-  if (!el) return;
-  const tag = el.tagName;
-  if (tag === 'INPUT' || tag === 'TEXTAREA') {
-    // Seulement pour les champs dans la modale wizard ou les autres modales
-    if (el.closest('#modalOverlay') || el.closest('.modal') || el.closest('#wizardBody')) {
-      scrollInputIntoView(el);
-    }
+  function onInputFocus(e) {
+    const el = e.target;
+    if (!el || (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA')) return;
+    if (!el.closest('#wizardBody')) return;
+    setTimeout(() => {
+      try {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {
+        el.scrollIntoView(false);
+      }
+    }, 300);
   }
-});
 
-// Ajuste la hauteur de la modale quand le clavier s'ouvre/ferme
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', () => {
-    const modal = document.querySelector('.wizard-modal');
-    if (modal && document.getElementById('modalOverlay')?.classList.contains('open')) {
-      // La hauteur réelle de l'écran visible (sans le clavier)
-      const visibleHeight = window.visualViewport.height;
-      modal.style.maxHeight = visibleHeight + 'px';
+  if (window.visualViewport) {
+    const vv = window.visualViewport;
+    function adjustHeight() {
+      const modal = wizardModal();
+      if (!modal) return;
+      const isOpen = document.getElementById('modalOverlay')?.classList.contains('open');
+      if (!isOpen) return;
+      const visibleHeight = vv.height;
+      const offsetTop = vv.offsetTop;
+      const screenHeight = window.innerHeight;
+      const keyboardOpen = (screenHeight - visibleHeight) > 100;
+      if (keyboardOpen) {
+        modal.classList.add('keyboard-open');
+        modal.style.height = visibleHeight + 'px';
+        modal.style.maxHeight = visibleHeight + 'px';
+        modal.style.top = offsetTop + 'px';
+      } else {
+        modal.classList.remove('keyboard-open');
+        modal.style.height = '';
+        modal.style.maxHeight = '';
+        modal.style.top = '';
+      }
+    }
+    vv.addEventListener('resize', adjustHeight);
+    vv.addEventListener('scroll', adjustHeight);
+  }
+
+  document.addEventListener('focusin', onInputFocus);
+
+  window.addEventListener('resize', () => {
+    const modal = wizardModal();
+    if (modal && !document.getElementById('modalOverlay')?.classList.contains('open')) {
+      modal.style.height = '';
+      modal.style.maxHeight = '';
+      modal.style.top = '';
+      modal.classList.remove('keyboard-open');
     }
   });
-}
+})();
 </script>
 
 </body>
