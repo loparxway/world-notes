@@ -815,7 +815,7 @@ textarea{resize:vertical;min-height:90px}
         <span class="show-mobile">➕</span>
       </button>
       <div class="user-menu">
-<img class="user-avatar" id="userAvatar" alt="Profil" onclick="alert('✅ Avatar cliqué !'); toggleUserMenu(event);" />
+<img class="user-avatar" id="userAvatar" alt="Profil" />
         <div class="user-dropdown" id="userDropdown">
           <div class="user-info">
             <div class="user-name" id="userName">—</div>
@@ -1259,10 +1259,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-// DEBUG TEMPORAIRE
-window.addEventListener('error', (e) => {
-  alert('❌ ERREUR JS : ' + e.message + '\nLigne ' + e.lineno);
-});
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
 if ('serviceWorker' in navigator) {
