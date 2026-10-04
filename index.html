@@ -2,7 +2,7 @@
 <html lang="fr" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>🌍 WORLD NOTES — La carte du monde de tes souvenirs</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#f97316">
@@ -408,7 +408,7 @@ textarea{resize:vertical;min-height:90px}
 .cloud-loader{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin2 0.8s linear infinite;vertical-align:middle;margin-right:8px}
 .marker-cluster,.marker-cluster div{background:transparent !important;color:transparent !important;box-shadow:none !important}
 @media (max-width:768px){
-.leaflet-popup-content-wrapper{max-width:calc(100vw - 30px) !important}
+.leaflet-popup-content-wrapper{max-width:calc(100vw - 60px) !important;width:auto !important}
 .leaflet-popup-content{width:auto !important;max-width:calc(100vw - 30px) !important}
 .popup-photo{max-width:100% !important;height:auto !important;max-height:180px !important}
 .popup-body{padding:12px 14px !important}
@@ -1446,7 +1446,7 @@ function createMarkerIcon(note) {
 function createUserLocationIcon() { return L.divIcon({ className: '', html: '<div class="user-location-marker"></div>', iconSize: [20, 20], iconAnchor: [10, 10] }); }
 function createTempMarkerIcon() { return L.divIcon({ className: '', html: '<div class="temp-marker"></div>', iconSize: [26, 26], iconAnchor: [13, 13] }); }
 function addMarkerToMap(note) {
-  const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { maxWidth: window.innerWidth < 500 ? window.innerWidth - 40 : 360, minWidth: 250, autoPanPadding: [20, 20] });
+  const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, minWidth: 240, autoPanPadding: [10, 10] });
   markers[note.id] = marker;
   markersCluster.addLayer(marker);
   return marker;
