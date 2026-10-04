@@ -161,6 +161,8 @@ button{font-family:inherit;font-size:0.9rem;font-weight:600;padding:10px 18px;bo
 .btn-float:hover{transform:scale(1.1) rotate(15deg);box-shadow:0 12px 32px rgba(139,92,246,0.7)}
 .btn-float.btn-stats{background:linear-gradient(135deg,#06b6d4,#0891b2);box-shadow:0 8px 24px rgba(6,182,212,0.5)}
 .btn-float.btn-stats:hover{box-shadow:0 12px 32px rgba(6,182,212,0.7);transform:scale(1.1) rotate(-15deg)}
+.btn-float.btn-live{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 8px 24px rgba(34,197,94,0.5)}
+.btn-float.btn-live:hover{box-shadow:0 12px 32px rgba(34,197,94,0.7);transform:scale(1.1) rotate(15deg)}
 #sidebar{position:fixed;top:calc(64px + env(safe-area-inset-top,0));right:0;bottom:0;width:340px;background:var(--bg-overlay);backdrop-filter:blur(16px);border-left:1px solid var(--border-color);transform:translateX(100%);transition:transform 0.35s;z-index:999;display:flex;flex-direction:column}
 #sidebar.open{transform:translateX(0)}
 .sidebar-header{padding:20px;border-bottom:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center}
@@ -582,6 +584,35 @@ textarea{resize:vertical;min-height:90px}
   .wizard-body {flex: 1;overflow-y: auto;-webkit-overflow-scrolling: touch;padding-bottom: 60vh;}
   .wizard-body input,.wizard-body textarea {scroll-margin-bottom: 60vh;}
 }
+
+/* ===== LIVE LOCATION ===== */
+#liveFriendsBtn{position:relative}
+#liveFriendsBtn.has-live::after{content:'';position:absolute;top:6px;right:6px;width:9px;height:9px;background:#22c55e;border:2px solid var(--bg-modal);border-radius:50%;animation:liveDotPulse 1.5s ease-in-out infinite}
+.live-marker{width:40px;height:40px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 4px rgba(34,197,94,0.35),0 4px 12px rgba(0,0,0,0.5);background-size:cover;background-position:center;position:relative;cursor:pointer;animation:liveMarkerPulse 2.5s ease-in-out infinite}
+.live-marker::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#22c55e;border:2px solid white;border-radius:50%;animation:liveDotPulse 1.5s ease-in-out infinite}
+@keyframes liveMarkerPulse{0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,0.35),0 4px 12px rgba(0,0,0,0.5)}50%{box-shadow:0 0 0 14px rgba(34,197,94,0.1),0 4px 12px rgba(0,0,0,0.5)}}
+@keyframes liveDotPulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.4)}}
+.live-panel{position:fixed;top:calc(76px + env(safe-area-inset-top,0));right:20px;width:320px;max-height:60vh;overflow-y:auto;background:var(--bg-modal);border:1px solid var(--border-color);border-radius:14px;padding:16px;box-shadow:var(--shadow-lg);z-index:1500;display:none}
+.live-panel.open{display:block}
+.live-panel h3{font-size:0.95rem;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;color:var(--text-primary)}
+.live-panel h3 button{background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;padding:0;line-height:1}
+.live-user-row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--bg-input);margin-bottom:8px;cursor:pointer;transition:all 0.2s;border:1px solid var(--border-subtle)}
+.live-user-row:hover{background:var(--bg-card-hover);border-color:rgba(34,197,94,0.5);transform:translateX(-2px)}
+.live-user-row img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid rgba(34,197,94,0.6);flex-shrink:0}
+.live-user-info{flex:1;min-width:0}
+.live-user-name{font-size:0.85rem;font-weight:700;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.live-user-meta{font-size:0.72rem;color:var(--text-muted);margin-top:2px}
+.live-user-meta.stale{color:#f59e0b}
+.live-empty{text-align:center;padding:24px 12px;color:var(--text-faint);font-size:0.82rem;line-height:1.5}
+.location-consent{position:fixed;bottom:20px;left:20px;right:20px;max-width:480px;margin:0 auto;background:var(--bg-modal);border:2px solid #22c55e;border-radius:14px;padding:16px;z-index:7000;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;animation:slideUpBanner .5s cubic-bezier(.34,1.56,.64,1)}
+.location-consent.show{display:block}
+.location-consent h4{font-size:0.95rem;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.location-consent p{font-size:0.82rem;color:var(--text-secondary);line-height:1.5;margin-bottom:12px}
+.location-consent .consent-actions{display:flex;gap:8px;justify-content:flex-end}
+.location-consent .consent-actions button{padding:10px 16px;font-size:0.85rem;border-radius:10px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.location-consent .btn-allow{background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;box-shadow:0 4px 12px rgba(34,197,94,0.35)}
+.location-consent .btn-allow:hover{transform:translateY(-2px)}
+.location-consent .btn-deny{background:transparent;color:var(--text-muted);border:1px solid var(--border-hover)}
 </style>
 </head><body>
 
@@ -596,8 +627,8 @@ textarea{resize:vertical;min-height:90px}
     <div class="landing-features">
       <div class="feature-card"><span class="feature-icon">📍</span><h3>Épingle tes souvenirs</h3><p>Ajoute des anecdotes sur les lieux que tu as visités : photos, souvenirs, moments uniques.</p></div>
       <div class="feature-card"><span class="feature-icon">💬</span><h3>Réagis et commente</h3><p>Réagis avec des emojis et commente les souvenirs de tes amis. Créez des souvenirs ensemble !</p></div>
+      <div class="feature-card"><span class="feature-icon">📡</span><h3>Amis en direct</h3><p>Vois où sont tes amis en temps réel sur la carte, rafraîchi toutes les minutes.</p></div>
       <div class="feature-card"><span class="feature-icon">📊</span><h3>Suis tes statistiques</h3><p>Nombre de pays, distance parcourue, badges de voyageur… Ta carte de voyage en chiffres.</p></div>
-      <div class="feature-card"><span class="feature-icon">🔒</span><h3>Privé et sécurisé</h3><p>Tes souvenirs sont stockés dans ton compte Google. Seuls toi et tes amis y avez accès.</p></div>
     </div>
     <div class="landing-cta">
       <button class="btn-landing-primary" onclick="goToLogin()">
@@ -700,6 +731,7 @@ textarea{resize:vertical;min-height:90px}
       <button class="btn-ghost btn-toggle-notes" onclick="toggleSidebar()">📖 Notes</button>
       <button class="btn-ghost btn-icon" onclick="openFriendsModal()" title="Amis">👥<span class="badge" id="friendBadge" style="display: none;">0</span></button>
       <button class="btn-ghost btn-icon" onclick="openGroupsModal()" title="Groupes">📁</button>
+      <button class="btn-ghost btn-icon" id="liveFriendsBtn" onclick="toggleLivePanel()" title="Amis en direct">📡</button>
       <button class="btn-ghost btn-icon" onclick="toggleSettings()" title="Réglages">⚙️</button>
       <button class="btn-primary" onclick="openAddModal()">
         <span class="hide-mobile">➕ Ajouter</span>
@@ -732,6 +764,7 @@ textarea{resize:vertical;min-height:90px}
   </div>
 
   <div class="floating-buttons">
+    <button class="btn-float btn-live" onclick="toggleLivePanel()" title="Amis en direct">📡</button>
     <button class="btn-float btn-stats" onclick="openStatsModal()" title="Mes stats">📊</button>
     <button class="btn-float" onclick="showRandomNote()" title="Souvenir aléatoire">🎲</button>
   </div>
@@ -744,6 +777,15 @@ textarea{resize:vertical;min-height:90px}
       <div class="theme-choice" data-theme="light" onclick="chooseTheme('light')"><span class="emoji">☀️</span>Clair</div>
     </div>
     <div class="settings-actions"><button class="btn-primary" onclick="applySettings()">✓ Appliquer</button></div>
+
+    <div class="backup-section">
+      <h4>📡 Localisation</h4>
+      <p class="description">Partage ta position avec tes amis (rafraîchissement 1 min).</p>
+      <button id="settingsLiveBtn" class="btn-full edit-profile" onclick="toggleLiveFromSettings()" style="margin-bottom: 0;">
+        📡 Activer le partage
+      </button>
+    </div>
+
     <div class="backup-section">
       <h4>💾 Sauvegarde</h4>
       <p class="description">Exporte tes notes dans un fichier.</p>
@@ -762,6 +804,7 @@ textarea{resize:vertical;min-height:90px}
   </div>
 
   <div id="map"></div>
+  <div class="live-panel" id="livePanel"></div>
   <div class="hint" id="hint">💡 Clique sur la carte ou sur <b>➕ Ajouter</b></div>
 
   <aside id="sidebar">
@@ -1099,6 +1142,7 @@ textarea{resize:vertical;min-height:90px}
           <li>❤️ Toutes tes réactions</li>
           <li>👥 Toutes tes amitiés</li>
           <li>📨 Toutes tes demandes d'amis</li>
+          <li>📡 Ta position partagée</li>
         </ul>
       </div>
       <div class="form-group">
@@ -1109,6 +1153,15 @@ textarea{resize:vertical;min-height:90px}
         <button class="btn-ghost" onclick="closeDeleteAccountModal()">Annuler</button>
         <button class="btn-danger" id="confirmDeleteBtn" onclick="deleteMyAccount()" disabled>🗑️ Supprimer définitivement</button>
       </div>
+    </div>
+  </div>
+
+  <div class="location-consent" id="locationConsent">
+    <h4>📍 Partage de position</h4>
+    <p>World Notes peut partager ta position avec tes amis pour qu'ils te voient en direct sur la carte. Rafraîchissement toutes les minutes.</p>
+    <div class="consent-actions">
+      <button class="btn-deny" onclick="denyLocationConsent()">Non merci</button>
+      <button class="btn-allow" onclick="allowLocationConsent()">✓ Autoriser</button>
     </div>
   </div>
 
@@ -1160,7 +1213,7 @@ function goToLanding() { document.getElementById('loginScreen').classList.remove
 const LEGAL_CONTENT = {
   terms: { title: '📄 Conditions d\'utilisation', content: `<h3>1. Acceptation</h3><p>En créant un compte, tu acceptes ces conditions.</p><h3>2. Service</h3><p>World Notes permet d'épingler des souvenirs sur une carte.</p><h3>3. Compte</h3><p>Connexion via Google obligatoire.</p><h3>4. Contenu</h3><p>Interdit de publier du contenu illégal.</p><h3>5. Amis</h3><p>Tes amis voient tes souvenirs.</p><h3>6. Responsabilité</h3><p>Projet personnel, perte de données possible.</p><h3>7. Suppression</h3><p>Effacement sous 30 jours.</p>` },
   privacy: { title: '🔒 Confidentialité', content: `<h3>1. Données</h3><p>Nom, email, photo, contenu.</p><h3>2. Utilisation</h3><p>Affichage de tes souvenirs uniquement.</p><h3>3. Stockage</h3><p>Firebase + Cloudinary.</p><h3>4. RGPD</h3><p>Tu peux exporter/supprimer.</p>` },
-  about: { title: 'ℹ️ À propos', content: `<h3>🌍 World Notes</h3><p>Carnet de voyage social sur carte.</p><h3>✨ Fonctionnalités</h3><ul><li>📍 Épingler des souvenirs</li><li>⭐ Favoris</li><li>🎲 Aléatoire</li><li>📊 Stats et badges</li><li>💬 Commentaires</li><li>📤 Partage</li><li>👥 Amis</li></ul>` }
+  about: { title: 'ℹ️ À propos', content: `<h3>🌍 World Notes</h3><p>Carnet de voyage social sur carte.</p><h3>✨ Fonctionnalités</h3><ul><li>📍 Épingler des souvenirs</li><li>⭐ Favoris</li><li>🎲 Aléatoire</li><li>📊 Stats et badges</li><li>💬 Commentaires</li><li>📤 Partage</li><li>👥 Amis</li><li>📡 Amis en direct</li></ul>` }
 };
 function openLegalModal(type) { const d = LEGAL_CONTENT[type]; if (!d) return; document.getElementById('legalModalTitle').textContent = d.title; document.getElementById('legalModalContent').innerHTML = d.content; document.getElementById('legalModal').classList.add('open'); }
 function closeLegalModal() { document.getElementById('legalModal').classList.remove('open'); }
@@ -1196,6 +1249,17 @@ let pendingGroupEmoji = '🏖️';
 let unsubscribeGroups = null;
 let currentWizardStep = 1;
 
+/* ===== LIVE LOCATION STATE ===== */
+let liveLocationEnabled = false;
+let liveLocationInterval = null;
+let liveMarkers = {};
+let liveLocationsData = {};
+let unsubscribeLiveLocations = null;
+let livePanelOpen = false;
+const LIVE_UPDATE_INTERVAL = 60 * 1000;
+const LIVE_STALE_THRESHOLD = 5 * 60 * 1000;
+const LIVE_MAX_AGE = 10 * 60 * 1000;
+
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
@@ -1228,6 +1292,22 @@ function cleanupListeners() {
     unsubscribeComments = unsubscribeGroups = null;
   noteUnsubs = [];
   groupNotes = {};
+
+  /* ===== CLEANUP LIVE LOCATION ===== */
+  if (liveLocationInterval) {
+    clearInterval(liveLocationInterval);
+    liveLocationInterval = null;
+  }
+  if (unsubscribeLiveLocations) {
+    try { unsubscribeLiveLocations(); } catch(e) {}
+    unsubscribeLiveLocations = null;
+  }
+  Object.values(liveMarkers).forEach(m => {
+    try { map && map.removeLayer(m); } catch(e) {}
+  });
+  liveMarkers = {};
+  liveLocationsData = {};
+  liveLocationEnabled = false;
 }
 
 auth.onAuthStateChanged(async (user) => {
@@ -1387,6 +1467,10 @@ function showApp() {
   if (window.innerWidth > 768) {
     setTimeout(() => { document.getElementById('sidebar').classList.add('open'); document.getElementById('map').classList.add('with-sidebar'); if (map) map.invalidateSize(); }, 300);
   }
+  setTimeout(() => {
+    updateLiveFriendsBtn();
+    checkLocationConsent();
+  }, 800);
 }
 function showSyncIndicator(text, synced) {
   const el = document.getElementById('syncIndicator'); const txt = document.getElementById('syncText');
@@ -1517,7 +1601,11 @@ function loadFriends() {
     const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
     myFriends = newFriends;
     await loadFriendsProfiles();
-    if (changed) { if (allGroups !== undefined) loadAllNotes(); }
+    if (changed) {
+      loadAllNotes();
+      /* ===== RAFRAÎCHIR L'ÉCOUTE DES POSITIONS AMIES ===== */
+      if (liveLocationEnabled) subscribeToFriendsLiveLocations();
+    }
   });
 }
 async function loadFriendsProfiles() {
@@ -2395,11 +2483,10 @@ async function deleteMyAccount() {
   cleanupListeners();
   await new Promise(resolve => setTimeout(resolve, 400));
   const uid = currentUser.uid;
-  const totalSteps = 7; let step = 0;
+  const totalSteps = 8; let step = 0;
   const updateProgress = (label) => { step++; btn.innerHTML = `<span class="cloud-loader"></span>${label} (${step}/${totalSteps})`; };
   try {
     updateProgress('Retrait des amitiés');
-    console.log('📘 Étape 1: retrait des amitiés (' + myFriends.length + ')');
     for (const friendUid of myFriends) {
       try {
         const friendRef = db.collection('users').doc(friendUid);
@@ -2411,7 +2498,6 @@ async function deleteMyAccount() {
       } catch (err) { console.warn('  ⚠️ skip ami', friendUid, err.message); }
     }
     updateProgress('Nettoyage interactions');
-    console.log('📘 Étape 2: nettoyage des interactions');
     const myNoteIds = myNotes.map(n => n.id);
     for (let i = 0; i < myNoteIds.length; i += 10) {
       const chunk = myNoteIds.slice(i, i + 10);
@@ -2429,7 +2515,6 @@ async function deleteMyAccount() {
       } catch (err) { console.warn('  ⚠️ skip comments:', err.message); }
     }
     updateProgress('Mes réactions');
-    console.log('📘 Étape 3: mes réactions');
     try {
       const reactionsSnap = await db.collection('reactions').where('userId', '==', uid).get();
       const batch = db.batch();
@@ -2437,7 +2522,6 @@ async function deleteMyAccount() {
       if (!reactionsSnap.empty) await batch.commit();
     } catch (err) { console.warn('  ⚠️ skip mes reactions:', err.message); }
     updateProgress('Mes commentaires');
-    console.log('📘 Étape 4: mes commentaires');
     try {
       const commentsSnap = await db.collection('comments').where('userId', '==', uid).get();
       const batch = db.batch();
@@ -2445,7 +2529,6 @@ async function deleteMyAccount() {
       if (!commentsSnap.empty) await batch.commit();
     } catch (err) { console.warn('  ⚠️ skip mes comments:', err.message); }
     updateProgress('Demandes d\'amis');
-    console.log('📘 Étape 5: demandes d\'amis');
     try {
       const sentReq = await db.collection('friendRequests').where('from', '==', uid).get();
       const recvReq = await db.collection('friendRequests').where('to', '==', uid).get();
@@ -2454,15 +2537,14 @@ async function deleteMyAccount() {
       recvReq.forEach(doc => batch.delete(doc.ref));
       if (!sentReq.empty || !recvReq.empty) await batch.commit();
     } catch (err) { console.warn('  ⚠️ skip requests:', err.message); }
+    updateProgress('Position partagée');
+    try { await db.collection('liveLocations').doc(uid).delete(); } catch (err) { console.warn('  ⚠️ skip liveLoc:', err.message); }
     updateProgress('Mes souvenirs');
-    console.log('📘 Étape 6: mes notes (' + myNotes.length + ')');
     for (const note of myNotes) {
       try { await db.collection('notes').doc(note.id).delete(); } catch (err) { console.warn('  ⚠️ skip note', note.id); }
     }
     updateProgress('Mon profil');
-    console.log('📘 Étape 7: profil user');
     try { await db.collection('users').doc(uid).delete(); } catch (err) { console.warn('  ⚠️ skip profile:', err.message); }
-    console.log('📘 Étape finale: compte auth');
     try {
       await currentUser.delete();
     } catch (err) {
@@ -2519,7 +2601,7 @@ sidebarSearchInput.addEventListener('input', () => { sidebarSearchQuery = sideba
 function clearSidebarSearch() { sidebarSearchInput.value = ''; sidebarSearchQuery = ''; clearSidebarSearchBtn.classList.remove('visible'); renderAllMarkers(); }
 
 function showRandomNote() {
-  const btn = document.querySelector('.btn-float:not(.btn-stats)');
+  const btn = document.querySelector('.btn-float:not(.btn-stats):not(.btn-live)');
   if (btn) btn.style.animation = 'spin3 0.6s linear infinite';
   let available = [];
   if (mapFilter === 'all') available = allNotes;
@@ -2662,7 +2744,7 @@ async function handlePhotoFile(file) {
 function removePhoto(event) { if (event) event.stopPropagation(); pendingPhoto = null; photoPreview.src = ''; photoPreviewWrapper.classList.remove('visible'); photoUploadZone.style.display = ''; photoInput.value = ''; }
 function toggleUserMenu(event) { if (event) event.stopPropagation(); document.getElementById('userDropdown').classList.toggle('open'); }
 document.addEventListener('click', (e) => { if (!e.target.closest('.user-menu')) document.getElementById('userDropdown').classList.remove('open'); });
-function toggleSettings() { const panel = document.getElementById('settingsPanel'); const isOpening = !panel.classList.contains('open'); panel.classList.toggle('open'); if (isOpening) { updateThemeChoices(); updateNotesCountInfo(); } }
+function toggleSettings() { const panel = document.getElementById('settingsPanel'); const isOpening = !panel.classList.contains('open'); panel.classList.toggle('open'); if (isOpening) { updateThemeChoices(); updateNotesCountInfo(); updateSettingsLiveBtn(); } }
 function updateThemeChoices() { document.querySelectorAll('.theme-choice').forEach(el => { el.classList.toggle('active', el.dataset.theme === uiTheme); }); }
 function chooseTheme(theme) { uiTheme = theme; updateThemeChoices(); }
 function applySettings() { localStorage.setItem('worldnotes_theme', uiTheme); document.documentElement.setAttribute('data-theme', uiTheme); toggleSettings(); showToast('✅ Réglages appliqués', 'success'); }
@@ -2927,6 +3009,285 @@ function showToast(msg, type = '') { const toast = document.getElementById('toas
 function escapeHtml(str) { if (str === undefined || str === null) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
+/* =========================================================
+   📡 LIVE LOCATION — Partage de position en direct
+   ========================================================= */
+
+function checkLocationConsent() {
+  if (!currentUser) return;
+  const consent = localStorage.getItem('worldnotes_location_consent');
+  if (consent === 'granted') {
+    enableLiveLocation(true);
+  } else if (consent === 'denied') {
+    /* rien */
+  } else {
+    setTimeout(() => {
+      const banner = document.getElementById('locationConsent');
+      if (banner) banner.classList.add('show');
+    }, 3000);
+  }
+}
+
+function allowLocationConsent() {
+  localStorage.setItem('worldnotes_location_consent', 'granted');
+  document.getElementById('locationConsent').classList.remove('show');
+  enableLiveLocation(false);
+}
+
+function denyLocationConsent() {
+  localStorage.setItem('worldnotes_location_consent', 'denied');
+  document.getElementById('locationConsent').classList.remove('show');
+  showToast('📍 Partage de position désactivé. Tu peux l\'activer dans les réglages.', 'info');
+}
+
+async function enableLiveLocation(silent = false) {
+  if (!currentUser) return;
+  if (!navigator.geolocation) {
+    if (!silent) showToast('❌ Géolocalisation non supportée', 'error');
+    return;
+  }
+  liveLocationEnabled = true;
+  updateLiveFriendsBtn();
+  await sendLiveLocation();
+  if (liveLocationInterval) clearInterval(liveLocationInterval);
+  liveLocationInterval = setInterval(sendLiveLocation, LIVE_UPDATE_INTERVAL);
+  subscribeToFriendsLiveLocations();
+  if (!silent) showToast('📡 Position partagée avec tes amis !', 'success');
+}
+
+async function disableLiveLocation() {
+  liveLocationEnabled = false;
+  updateLiveFriendsBtn();
+  if (liveLocationInterval) {
+    clearInterval(liveLocationInterval);
+    liveLocationInterval = null;
+  }
+  try { await db.collection('liveLocations').doc(currentUser.uid).delete(); } catch (err) { console.warn('Suppression liveLoc:', err); }
+  if (unsubscribeLiveLocations) { unsubscribeLiveLocations(); unsubscribeLiveLocations = null; }
+  Object.values(liveMarkers).forEach(m => { try { map && map.removeLayer(m); } catch(e) {} });
+  liveMarkers = {};
+  liveLocationsData = {};
+  closeLivePanel();
+  updateLiveFriendsBtn();
+}
+
+function updateLiveFriendsBtn() {
+  const btn = document.getElementById('liveFriendsBtn');
+  if (!btn) return;
+  btn.classList.toggle('has-live', liveLocationEnabled);
+  btn.title = liveLocationEnabled ? 'Amis en direct (partage actif)' : 'Amis en direct (partage désactivé)';
+}
+
+async function sendLiveLocation() {
+  if (!liveLocationEnabled || !currentUser) return;
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude: lat, longitude: lng, accuracy } = position.coords;
+      try {
+        await db.collection('liveLocations').doc(currentUser.uid).set({
+          lat, lng,
+          accuracy: accuracy || 0,
+          timestamp: Date.now(),
+          displayName: myProfile?.displayName || currentUser.displayName || 'Utilisateur',
+          username: myProfile?.username || '',
+          photoURL: myProfile?.photoURL || currentUser.photoURL || ''
+        });
+        console.log('📡 Position envoyée:', lat.toFixed(5), lng.toFixed(5));
+      } catch (err) { console.warn('Erreur envoi liveLoc:', err); }
+    },
+    (error) => {
+      console.warn('Erreur GPS:', error.message);
+      if (error.code === error.PERMISSION_DENIED) {
+        showToast('🚫 Autorisation GPS refusée', 'error');
+        localStorage.setItem('worldnotes_location_consent', 'denied');
+        disableLiveLocation();
+      }
+    },
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 }
+  );
+}
+
+function subscribeToFriendsLiveLocations() {
+  if (unsubscribeLiveLocations) unsubscribeLiveLocations();
+  const uidsToWatch = [...myFriends];
+  if (uidsToWatch.length === 0) {
+    liveLocationsData = {};
+    renderLiveMarkers();
+    return;
+  }
+  const chunks = [];
+  for (let i = 0; i < uidsToWatch.length; i += 10) chunks.push(uidsToWatch.slice(i, i + 10));
+  const unsubs = [];
+  unsubscribeLiveLocations = () => {
+    unsubs.forEach(u => { try { u(); } catch(e) {} });
+    unsubs.length = 0;
+  };
+  chunks.forEach(chunk => {
+    const unsub = db.collection('liveLocations')
+      .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+      .onSnapshot((snapshot) => {
+        chunk.forEach(uid => { delete liveLocationsData[uid]; });
+        snapshot.docs.forEach(doc => { liveLocationsData[doc.id] = { uid: doc.id, ...doc.data() }; });
+        renderLiveMarkers();
+        if (livePanelOpen) renderLivePanel();
+        updateLiveFriendsBtn();
+      }, (err) => { console.warn('Erreur subscribeFriendsLive:', err); });
+    unsubs.push(unsub);
+  });
+}
+
+function renderLiveMarkers() {
+  if (!map) return;
+  const now = Date.now();
+  Object.keys(liveMarkers).forEach(uid => {
+    if (!liveLocationsData[uid]) {
+      try { map.removeLayer(liveMarkers[uid]); } catch(e) {}
+      delete liveMarkers[uid];
+    }
+  });
+  Object.values(liveLocationsData).forEach(loc => {
+    const age = now - (loc.timestamp || 0);
+    if (age > LIVE_MAX_AGE) {
+      if (liveMarkers[loc.uid]) { try { map.removeLayer(liveMarkers[loc.uid]); } catch(e) {} delete liveMarkers[loc.uid]; }
+      return;
+    }
+    const avatar = cloudinaryThumb(loc.photoURL, 100) || 'https://www.gravatar.com/avatar/?d=mp';
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="live-marker" style="background-image:url('${avatar}');"></div>`,
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
+      popupAnchor: [0, -20]
+    });
+    const ageStr = formatAge(age);
+    const name = loc.displayName || 'Utilisateur';
+    const username = loc.username ? '@' + loc.username : '';
+    const popupHtml = `
+      <div style="padding: 12px 14px; min-width: 180px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <img src="${avatar}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #22c55e;" />
+          <div>
+            <div style="font-weight:700;color:var(--text-primary);font-size:0.9rem;">${escapeHtml(name)}</div>
+            ${username ? `<div style="font-size:0.72rem;color:#22c55e;font-weight:600;">${escapeHtml(username)}</div>` : ''}
+          </div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+          <span style="width:8px;height:8px;background:#22c55e;border-radius:50%;display:inline-block;"></span>
+          Mis à jour ${ageStr}
+        </div>
+        ${loc.accuracy ? `<div style="font-size:0.68rem;color:var(--text-faint);margin-top:4px;">Précision : ±${Math.round(loc.accuracy)}m</div>` : ''}
+      </div>
+    `;
+    if (liveMarkers[loc.uid]) {
+      liveMarkers[loc.uid].setLatLng([loc.lat, loc.lng]);
+      liveMarkers[loc.uid].setIcon(icon);
+      liveMarkers[loc.uid].setPopupContent(popupHtml);
+    } else {
+      const marker = L.marker([loc.lat, loc.lng], { icon, zIndexOffset: 2000 })
+        .addTo(map)
+        .bindPopup(popupHtml, { closeOnClick: false, autoPan: false });
+      marker.on('click', (e) => L.DomEvent.stopPropagation(e));
+      liveMarkers[loc.uid] = marker;
+    }
+  });
+}
+
+function formatAge(ms) {
+  const sec = Math.floor(ms / 1000);
+  if (sec < 60) return `il y a ${sec}s`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `il y a ${min} min`;
+  const h = Math.floor(min / 60);
+  return `il y a ${h}h`;
+}
+
+function toggleLivePanel() {
+  livePanelOpen = !livePanelOpen;
+  const panel = document.getElementById('livePanel');
+  if (!panel) return;
+  if (livePanelOpen) {
+    renderLivePanel();
+    panel.classList.add('open');
+  } else {
+    panel.classList.remove('open');
+  }
+}
+
+function closeLivePanel() {
+  livePanelOpen = false;
+  const panel = document.getElementById('livePanel');
+  if (panel) panel.classList.remove('open');
+}
+
+function renderLivePanel() {
+  const panel = document.getElementById('livePanel');
+  if (!panel) return;
+  const now = Date.now();
+  const list = Object.values(liveLocationsData)
+    .filter(loc => now - (loc.timestamp || 0) < LIVE_MAX_AGE)
+    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  let html = `<h3>📡 Amis en direct<button onclick="toggleLivePanel()">×</button></h3>`;
+  if (!liveLocationEnabled) {
+    html += `<div class="live-empty" style="color:#f59e0b;">⚠️ Ton partage de position est désactivé.<br><br>Tu ne verras pas tes amis tant que tu ne partages pas toi aussi.<br><br><button class="btn-primary" style="margin-top:8px;padding:8px 14px;font-size:0.8rem;" onclick="enableLiveLocation()">📡 Activer le partage</button></div>`;
+  } else if (list.length === 0) {
+    html += `<div class="live-empty">Aucun ami ne partage sa position pour l'instant.<br><br>Reviens plus tard ! 👋</div>`;
+  } else {
+    html += list.map(loc => {
+      const avatar = cloudinaryThumb(loc.photoURL, 80) || 'https://www.gravatar.com/avatar/?d=mp';
+      const name = loc.displayName || 'Utilisateur';
+      const username = loc.username ? '@' + loc.username : '';
+      const age = now - (loc.timestamp || 0);
+      const ageStr = formatAge(age);
+      const staleClass = age > LIVE_STALE_THRESHOLD ? ' stale' : '';
+      return `
+        <div class="live-user-row" onclick="centerOnLiveUser('${loc.uid}')">
+          <img src="${avatar}" alt="${escapeAttr(name)}" loading="lazy" />
+          <div class="live-user-info">
+            <div class="live-user-name">${escapeHtml(name)}</div>
+            <div class="live-user-meta${staleClass}">${username ? escapeHtml(username) + ' • ' : ''}${ageStr}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  panel.innerHTML = html;
+}
+
+function centerOnLiveUser(uid) {
+  const loc = liveLocationsData[uid];
+  if (!loc) return;
+  map.flyTo([loc.lat, loc.lng], 16, { duration: 1.2 });
+  const marker = liveMarkers[uid];
+  if (marker) setTimeout(() => marker.openPopup(), 800);
+  if (isMobile()) closeLivePanel();
+}
+
+function toggleLiveFromSettings() {
+  if (liveLocationEnabled) {
+    if (confirm('Désactiver le partage de ta position ?')) {
+      localStorage.setItem('worldnotes_location_consent', 'denied');
+      disableLiveLocation();
+      updateSettingsLiveBtn();
+    }
+  } else {
+    localStorage.setItem('worldnotes_location_consent', 'granted');
+    enableLiveLocation().then(updateSettingsLiveBtn);
+  }
+}
+
+function updateSettingsLiveBtn() {
+  const btn = document.getElementById('settingsLiveBtn');
+  if (!btn) return;
+  if (liveLocationEnabled) {
+    btn.innerHTML = '🛑 Désactiver le partage';
+    btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+  } else {
+    btn.innerHTML = '📡 Activer le partage';
+    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+  }
+}
+
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (document.getElementById('statsModal').classList.contains('open')) closeStatsModal();
@@ -2943,6 +3304,7 @@ document.addEventListener('keydown', (e) => {
     else if (document.getElementById('deleteAccountModal').classList.contains('open')) closeDeleteAccountModal();
     else if (document.getElementById('noteDetailModal').classList.contains('open')) closeNoteDetail();
     else if (document.getElementById('modalOverlay').classList.contains('open')) closeAddModal();
+    else if (livePanelOpen) closeLivePanel();
   }
   if (e.key === 'r' && !e.ctrlKey && !e.metaKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') showRandomNote();
   if (e.key === 's' && !e.ctrlKey && !e.metaKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') openStatsModal();
@@ -2970,6 +3332,21 @@ document.getElementById('noteText')?.addEventListener('input', updateWizardNextS
   }
   document.addEventListener('focusin', onInputFocus);
 })();
+
+/* ===== RAFRAÎCHIR LES AGES DES MARQUEURS TOUTES LES 30 SECONDES ===== */
+setInterval(() => {
+  if (liveLocationEnabled && Object.keys(liveLocationsData).length > 0) {
+    renderLiveMarkers();
+    if (livePanelOpen) renderLivePanel();
+  }
+}, 30000);
+
+/* ===== REPRISE AU DÉMARRAGE ===== */
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && liveLocationEnabled) {
+    sendLiveLocation();
+  }
+});
 </script>
 
 </body>
