@@ -421,38 +421,6 @@ textarea{resize:vertical;min-height:90px}
 .comment-send{width:36px !important;height:36px !important;font-size:0.95rem !important}
 .leaflet-popup-close-button{width:32px !important;height:32px !important;font-size:24px !important;line-height:30px !important;color:var(--text-primary) !important;padding:0 !important}
 }
-.leaflet-popup-content{
-  width:auto !important;
-  max-width:calc(100vw - 24px) !important;
-  margin:0 !important;
-  max-height:65vh !important;
-  overflow-y:auto !important;
-  -webkit-overflow-scrolling:touch !important;
-}
-.popup-photo{max-width:100% !important;height:auto !important;max-height:180px !important}
-.popup-body{padding:14px 16px !important}
-.popup-place{font-size:0.95rem !important}
-.popup-text{font-size:0.88rem !important}
-.reactions-bar{gap:6px !important;justify-content:center !important}
-.reaction-btn{padding:5px 10px !important;font-size:0.82rem !important}
-.comments-section{max-height:none !important;overflow-y:visible !important}
-.comment-input-wrapper{position:sticky !important;bottom:0 !important;background:var(--bg-modal) !important;padding-top:8px !important;padding-bottom:4px !important}
-.comment-input-wrapper input{font-size:0.82rem !important;padding:8px 12px !important}
-.comment-send{width:36px !important;height:36px !important;font-size:0.95rem !important}
-.leaflet-popup-close-button{
-  width:36px !important;
-  height:36px !important;
-  font-size:26px !important;
-  line-height:34px !important;
-  color:var(--text-primary) !important;
-  padding:0 !important;
-  top:8px !important;
-  right:8px !important;
-  background:rgba(0,0,0,0.35) !important;
-  border-radius:50% !important;
-  z-index:20 !important;
-}
-.leaflet-popup-tip{display:none !important}
 .share-menu{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:8000;padding:20px}
 .share-menu.open{display:flex}
 .share-menu-content{background:var(--bg-modal);border:1px solid var(--border-color);border-radius:20px;padding:24px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:randomIn .35s cubic-bezier(.34,1.56,.64,1)}
@@ -881,10 +849,11 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
     <span class="badge-text" id="groupFilterText">🏖️ Groupe</span>
     <button class="badge-close" onclick="clearGroupFilter()" title="Retirer le filtre">×</button>
   </div>
-<!-- 📝 Modale détail d'une note (mobile) -->
-<div class="modal-overlay" id="noteDetailModal">
-  <div class="modal" id="noteDetailContent"></div>
-</div>
+
+  <!-- 📝 Modale détail d'une note (mobile) -->
+  <div class="modal-overlay" id="noteDetailModal">
+    <div class="modal" id="noteDetailContent"></div>
+  </div>
 
   <div class="modal-overlay" id="deleteAccountModal">
     <div class="modal" style="max-width: 480px;">
@@ -982,14 +951,14 @@ let uiTheme = localStorage.getItem('worldnotes_theme') || 'dark';
 document.documentElement.setAttribute('data-theme', uiTheme);
 let currentUser = null, myProfile = null, myFriends = [], friendsProfiles = {}, allProfiles = {}, incomingRequests = [], outgoingRequests = [];
 let allNotes = [], myNotes = [], friendNotes = [], favoriteNotes = [], allReactions = {}, allComments = {};
-let groupNotes = {};      // 🆕 { groupId: [notes] } - notes par groupe
-let noteUnsubs = [];      // 🆕 listeners notes actifs
+let groupNotes = {};
+let noteUnsubs = [];
 let mapFilter = 'all', sidebarSearchQuery = '', pendingProfilePhoto = null, editingNoteId = null;
 let pendingIsFavorite = false, pendingTags = [], currentRandomNoteId = null, currentStatsTab = 'dashboard';
 let notesByIdCache = {};
 let unsubscribeProfile = null, unsubscribeNotes = null, unsubscribeFriends = null, unsubscribeIncoming = null, unsubscribeOutgoing = null, unsubscribeReactions = null, unsubscribeComments = null;
 let map = null, tileLayer = null, pendingLatLng = null, pendingSource = null, pendingIcon = '📍', pendingPhoto = null;
-let openPopupNoteId = null; // 🆕 ID de la note dont la popup est ouverte (fix iOS)
+let openPopupNoteId = null;
 let markers = {}, markersCluster = null, userLocationMarker = null, userLocationCircle = null, tempMarker = null;
 const REACTION_EMOJIS = ['❤️', '😂', '😍', '🔥', '👏', '😮'];
 const FIRESTORE_IN_LIMIT = 30;
@@ -1024,7 +993,6 @@ function signInWithGoogle() {
 auth.getRedirectResult().catch(() => {});
 function signOut() { if (!confirm('Se déconnecter ?')) return; cleanupListeners(); auth.signOut().catch(() => {}); }
 
-/* 🆕 CLEANUP complet */
 function cleanupListeners() {
   [unsubscribeProfile, unsubscribeNotes, unsubscribeFriends,
    unsubscribeIncoming, unsubscribeOutgoing, unsubscribeReactions,
@@ -1098,7 +1066,6 @@ async function ensureUserProfile() {
       if (!data.friends) updates.friends = [];
       if (data.bio === undefined) updates.bio = '';
       if (data.location === undefined) updates.location = '';
-      // 🧹 Migration : supprimer l'email s'il existe encore
       if (data.email !== undefined) {
         try { await userRef.update({ email: firebase.firestore.FieldValue.delete() }); } catch(e) {}
       }
@@ -1209,7 +1176,6 @@ function loadFriends() {
     myFriends = newFriends;
     await loadFriendsProfiles();
     if (changed) {
-      // 🆕 Recharger les notes si la liste d'amis change
       if (allGroups !== undefined) loadAllNotes();
     }
   });
@@ -1285,18 +1251,13 @@ async function sendFriendRequest() {
   finally { input.disabled = false; }
 }
 
-/* 🆕 ORDRE CORRIGÉ : d'abord accepter la demande, ensuite batch friends */
 async function acceptFriendRequest(requestId) {
   try {
     const reqDoc = await db.collection('friendRequests').doc(requestId).get();
     if (!reqDoc.exists) { showToast('❌ Demande introuvable', 'error'); return; }
     const req = reqDoc.data();
     if (req.to !== currentUser.uid) { showToast('❌ Cette demande ne t\'est pas destinée', 'error'); return; }
-    
-    // 1️⃣ D'abord marquer la demande comme acceptée
     await db.collection('friendRequests').doc(requestId).update({ status: 'accepted', acceptedAt: Date.now() });
-    
-    // 2️⃣ Ensuite, récupérer les listes actuelles et mettre à jour les deux users
     const myRef = db.collection('users').doc(currentUser.uid);
     const theirRef = db.collection('users').doc(req.from);
     const [myDoc, theirDoc] = await Promise.all([myRef.get(), theirRef.get()]);
@@ -1308,7 +1269,6 @@ async function acceptFriendRequest(requestId) {
     batch.update(myRef, { friends: myFriendsList });
     batch.update(theirRef, { friends: theirFriendsList });
     await batch.commit();
-    
     incomingRequests = incomingRequests.filter(r => r.id !== requestId);
     updateFriendBadge(); renderFriendsContent();
     setTimeout(refreshFriendsData, 500);
@@ -1321,7 +1281,6 @@ async function declineFriendRequest(requestId) {
   catch (err) { console.error('Erreur declineFriendRequest:', err); showToast('❌ Erreur', 'error'); }
 }
 
-/* 🆕 ORDRE CORRIGÉ : d'abord retirer des friends, ensuite supprimer les requests */
 async function removeFriend(friendUid) {
   const friend = friendsProfiles[friendUid];
   const name = friend ? (friend.username ? '@' + friend.username : friend.displayName) : 'cet ami';
@@ -1332,14 +1291,10 @@ async function removeFriend(friendUid) {
     const [myDoc, theirDoc] = await Promise.all([myRef.get(), theirRef.get()]);
     const myFriendsList = (myDoc.data().friends || []).filter(uid => uid !== friendUid);
     const theirFriendsList = (theirDoc.data().friends || []).filter(uid => uid !== currentUser.uid);
-    
-    // 1️⃣ D'abord retirer des listes friends (avant de supprimer les requests)
     const batch = db.batch();
     batch.update(myRef, { friends: myFriendsList });
     batch.update(theirRef, { friends: theirFriendsList });
     await batch.commit();
-    
-    // 2️⃣ Ensuite, supprimer les friendRequests associées
     try {
       const requests1 = await db.collection('friendRequests').where('from', '==', currentUser.uid).where('to', '==', friendUid).get();
       const requests2 = await db.collection('friendRequests').where('from', '==', friendUid).where('to', '==', currentUser.uid).get();
@@ -1348,7 +1303,6 @@ async function removeFriend(friendUid) {
       requests2.forEach(doc => batch2.delete(doc.ref));
       if (!requests1.empty || !requests2.empty) await batch2.commit();
     } catch(e) { console.warn('Nettoyage requests:', e); }
-    
     showToast('🗑️ Ami retiré', 'info');
   } catch (err) { console.error('Erreur removeFriend:', err); showToast('❌ Erreur: ' + err.message, 'error'); }
 }
@@ -1401,7 +1355,6 @@ async function cancelFriendRequest(requestId) {
   catch (err) { console.error('Erreur cancelFriendRequest:', err); }
 }
 
-/* 🆕 REFACTOR : loadAllNotes() avec requêtes séparées */
 function loadAllNotes() {
   if (unsubscribeNotes) unsubscribeNotes();
   noteUnsubs.forEach(u => { try { u(); } catch(e){} });
@@ -1409,8 +1362,8 @@ function loadAllNotes() {
   showSyncIndicator('Chargement des souvenirs...', false);
 
   let _mine = [];
-  let _friends = {}; // { uid: [notes] }
-  let _groups = {};  // { groupId: [notes] }
+  let _friends = {};
+  let _groups = {};
 
   function mergeAndRender() {
     myNotes = _mine;
@@ -1432,7 +1385,6 @@ function loadAllNotes() {
     showSyncIndicator('Synchronisé', true);
   }
 
-  // ───── Requête 1 : MES notes ─────
   const u1 = db.collection('notes')
     .where('userId', '==', currentUser.uid)
     .orderBy('createdAt', 'desc')
@@ -1443,7 +1395,6 @@ function loadAllNotes() {
     }, err => console.error('❌ notes/mine:', err.code, err.message));
   noteUnsubs.push(u1);
 
-  // ───── Requête 2 : notes de mes AMIS (visibilité 'all') ─────
   if (myFriends.length > 0) {
     for (let i = 0; i < myFriends.length; i += 10) {
       const chunk = myFriends.slice(i, i + 10);
@@ -1465,7 +1416,6 @@ function loadAllNotes() {
     }
   }
 
-  // ───── Requête 3 : notes de mes GROUPES ─────
   allGroups.forEach(group => {
     const u = db.collection('notes')
       .where('visibility', '==', group.id)
@@ -1572,28 +1522,31 @@ function createMarkerIcon(note) {
 }
 function createUserLocationIcon() { return L.divIcon({ className: '', html: '<div class="user-location-marker"></div>', iconSize: [20, 20], iconAnchor: [10, 10] }); }
 function createTempMarkerIcon() { return L.divIcon({ className: '', html: '<div class="temp-marker"></div>', iconSize: [26, 26], iconAnchor: [13, 13] }); }
+
 function addMarkerToMap(note) {
-  const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { 
-  maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, 
-  minWidth: 240, 
-  autoPanPadding: [50, 50],
-  autoPan: false,          // 🆕 Désactive le déplacement auto de la carte
-  keepInView: false,       // 🆕 Ne force pas à garder la popup dans le cadre
-  closeOnClick: false      // 🆕 Ne ferme pas au clic ailleurs
-});
-  marker.on('click', (e) => { 
-  L.DomEvent.stopPropagation(e);
-  if (isMobile()) {
-    if (e.originalEvent && e.originalEvent.preventDefault) e.originalEvent.preventDefault();
-    openNoteDetail(note.id);
-    return;
+  const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) });
+  if (!isMobile()) {
+    marker.bindPopup(buildPopupContent(note), { 
+      maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, 
+      minWidth: 240, 
+      autoPanPadding: [50, 50],
+      autoPan: false,
+      keepInView: false,
+      closeOnClick: false
+    });
   }
-  openPopupNoteId = note.id;
-  window._popupOpenedAt = Date.now();
-});
+  marker.on('click', (e) => { 
+    L.DomEvent.stopPropagation(e);
+    if (isMobile()) {
+      if (e.originalEvent && e.originalEvent.preventDefault) e.originalEvent.preventDefault();
+      openNoteDetail(note.id);
+      return;
+    }
+    openPopupNoteId = note.id;
+    window._popupOpenedAt = Date.now();
+  });
   marker.on('mousedown', (e) => { L.DomEvent.stopPropagation(e); });
   marker.on('touchstart', (e) => { L.DomEvent.stopPropagation(e); });
-  // 🆕 On track nous-mêmes quel marqueur a sa popup ouverte (fix iOS)
   marker.on('popupopen', () => {
     window._popupOpenedAt = Date.now();
     openPopupNoteId = note.id;
@@ -1605,6 +1558,7 @@ function addMarkerToMap(note) {
   markersCluster.addLayer(marker);
   return marker;
 }
+
 function renderTagsHtml(tags) { if (!tags || tags.length === 0) return ''; return `<div class="note-tags">${tags.map(t => `<span class="tag-chip">#${escapeHtml(t)}</span>`).join('')}</div>`; }
 function renderReactionsHtml(noteId) {
   const reactions = allReactions[noteId] || [];
@@ -1631,6 +1585,7 @@ function renderCommentsHtml(noteId) {
   }
   return `<div class="comments-section"><div class="comments-header">💬 Commentaires (${comments.length})</div><div class="comments-list">${commentsListHtml}</div><div class="comment-input-wrapper"><input type="text" id="commentInput_${noteId}" placeholder="Écrire un commentaire..." maxlength="300" onkeydown="if(event.key==='Enter'){event.preventDefault();addComment('${noteId}');}" /><button class="comment-send" onclick="addComment('${noteId}')" title="Envoyer">➤</button></div></div>`;
 }
+
 /* 📝 MODALE DÉTAIL NOTE (mobile) */
 function isMobile() { return window.innerWidth <= 768; }
 
@@ -1745,18 +1700,12 @@ function renderAllMarkers() {
 function refreshOpenPopup() {
   if (!map) return;
   const openPopup = map._popup; if (!openPopup) return;
-  const noteId = openPopupNoteId; if (!noteId) return; // 🆕 Utilise notre variable (fix iOS)
+  const noteId = openPopupNoteId; if (!noteId) return;
   const note = notesByIdCache[noteId]; if (!note) return;
-  
-  // 🆕 Sur iOS : mise à jour ciblée pour ne PAS reconstruire la popup en entier
-  // (sinon iOS la ferme automatiquement)
   const popupEl = openPopup.getElement();
   if (!popupEl) return;
-  
   const reactionsEl = popupEl.querySelector('.reactions-bar');
   const commentsEl = popupEl.querySelector('.comments-section');
-  
-  // Sauvegarder le focus du champ commentaire s'il est actif
   let savedFocus = null, savedValue = '', savedSelection = null;
   const activeEl = document.activeElement;
   if (activeEl && activeEl.id && activeEl.id.startsWith('commentInput_')) {
@@ -1764,32 +1713,24 @@ function refreshOpenPopup() {
     savedValue = activeEl.value;
     try { savedSelection = [activeEl.selectionStart, activeEl.selectionEnd]; } catch(e) {}
   }
-  
-  // Mise à jour CIBLÉE (ne touche pas au reste de la popup)
   if (reactionsEl) {
     const newReactionsHtml = renderReactionsHtml(noteId);
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = newReactionsHtml;
     const newReactionsEl = tempDiv.firstElementChild;
-    if (newReactionsEl) {
-      reactionsEl.replaceWith(newReactionsEl);
-    }
+    if (newReactionsEl) { reactionsEl.replaceWith(newReactionsEl); }
   }
-  
   if (commentsEl) {
     const newCommentsHtml = renderCommentsHtml(noteId);
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = newCommentsHtml;
     const newCommentsEl = tempDiv.firstElementChild;
     if (newCommentsEl) {
-      // Sauvegarder la position de scroll des commentaires
       const scrollTop = commentsEl.scrollTop;
       commentsEl.replaceWith(newCommentsEl);
       newCommentsEl.scrollTop = scrollTop;
     }
   }
-  
-  // Restaurer le focus du champ commentaire si besoin
   if (savedFocus) {
     const newEl = document.getElementById(savedFocus);
     if (newEl) {
@@ -1942,7 +1883,6 @@ function loadGroups() {
       (snapshot) => {
         const newGroups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         newGroups.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        // 🆕 Détecter un changement de LISTE des groupes (pas juste contenu)
         const oldIds = allGroups.map(g => g.id).sort().join(',');
         const newIds = newGroups.map(g => g.id).sort().join(',');
         const groupIdsChanged = oldIds !== newIds;
@@ -1952,7 +1892,6 @@ function loadGroups() {
         if (groupIdsChanged) {
           loadAllNotes();
         } else {
-          // Juste refresh des marqueurs si le contenu a changé
           renderAllMarkers();
         }
       },
@@ -2756,7 +2695,6 @@ async function saveNote() {
 let toastTimer;
 function showToast(msg, type = '') { const toast = document.getElementById('toast'); toast.textContent = msg; toast.className = 'toast show ' + type; clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 3200); }
 function escapeHtml(str) { if (str === undefined || str === null) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
-/* 🆕 Anti-XSS attributs HTML */
 function escapeAttr(str) {
   return String(str ?? '')
     .replace(/&/g, '&amp;')
@@ -2781,7 +2719,7 @@ document.addEventListener('keydown', (e) => {
     else if (document.getElementById('shareMenu').classList.contains('open')) closeShareMenu();
     else if (document.getElementById('qrModal').classList.contains('open')) closeQRModal();
     else if (document.getElementById('deleteAccountModal').classList.contains('open')) closeDeleteAccountModal();
-        else if (document.getElementById('noteDetailModal').classList.contains('open')) closeNoteDetail();
+    else if (document.getElementById('noteDetailModal').classList.contains('open')) closeNoteDetail();
     else closeAddModal();
   }
   if (e.key === 'r' && !e.ctrlKey && !e.metaKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') showRandomNote();
