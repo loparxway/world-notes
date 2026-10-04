@@ -691,6 +691,31 @@ textarea{resize:vertical;min-height:90px}
     padding: 8px 12px !important;
   }
 }
+/* ===== FIX Z-INDEX ABSOLU ===== */
+header {
+  z-index: 99999 !important;
+}
+.user-menu {
+  z-index: 99999 !important;
+}
+.user-dropdown {
+  z-index: 99999 !important;
+  position: absolute !important;
+  top: 52px !important;
+  right: 0 !important;
+}
+.leaflet-container,
+#map,
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1 !important;
+}
+.leaflet-popup-pane,
+.leaflet-marker-pane,
+.leaflet-tile-pane {
+  z-index: 100 !important;
+}
 </style>
 </head><body>
 
