@@ -135,11 +135,9 @@ button{font-family:inherit;font-size:0.9rem;font-weight:600;padding:10px 18px;bo
 .btn-icon{padding:10px 14px;font-size:1.1rem;position:relative}
 .badge{position:absolute;top:4px;right:4px;background:#ef4444;color:white;font-size:0.65rem;font-weight:700;padding:2px 5px;border-radius:10px;min-width:16px;text-align:center;line-height:1.2;box-shadow:0 2px 6px rgba(239,68,68,0.5)}
 .user-menu{position:relative;z-index:1100}
-.user-avatar{cursor:pointer;pointer-events:auto}
-.user-dropdown{z-index:1101}
-.user-avatar{width:38px;height:38px;border-radius:50%;border:2px solid rgba(249,115,22,0.6);cursor:pointer;object-fit:cover;transition:all 0.25s}
+.user-avatar{width:38px;height:38px;border-radius:50%;border:2px solid rgba(249,115,22,0.6);cursor:pointer;object-fit:cover;transition:all 0.25s;pointer-events:auto}
 .user-avatar:hover{transform:scale(1.08);border-color:#f97316}
-.user-dropdown{position:absolute;top:50px;right:0;background:var(--bg-modal);border:1px solid var(--border-color);border-radius:12px;padding:8px;min-width:240px;box-shadow:var(--shadow-lg);display:none;z-index:10}
+.user-dropdown{position:absolute;top:50px;right:0;background:var(--bg-modal);border:1px solid var(--border-color);border-radius:12px;padding:8px;min-width:240px;box-shadow:var(--shadow-lg);display:none;z-index:1101}
 .user-dropdown.open{display:block}
 .user-info{padding:10px 12px;border-bottom:1px solid var(--border-subtle);margin-bottom:6px}
 .user-name{font-weight:700;font-size:0.9rem;color:var(--text-primary);margin-bottom:2px}
@@ -588,8 +586,6 @@ textarea{resize:vertical;min-height:90px}
 }
 
 /* ===== LIVE LOCATION ===== */
-#liveFriendsBtn{position:relative}
-#liveFriendsBtn.has-live::after{content:'';position:absolute;top:6px;right:6px;width:9px;height:9px;background:#22c55e;border:2px solid var(--bg-modal);border-radius:50%;animation:liveDotPulse 1.5s ease-in-out infinite}
 .live-marker{width:40px;height:40px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 4px rgba(34,197,94,0.35),0 4px 12px rgba(0,0,0,0.5);background-size:cover;background-position:center;position:relative;cursor:pointer;animation:liveMarkerPulse 2.5s ease-in-out infinite}
 .live-marker::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#22c55e;border:2px solid white;border-radius:50%;animation:liveDotPulse 1.5s ease-in-out infinite}
 @keyframes liveMarkerPulse{0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,0.35),0 4px 12px rgba(0,0,0,0.5)}50%{box-shadow:0 0 0 14px rgba(34,197,94,0.1),0 4px 12px rgba(0,0,0,0.5)}}
@@ -1604,7 +1600,6 @@ function loadFriends() {
     await loadFriendsProfiles();
     if (changed) {
       loadAllNotes();
-      /* ===== RAFRAÎCHIR L'ÉCOUTE DES POSITIONS AMIES ===== */
       if (liveLocationEnabled) subscribeToFriendsLiveLocations();
     }
   });
@@ -2743,6 +2738,8 @@ async function handlePhotoFile(file) {
   catch (err) { showToast('❌ Erreur photo : ' + err.message, 'error'); }
 }
 function removePhoto(event) { if (event) event.stopPropagation(); pendingPhoto = null; photoPreview.src = ''; photoPreviewWrapper.classList.remove('visible'); photoUploadZone.style.display = ''; photoInput.value = ''; }
+
+/* ===== FIX USER MENU ===== */
 function toggleUserMenu(event) {
   if (event) {
     event.stopPropagation();
@@ -2754,17 +2751,16 @@ function toggleUserMenu(event) {
 }
 
 document.addEventListener('click', (e) => {
-  // Fermer le menu utilisateur si on clique ailleurs
   const userMenu = document.querySelector('.user-menu');
   if (userMenu && !userMenu.contains(e.target)) {
     const dd = document.getElementById('userDropdown');
     if (dd) dd.classList.remove('open');
   }
-  // Fermer le panel live si on clique ailleurs
   if (livePanelOpen && !e.target.closest('#livePanel') && !e.target.closest('[onclick*="toggleLivePanel"]')) {
     closeLivePanel();
   }
 });
+
 function toggleSettings() { const panel = document.getElementById('settingsPanel'); const isOpening = !panel.classList.contains('open'); panel.classList.toggle('open'); if (isOpening) { updateThemeChoices(); updateNotesCountInfo(); updateSettingsLiveBtn(); } }
 function updateThemeChoices() { document.querySelectorAll('.theme-choice').forEach(el => { el.classList.toggle('active', el.dataset.theme === uiTheme); }); }
 function chooseTheme(theme) { uiTheme = theme; updateThemeChoices(); }
@@ -3031,7 +3027,7 @@ function escapeHtml(str) { if (str === undefined || str === null) return ''; con
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
 /* =========================================================
-   📡 LIVE LOCATION — Partage de position en direct
+   📡 LIVE LOCATION
    ========================================================= */
 
 function checkLocationConsent() {
@@ -3094,7 +3090,6 @@ async function disableLiveLocation() {
 
 function updateLiveFriendsBtn() {
   // Le bouton header a été supprimé — plus rien à faire ici
-  // Le bouton flottant est géré via ses propres styles
   return;
 }
 
@@ -3353,7 +3348,6 @@ document.getElementById('noteText')?.addEventListener('input', updateWizardNextS
   document.addEventListener('focusin', onInputFocus);
 })();
 
-/* ===== RAFRAÎCHIR LES AGES DES MARQUEURS TOUTES LES 30 SECONDES ===== */
 setInterval(() => {
   if (liveLocationEnabled && Object.keys(liveLocationsData).length > 0) {
     renderLiveMarkers();
@@ -3361,7 +3355,6 @@ setInterval(() => {
   }
 }, 30000);
 
-/* ===== REPRISE AU DÉMARRAGE ===== */
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && liveLocationEnabled) {
     sendLiveLocation();
