@@ -595,33 +595,40 @@ textarea{resize:vertical;min-height:90px}
    📱 FIX CLAVIER MOBILE iOS (efficace)
    ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .wizard-modal {
-    height: 100vh;
-    height: 100dvh;
-    max-height: 100vh;
-    max-height: 100dvh;
+  /* iOS Safari : on abandonne le "fixed" pour éviter le push */
+  #modalOverlay {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
   }
-
+  
+  .wizard-modal {
+    /* ⚠️ SUPPRIMER height/max-height fixes */
+    height: auto;
+    max-height: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+  }
+  
+  /* Le wizard body prend tout l'espace disponible */
   .wizard-body {
+    flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 40vh;
+    /* Laisse 60% de la hauteur d'écran en bas pour scroller */
+    padding-bottom: 60vh;
   }
-
+  
+  /* Inputs scrollent bien dans la vue */
   .wizard-body input,
   .wizard-body textarea {
-    scroll-margin-top: 100px;
-    scroll-margin-bottom: 40vh;
-  }
-
-  .wizard-modal.keyboard-open .wizard-footer {
-    display: none;
-  }
-
-  .wizard-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    scroll-margin-bottom: 60vh;
   }
 }
 </style>
@@ -3037,63 +3044,29 @@ document.getElementById('placeName')?.addEventListener('input', updateWizardNext
 document.getElementById('noteText')?.addEventListener('input', updateWizardNextState);
 
 /* ═══════════════════════════════════════════
-   📱 FIX CLAVIER MOBILE iOS (actif)
+   📱 FIX CLAVIER MOBILE iOS (version finale)
    ═══════════════════════════════════════════ */
 (function() {
-  const wizardModal = () => document.querySelector('.wizard-modal');
-  const wizardBody = () => document.getElementById('wizardBody');
-
   function onInputFocus(e) {
     const el = e.target;
     if (!el || (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA')) return;
     if (!el.closest('#wizardBody')) return;
+    
     setTimeout(() => {
-      try {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } catch (err) {
-        el.scrollIntoView(false);
-      }
-    }, 300);
-  }
-
-  if (window.visualViewport) {
-    const vv = window.visualViewport;
-    function adjustHeight() {
-      const modal = wizardModal();
-      if (!modal) return;
-      const isOpen = document.getElementById('modalOverlay')?.classList.contains('open');
-      if (!isOpen) return;
-      const visibleHeight = vv.height;
-      const offsetTop = vv.offsetTop;
-      const screenHeight = window.innerHeight;
-      const keyboardOpen = (screenHeight - visibleHeight) > 100;
-      if (keyboardOpen) {
-        modal.classList.add('keyboard-open');
-        modal.style.height = visibleHeight + 'px';
-        modal.style.maxHeight = visibleHeight + 'px';
-        modal.style.top = offsetTop + 'px';
-      } else {
-        modal.classList.remove('keyboard-open');
-        modal.style.height = '';
-        modal.style.maxHeight = '';
-        modal.style.top = '';
-      }
-    }
-    vv.addEventListener('resize', adjustHeight);
-    vv.addEventListener('scroll', adjustHeight);
+      const yOffset = 20;
+      const wizardBody = document.getElementById('wizardBody');
+      if (!wizardBody) return;
+      
+      const inputTop = el.offsetTop;
+      
+      wizardBody.scrollTo({
+        top: Math.max(0, inputTop - yOffset),
+        behavior: 'smooth'
+      });
+    }, 400);
   }
 
   document.addEventListener('focusin', onInputFocus);
-
-  window.addEventListener('resize', () => {
-    const modal = wizardModal();
-    if (modal && !document.getElementById('modalOverlay')?.classList.contains('open')) {
-      modal.style.height = '';
-      modal.style.maxHeight = '';
-      modal.style.top = '';
-      modal.classList.remove('keyboard-open');
-    }
-  });
 })();
 </script>
 
