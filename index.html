@@ -1343,8 +1343,22 @@ function loadAllNotes() {
   showSyncIndicator('Chargement des souvenirs...', false);
   unsubscribeNotes = db.collection('notes').orderBy('createdAt', 'desc').limit(500).onSnapshot((snapshot) => {
     const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // 1. Notes de moi + mes amis
     const allowed = new Set([currentUser.uid, ...myFriends]);
-    allNotes = all.filter(n => allowed.has(n.userId));
+    const byAmis = all.filter(n => allowed.has(n.userId));
+    
+    // 2. Notes des groupes dont je suis membre
+    const myGroupIds = new Set(allGroups.map(g => g.id));
+    const byGroups = all.filter(n => {
+      return n.visibility 
+        && n.visibility !== 'all' 
+        && myGroupIds.has(n.visibility)
+        && !allowed.has(n.userId);
+    });
+    
+    // 3. Fusionner
+    allNotes = [...byAmis, ...byGroups];
     notesByIdCache = {};
     allNotes.forEach(n => { notesByIdCache[n.id] = n; });
     myNotes = allNotes.filter(n => n.userId === currentUser.uid);
@@ -1490,6 +1504,21 @@ function renderAllMarkers() {
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
 
+  // 🔒 Filtre strict : cacher les notes privées dont je ne suis pas membre
+  notesToShow = notesToShow.filter(n => {
+    // Ma note → toujours visible
+    if (n.userId === currentUser.uid) return true;
+    
+    // Note "all" d'un ami → visible
+    if ((!n.visibility || n.visibility === 'all') && myFriends.includes(n.userId)) return true;
+    
+    // Note de groupe dont je suis membre → visible
+    if (n.visibility && n.visibility !== 'all' && allGroups.some(g => g.id === n.visibility)) return true;
+    
+    // Sinon → caché
+    return false;
+  });
+
   // 📁 Filtre groupe actif
   if (activeGroupId) {
     const group = allGroups.find(g => g.id === activeGroupId);
@@ -1531,6 +1560,14 @@ function renderSidebar() {
   else if (mapFilter === 'mine') notesToShow = myNotes;
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
+
+  // 🔒 Filtre strict : cacher les notes privées dont je ne suis pas membre
+  notesToShow = notesToShow.filter(n => {
+    if (n.userId === currentUser.uid) return true;
+    if ((!n.visibility || n.visibility === 'all') && myFriends.includes(n.userId)) return true;
+    if (n.visibility && n.visibility !== 'all' && allGroups.some(g => g.id === n.visibility)) return true;
+    return false;
+  });
   if (sidebarSearchQuery.trim()) { const q = sidebarSearchQuery.toLowerCase().trim(); notesToShow = notesToShow.filter(n => { const inPlace = (n.place || '').toLowerCase().includes(q); const inText = (n.text || '').toLowerCase().includes(q); const inTags = (n.tags || []).some(t => t.toLowerCase().includes(q)); return inPlace || inText || inTags; }); }
   if (notesToShow.length === 0) {
     if (sidebarSearchQuery.trim()) list.innerHTML = `<div class="empty-state">🔍 Aucun résultat pour "${escapeHtml(sidebarSearchQuery)}"</div>`;
@@ -1646,8 +1683,9 @@ function loadGroups() {
       (snapshot) => {
         allGroups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         allGroups.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        renderGroupsList();
+                renderGroupsList();
         updateFilters();
+        loadAllNotes();
       },
       (error) => {
         console.error('Erreur loadGroups:', error);
