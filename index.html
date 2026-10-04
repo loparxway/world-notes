@@ -30,8 +30,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <style>
-:root[data-theme="dark"]{--bg-primary:#0f172a;--bg-secondary:#1e293b;--bg-tertiary:#0b1220;--bg-card:rgba(30,41,59,0.7);--bg-card-hover:rgba(51,65,85,0.8);--bg-overlay:rgba(15,23,42,0.85);--bg-modal:#1e293b;--bg-input:#0f172a;--bg-header:rgba(15,23,42,0.85);--text-primary:#e2e8f0;--text-secondary:#cbd5e1;--text-muted:#94a3b8;--text-faint:#64748b;--border-color:rgba(148,163,184,0.2);--border-subtle:rgba(148,163,184,0.15);--border-hover:rgba(148,163,184,0.3);--shadow-sm:0 2px 8px rgba(0,0,0,0.3);--shadow-md:0 4px 12px rgba(0,0,0,0.4);--shadow-lg:0 20px 60px rgba(0,0,0,0.6);--favorite:#fbbf24;--tag-bg:rgba(139,92,246,0.15);--tag-color:#a78bfa;--tag-border:rgba(139,92,246,0.3)}
-:root[data-theme="light"]{--bg-primary:#f1f5f9;--bg-secondary:#ffffff;--bg-tertiary:#e2e8f0;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(241,245,249,0.95);--bg-overlay:rgba(255,255,255,0.9);--bg-modal:#ffffff;--bg-input:#f8fafc;--bg-header:rgba(255,255,255,0.9);--text-primary:#0f172a;--text-secondary:#1e293b;--text-muted:#475569;--text-faint:#64748b;--border-color:rgba(15,23,42,0.15);--border-subtle:rgba(15,23,42,0.08);--border-hover:rgba(15,23,42,0.25);--shadow-sm:0 2px 8px rgba(15,23,42,0.08);--shadow-md:0 4px 12px rgba(15,23,42,0.1);--shadow-lg:0 20px 60px rgba(15,23,42,0.15);--favorite:#d97706;--tag-bg:rgba(139,92,246,0.1);--tag-color:#7c3aed;--tag-border:rgba(139,92,246,0.25)}
+:root[data-theme="dark"]{--bg-primary:#0f172a;--bg-secondary:#1e293b;--bg-tertiary:#0b1220;--bg-card:rgba(30,41,59,0.7);--bg-card-hover:rgba(51,65,85,0.8);--bg-overlay:rgba(15,23,42,0.85);--bg-modal:#1e293b;--bg-input:#0f172a;--bg-header:rgba(15,23,42,0.85);--text-primary:#e2e8f0;--text-secondary:#cbd5e1;--text-muted:#94a3b8;--text-faint:#64748b;--border-color:rgba(148,163,184,0.2);--border-subtle:rgba(148,163,184,0.15);--border-hover:rgba(148,163,184,0.3);--shadow-sm:0 2px 8px rgba(0,0,0,0.3);--shadow-md:0 4px 12px rgba(0,0,0,0.4);--shadow-lg:0 20px 60px rgba(0,0,0,0.6);--favorite:#fbbf24}
+:root[data-theme="light"]{--bg-primary:#f1f5f9;--bg-secondary:#ffffff;--bg-tertiary:#e2e8f0;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(241,245,249,0.95);--bg-overlay:rgba(255,255,255,0.9);--bg-modal:#ffffff;--bg-input:#f8fafc;--bg-header:rgba(255,255,255,0.9);--text-primary:#0f172a;--text-secondary:#1e293b;--text-muted:#475569;--text-faint:#64748b;--border-color:rgba(15,23,42,0.15);--border-subtle:rgba(15,23,42,0.08);--border-hover:rgba(15,23,42,0.25);--shadow-sm:0 2px 8px rgba(15,23,42,0.08);--shadow-md:0 4px 12px rgba(15,23,42,0.1);--shadow-lg:0 20px 60px rgba(15,23,42,0.15);--favorite:#d97706}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);overflow-x:hidden;min-height:100vh}
 @keyframes markerPop{0%{transform:rotate(-45deg) scale(0);opacity:0}50%{transform:rotate(-45deg) scale(1.3);opacity:1}70%{transform:rotate(-45deg) scale(0.9)}100%{transform:rotate(-45deg) scale(1);opacity:1}}
@@ -188,8 +188,6 @@ button{font-family:inherit;font-size:0.9rem;font-weight:600;padding:10px 18px;bo
 .fav-star{font-size:1.1rem;cursor:pointer;transition:all 0.2s;user-select:none;padding:2px 4px;border-radius:6px}
 .fav-star:hover{transform:scale(1.2);background:rgba(251,191,36,0.15)}
 .note-card .text{font-size:0.88rem;color:var(--text-secondary);line-height:1.4}
-.note-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
-.tag-chip{background:var(--tag-bg);color:var(--tag-color);border:1px solid var(--tag-border);padding:3px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;white-space:nowrap}
 .note-card .meta{margin-top:8px;font-size:0.72rem;color:var(--text-faint);display:flex;justify-content:space-between;align-items:center}
 .note-author{display:flex;align-items:center;gap:6px;font-size:0.75rem;color:#3b82f6;font-weight:600;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border-subtle)}
 .note-author img{width:18px;height:18px;border-radius:50%;object-fit:cover}
@@ -219,13 +217,6 @@ textarea{resize:vertical;min-height:90px}
 .photo-preview-wrapper.visible{display:block}
 .photo-preview{width:100%;max-height:240px;object-fit:cover;display:block;border-radius:12px}
 .photo-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.65);color:white;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
-.tags-input-wrapper{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;background:var(--bg-input);border:1px solid var(--border-hover);border-radius:10px;min-height:48px;cursor:text;transition:all 0.25s}
-.tags-input-wrapper:focus-within{border-color:#f97316;box-shadow:0 0 0 4px rgba(249,115,22,0.15)}
-.tags-input-wrapper .tag-chip-modal{display:inline-flex;align-items:center;gap:4px;background:var(--tag-bg);color:var(--tag-color);border:1px solid var(--tag-border);padding:4px 8px;border-radius:8px;font-size:0.78rem;font-weight:600}
-.tags-input-wrapper .tag-chip-modal .remove-tag{cursor:pointer;color:var(--tag-color);font-size:1rem;line-height:1;padding:0 2px;border-radius:4px}
-.tags-input-wrapper .tag-chip-modal .remove-tag:hover{color:#ef4444;background:rgba(239,68,68,0.15)}
-.tags-input-wrapper input{flex:1;min-width:100px;padding:4px 0;background:transparent;border:none;border-radius:0;font-size:0.88rem;outline:none;color:var(--text-primary)}
-.tags-input-wrapper input:focus{box-shadow:none;border:none}
 .search-wrapper{position:relative}
 .search-input-wrapper{position:relative}
 .search-input-wrapper input{padding-left:42px}
@@ -422,12 +413,6 @@ textarea{resize:vertical;min-height:90px}
 .timeline-date{font-size:0.72rem;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
 .timeline-place{font-size:0.95rem;font-weight:700;color:#06b6d4;margin-bottom:3px;display:flex;align-items:center;gap:6px}
 .timeline-text{font-size:0.82rem;color:var(--text-secondary);line-height:1.4}
-.top-tags{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-.top-tag-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg-input);border-radius:10px;border:1px solid var(--border-subtle)}
-.top-tag-name{font-weight:700;color:var(--tag-color);font-size:0.88rem;min-width:80px}
-.top-tag-bar{flex:1;height:8px;background:rgba(139,92,246,0.15);border-radius:4px;overflow:hidden}
-.top-tag-fill{height:100%;background:linear-gradient(90deg,#8b5cf6,#7c3aed);border-radius:4px;transition:width 0.6s ease}
-.top-tag-count{font-weight:700;font-size:0.82rem;color:var(--text-muted);min-width:30px;text-align:right}
 .stats-section-title{font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:16px;margin-top:24px;display:flex;align-items:center;gap:8px}
 .stats-section-title:first-child{margin-top:0}
 .stats-empty{text-align:center;padding:40px 20px;color:var(--text-faint);font-size:0.9rem}
@@ -591,45 +576,11 @@ textarea{resize:vertical;min-height:90px}
   .filter-btn .count{font-size:0.6rem;padding:1px 5px}
 }
 
-/* ═══════════════════════════════════════════
-   📱 FIX CLAVIER MOBILE iOS (efficace)
-   ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* iOS Safari : on abandonne le "fixed" pour éviter le push */
-  #modalOverlay {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-  }
-  
-  .wizard-modal {
-    /* ⚠️ SUPPRIMER height/max-height fixes */
-    height: auto;
-    max-height: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    border-radius: 0;
-  }
-  
-  /* Le wizard body prend tout l'espace disponible */
-  .wizard-body {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    /* Laisse 60% de la hauteur d'écran en bas pour scroller */
-    padding-bottom: 60vh;
-  }
-  
-  /* Inputs scrollent bien dans la vue */
-  .wizard-body input,
-  .wizard-body textarea {
-    scroll-margin-bottom: 60vh;
-  }
+  #modalOverlay {position: fixed;inset: 0;overflow: hidden;}
+  .wizard-modal {height: auto;max-height: none;position: absolute;top: 0;left: 0;right: 0;bottom: 0;display: flex;flex-direction: column;border-radius: 0;}
+  .wizard-body {flex: 1;overflow-y: auto;-webkit-overflow-scrolling: touch;padding-bottom: 60vh;}
+  .wizard-body input,.wizard-body textarea {scroll-margin-bottom: 60vh;}
 }
 </style>
 </head><body>
@@ -910,7 +861,7 @@ textarea{resize:vertical;min-height:90px}
           <div class="wizard-step-headline">
             <span class="wizard-step-icon">🎨</span>
             <h3>Personnalise ton souvenir</h3>
-            <p>Ajoute une catégorie, des tags et tes préférences</p>
+            <p>Ajoute une catégorie et tes préférences</p>
           </div>
 
           <div class="form-group">
@@ -936,14 +887,6 @@ textarea{resize:vertical;min-height:90px}
               <div class="icon-choice" data-icon="🌲" onclick="chooseIcon(this)">🌲</div>
               <div class="icon-choice" data-icon="❤️" onclick="chooseIcon(this)">❤️</div>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; display: block;">Tags (max 5)</label>
-            <div class="tags-input-wrapper" id="tagsInputWrapper" onclick="document.getElementById('tagInputField').focus()">
-              <input type="text" id="tagInputField" placeholder="Ex: été, famille..." maxlength="20" />
-            </div>
-            <div class="help-text">Appuie sur <b>Entrée</b> pour valider un tag</div>
           </div>
 
           <div class="form-group" id="visibilityGroupContainer" style="display: none;">
@@ -1022,7 +965,6 @@ textarea{resize:vertical;min-height:90px}
         <button class="stats-tab active" data-tab="dashboard" onclick="switchStatsTab('dashboard')">📊 Tableau de bord</button>
         <button class="stats-tab" data-tab="badges" onclick="switchStatsTab('badges')">🏆 Badges</button>
         <button class="stats-tab" data-tab="timeline" onclick="switchStatsTab('timeline')">📅 Timeline</button>
-        <button class="stats-tab" data-tab="tags" onclick="switchStatsTab('tags')">🏷️ Tags</button>
       </div>
       <div class="stats-body" id="statsBody"></div>
     </div>
@@ -1218,7 +1160,7 @@ function goToLanding() { document.getElementById('loginScreen').classList.remove
 const LEGAL_CONTENT = {
   terms: { title: '📄 Conditions d\'utilisation', content: `<h3>1. Acceptation</h3><p>En créant un compte, tu acceptes ces conditions.</p><h3>2. Service</h3><p>World Notes permet d'épingler des souvenirs sur une carte.</p><h3>3. Compte</h3><p>Connexion via Google obligatoire.</p><h3>4. Contenu</h3><p>Interdit de publier du contenu illégal.</p><h3>5. Amis</h3><p>Tes amis voient tes souvenirs.</p><h3>6. Responsabilité</h3><p>Projet personnel, perte de données possible.</p><h3>7. Suppression</h3><p>Effacement sous 30 jours.</p>` },
   privacy: { title: '🔒 Confidentialité', content: `<h3>1. Données</h3><p>Nom, email, photo, contenu.</p><h3>2. Utilisation</h3><p>Affichage de tes souvenirs uniquement.</p><h3>3. Stockage</h3><p>Firebase + Cloudinary.</p><h3>4. RGPD</h3><p>Tu peux exporter/supprimer.</p>` },
-  about: { title: 'ℹ️ À propos', content: `<h3>🌍 World Notes</h3><p>Carnet de voyage social sur carte.</p><h3>✨ Fonctionnalités</h3><ul><li>📍 Épingler des souvenirs</li><li>⭐ Favoris</li><li>🏷️ Tags</li><li>🎲 Aléatoire</li><li>📊 Stats et badges</li><li>💬 Commentaires</li><li>📤 Partage</li><li>👥 Amis</li></ul>` }
+  about: { title: 'ℹ️ À propos', content: `<h3>🌍 World Notes</h3><p>Carnet de voyage social sur carte.</p><h3>✨ Fonctionnalités</h3><ul><li>📍 Épingler des souvenirs</li><li>⭐ Favoris</li><li>🎲 Aléatoire</li><li>📊 Stats et badges</li><li>💬 Commentaires</li><li>📤 Partage</li><li>👥 Amis</li></ul>` }
 };
 function openLegalModal(type) { const d = LEGAL_CONTENT[type]; if (!d) return; document.getElementById('legalModalTitle').textContent = d.title; document.getElementById('legalModalContent').innerHTML = d.content; document.getElementById('legalModal').classList.add('open'); }
 function closeLegalModal() { document.getElementById('legalModal').classList.remove('open'); }
@@ -1236,7 +1178,7 @@ let allNotes = [], myNotes = [], friendNotes = [], favoriteNotes = [], allReacti
 let groupNotes = {};
 let noteUnsubs = [];
 let mapFilter = 'all', sidebarSearchQuery = '', pendingProfilePhoto = null, editingNoteId = null;
-let pendingIsFavorite = false, pendingTags = [], currentRandomNoteId = null, currentStatsTab = 'dashboard';
+let pendingIsFavorite = false, currentRandomNoteId = null, currentStatsTab = 'dashboard';
 let notesByIdCache = {};
 let unsubscribeProfile = null, unsubscribeNotes = null, unsubscribeFriends = null, unsubscribeIncoming = null, unsubscribeOutgoing = null, unsubscribeReactions = null, unsubscribeComments = null;
 let map = null, tileLayer = null, pendingLatLng = null, pendingSource = null, pendingIcon = '📍', pendingPhoto = null;
@@ -1902,7 +1844,6 @@ function addMarkerToMap(note) {
   markersCluster.addLayer(marker);
   return marker;
 }
-function renderTagsHtml(tags) { if (!tags || tags.length === 0) return ''; return `<div class="note-tags">${tags.map(t => `<span class="tag-chip">#${escapeHtml(t)}</span>`).join('')}</div>`; }
 function renderReactionsHtml(noteId) {
   const reactions = allReactions[noteId] || [];
   const counts = {};
@@ -1951,7 +1892,7 @@ function openNoteDetail(noteId) {
   } else {
     actionBtns = `<button class="share-action-btn" onclick="closeNoteDetail(); shareNote('${note.id}', event)" style="flex:1;justify-content:center"><span class="icon">🔗</span> Partager</button>`;
   }
-  const html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:12px"><h2 style="font-size:1.15rem;display:flex;align-items:center;gap:10px;flex:1;min-width:0"><span style="font-size:1.3rem">${icon}</span><span>${escapeHtml(note.place)}</span></h2><button onclick="closeNoteDetail()" style="background:none;border:none;color:var(--text-muted);font-size:1.8rem;cursor:pointer;padding:0;line-height:1;flex-shrink:0">×</button></div>${photoHtml}<div style="font-size:0.95rem;color:var(--text-secondary);line-height:1.5;margin-bottom:12px">${escapeHtml(note.text)}</div>${renderTagsHtml(note.tags)}${renderReactionsHtml(note.id)}${authorHtml}<div class="popup-footer" style="margin-top:12px"><span class="popup-meta">📅 ${date}</span>${favStar}</div><div class="comments-section" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${renderCommentsHtml(note.id)}</div><div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${actionBtns}</div>`;
+  const html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:12px"><h2 style="font-size:1.15rem;display:flex;align-items:center;gap:10px;flex:1;min-width:0"><span style="font-size:1.3rem">${icon}</span><span>${escapeHtml(note.place)}</span></h2><button onclick="closeNoteDetail()" style="background:none;border:none;color:var(--text-muted);font-size:1.8rem;cursor:pointer;padding:0;line-height:1;flex-shrink:0">×</button></div>${photoHtml}<div style="font-size:0.95rem;color:var(--text-secondary);line-height:1.5;margin-bottom:12px">${escapeHtml(note.text)}</div>${renderReactionsHtml(note.id)}${authorHtml}<div class="popup-footer" style="margin-top:12px"><span class="popup-meta">📅 ${date}</span>${favStar}</div><div class="comments-section" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${renderCommentsHtml(note.id)}</div><div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${actionBtns}</div>`;
   document.getElementById('noteDetailContent').innerHTML = html;
   document.getElementById('noteDetailModal').classList.add('open');
 }
@@ -1974,7 +1915,7 @@ function buildPopupContent(note) {
   let actionBtns = '';
   if (isMine) actionBtns = `<div style="display:flex;gap:6px;"><button class="btn-share" onclick="shareNote('${note.id}', event)" title="Partager">🔗</button><button class="popup-action-btn" onclick="editNoteFromPopup('${note.id}', event)" title="Modifier">✏️</button><button class="popup-delete-btn" onclick="deleteNoteFromPopup('${note.id}', event)" title="Supprimer">🗑️</button></div>`;
   else actionBtns = `<div style="display:flex;gap:6px;"><button class="btn-share" onclick="shareNote('${note.id}', event)" title="Partager">🔗</button></div>`;
-  return `${photoHtml}<div class="popup-body"><div class="popup-place ${isMine ? '' : 'friend-place'}"><div class="place-left"><span class="category-icon">${icon}</span>${escapeHtml(note.place)}</div>${favStar}</div><div class="popup-text">${escapeHtml(note.text)}</div>${renderTagsHtml(note.tags)}${renderReactionsHtml(note.id)}${authorHtml}<div class="popup-footer"><span class="popup-meta">📅 ${date}</span>${actionBtns}</div>${renderCommentsHtml(note.id)}</div>`;
+  return `${photoHtml}<div class="popup-body"><div class="popup-place ${isMine ? '' : 'friend-place'}"><div class="place-left"><span class="category-icon">${icon}</span>${escapeHtml(note.place)}</div>${favStar}</div><div class="popup-text">${escapeHtml(note.text)}</div>${renderReactionsHtml(note.id)}${authorHtml}<div class="popup-footer"><span class="popup-meta">📅 ${date}</span>${actionBtns}</div>${renderCommentsHtml(note.id)}</div>`;
 }
 function renderAllMarkers() {
   let notesToShow = [];
@@ -2001,7 +1942,7 @@ function renderAllMarkers() {
   }
   if (sidebarSearchQuery.trim()) {
     const q = sidebarSearchQuery.toLowerCase().trim();
-    notesToShow = notesToShow.filter(n => { const inPlace = (n.place || '').toLowerCase().includes(q); const inText = (n.text || '').toLowerCase().includes(q); const inTags = (n.tags || []).some(t => t.toLowerCase().includes(q)); return inPlace || inText || inTags; });
+    notesToShow = notesToShow.filter(n => { const inPlace = (n.place || '').toLowerCase().includes(q); const inText = (n.text || '').toLowerCase().includes(q); return inPlace || inText; });
   }
   const openPopupId = openPopupNoteId;
   const idsToShow = new Set(notesToShow.map(n => n.id));
@@ -2053,7 +1994,7 @@ function renderSidebar() {
     if (n.visibility && n.visibility !== 'all' && allGroups.some(g => g.id === n.visibility)) return true;
     return false;
   });
-  if (sidebarSearchQuery.trim()) { const q = sidebarSearchQuery.toLowerCase().trim(); notesToShow = notesToShow.filter(n => { const inPlace = (n.place || '').toLowerCase().includes(q); const inText = (n.text || '').toLowerCase().includes(q); const inTags = (n.tags || []).some(t => t.toLowerCase().includes(q)); return inPlace || inText || inTags; }); }
+  if (sidebarSearchQuery.trim()) { const q = sidebarSearchQuery.toLowerCase().trim(); notesToShow = notesToShow.filter(n => { const inPlace = (n.place || '').toLowerCase().includes(q); const inText = (n.text || '').toLowerCase().includes(q); return inPlace || inText; }); }
   if (notesToShow.length === 0) {
     if (sidebarSearchQuery.trim()) list.innerHTML = `<div class="empty-state">🔍 Aucun résultat pour "${escapeHtml(sidebarSearchQuery)}"</div>`;
     else list.innerHTML = `<div class="empty-state">Aucun souvenir pour l'instant.<br>Cliquez sur la carte pour commencer ✨</div>`;
@@ -2074,7 +2015,7 @@ function renderSidebar() {
     }
     const favStar = isMine ? `<span class="fav-star" onclick="toggleFavorite('${note.id}', event)" title="${isFav ? 'Retirer' : 'Ajouter aux favoris'}">${isFav ? '⭐' : '🤍'}</span>` : (isFav ? '<span class="fav-star" style="cursor:default;">⭐</span>' : '');
     const deleteBtn = isMine ? `<button class="delete-note" onclick="deleteNote('${note.id}', event)">🗑️</button>` : '';
-    return `<div class="note-card ${isMine ? '' : 'friend-note'} ${isFav ? 'favorite' : ''}">${photoHtml}<div class="note-body"><div onclick="focusNote('${note.id}')"><div class="place"><div class="place-left"><span class="category-icon">${icon}</span>${escapeHtml(note.place)}</div>${favStar}</div><div class="text">${escapeHtml(note.text)}</div></div>${renderTagsHtml(note.tags)}${authorHtml}<div class="meta"><span>📅 ${date}</span>${deleteBtn}</div></div></div>`;
+    return `<div class="note-card ${isMine ? '' : 'friend-note'} ${isFav ? 'favorite' : ''}">${photoHtml}<div class="note-body"><div onclick="focusNote('${note.id}')"><div class="place"><div class="place-left"><span class="category-icon">${icon}</span>${escapeHtml(note.place)}</div>${favStar}</div><div class="text">${escapeHtml(note.text)}</div></div>${authorHtml}<div class="meta"><span>📅 ${date}</span>${deleteBtn}</div></div></div>`;
   }).join('');
 }
 function focusNote(id) {
@@ -2549,8 +2490,8 @@ const DRAFT_KEY = 'worldnotes_draft';
 let draftSaveTimeout = null;
 function saveDraft() {
   if (editingNoteId) return;
-  const draft = { place: document.getElementById('placeName').value, text: document.getElementById('noteText').value, date: document.getElementById('noteDate').value, tags: pendingTags, icon: pendingIcon, favorite: pendingIsFavorite, lat: pendingLatLng?.lat, lng: pendingLatLng?.lng, source: pendingSource, savedAt: Date.now() };
-  const isEmpty = !draft.place && !draft.text && draft.tags.length === 0;
+  const draft = { place: document.getElementById('placeName').value, text: document.getElementById('noteText').value, date: document.getElementById('noteDate').value, icon: pendingIcon, favorite: pendingIsFavorite, lat: pendingLatLng?.lat, lng: pendingLatLng?.lng, source: pendingSource, savedAt: Date.now() };
+  const isEmpty = !draft.place && !draft.text;
   if (isEmpty) { localStorage.removeItem(DRAFT_KEY); return; }
   localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
 }
@@ -2566,31 +2507,11 @@ function restoreDraft(draft) {
   document.getElementById('noteDate').value = draft.date || '';
   if (draft.lat && draft.lng) { pendingLatLng = { lat: draft.lat, lng: draft.lng }; pendingSource = draft.source || 'manual'; updateLocationBox(); }
   if (draft.icon) { pendingIcon = draft.icon; document.querySelectorAll('.icon-choice').forEach(c => { c.classList.toggle('active', c.dataset.icon === draft.icon); }); }
-  if (draft.tags && Array.isArray(draft.tags)) { pendingTags = draft.tags; renderTagsInModal(); }
   if (draft.favorite) { pendingIsFavorite = true; updateFavToggle(); }
   const banner = document.getElementById('draftBanner');
-  if (banner && (draft.place || draft.text || (draft.tags && draft.tags.length > 0))) banner.classList.add('visible');
+  if (banner && (draft.place || draft.text)) banner.classList.add('visible');
 }
 function clearDraft() { localStorage.removeItem(DRAFT_KEY); document.getElementById('draftBanner').classList.remove('visible'); showToast('🗑️ Brouillon effacé', 'info'); }
-
-function renderTagsInModal() {
-  const wrapper = document.getElementById('tagsInputWrapper');
-  const input = document.getElementById('tagInputField');
-  wrapper.querySelectorAll('.tag-chip-modal').forEach(c => c.remove());
-  pendingTags.forEach(tag => { const chip = document.createElement('div'); chip.className = 'tag-chip-modal'; chip.innerHTML = `#${escapeHtml(tag)}<span class="remove-tag" data-tag="${escapeAttr(tag)}">×</span>`; wrapper.insertBefore(chip, input); });
-  wrapper.querySelectorAll('.remove-tag').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); removeTag(btn.dataset.tag); }); });
-}
-function addTag(tagText) {
-  const tag = tagText.trim().toLowerCase().replace(/^#/, '').replace(/[^a-z0-9_àâäéèêëïîôöùûüç-]/gi, '');
-  if (!tag || tag.length < 2 || tag.length > 20) return;
-  if (pendingTags.includes(tag)) return;
-  if (pendingTags.length >= 5) { showToast('⚠️ Max 5 tags par souvenir', 'error'); return; }
-  pendingTags.push(tag); renderTagsInModal();
-}
-function removeTag(tag) { pendingTags = pendingTags.filter(t => t !== tag); renderTagsInModal(); }
-const tagInputField = document.getElementById('tagInputField');
-tagInputField.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(tagInputField.value); tagInputField.value = ''; } else if (e.key === 'Backspace' && tagInputField.value === '' && pendingTags.length > 0) { pendingTags.pop(); renderTagsInModal(); } });
-tagInputField.addEventListener('blur', () => { if (tagInputField.value.trim()) { addTag(tagInputField.value); tagInputField.value = ''; } });
 
 const sidebarSearchInput = document.getElementById('sidebarSearch');
 const clearSidebarSearchBtn = document.getElementById('clearSidebarSearch');
@@ -2617,9 +2538,8 @@ function showRandomNote() {
     if (!isMine) { const authorProfile = friendsProfiles[random.userId]; const authorName = authorProfile ? (authorProfile.username ? '@' + authorProfile.username : authorProfile.displayName) : 'Un ami'; const authorAvatar = cloudinaryThumb(authorProfile?.photoURL, 60) || 'https://www.gravatar.com/avatar/?d=mp'; authorHtml = `<div class="popup-author" style="cursor:default;"><img src="${authorAvatar}" alt="${escapeAttr(authorName)}" loading="lazy" /><span>${escapeHtml(authorName)}</span></div>`; }
     let photoHtml = '';
     if (random.photo) photoHtml = `<img class="popup-photo" src="${cloudinaryThumb(random.photo, 700)}" alt="Photo" loading="lazy" onclick="openLightbox('${random.id}', event)" />`;
-    const tagsHtml = renderTagsHtml(random.tags);
     const content = document.getElementById('randomNoteContent');
-    content.innerHTML = `${photoHtml}<div class="popup-body"><h2 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px; text-align: center; text-transform: uppercase; letter-spacing: 1px;">🎲 Souvenir aléatoire</h2><div class="popup-place ${isMine ? '' : 'friend-place'}"><div class="place-left"><span class="category-icon">${icon}</span>${escapeHtml(random.place)}</div>${random.favorite ? '⭐' : ''}</div><div class="popup-text">${escapeHtml(random.text)}</div>${tagsHtml}${authorHtml}<div style="margin-top: 12px; font-size: 0.75rem; color: var(--text-faint);">📅 ${date}</div></div><div class="random-note-actions"><button class="btn-ghost" onclick="closeRandomNote()">Fermer</button><button class="btn-primary" onclick="goToRandomNote()">📍 Voir sur la carte</button><button class="btn-primary" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);" onclick="rollAnotherRandom()">🎲 Autre</button></div>`;
+    content.innerHTML = `${photoHtml}<div class="popup-body"><h2 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px; text-align: center; text-transform: uppercase; letter-spacing: 1px;">🎲 Souvenir aléatoire</h2><div class="popup-place ${isMine ? '' : 'friend-place'}"><div class="place-left"><span class="category-icon">${icon}</span>${escapeHtml(random.place)}</div>${random.favorite ? '⭐' : ''}</div><div class="popup-text">${escapeHtml(random.text)}</div>${authorHtml}<div style="margin-top: 12px; font-size: 0.75rem; color: var(--text-faint);">📅 ${date}</div></div><div class="random-note-actions"><button class="btn-ghost" onclick="closeRandomNote()">Fermer</button><button class="btn-primary" onclick="goToRandomNote()">📍 Voir sur la carte</button><button class="btn-primary" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);" onclick="rollAnotherRandom()">🎲 Autre</button></div>`;
     document.getElementById('randomNoteModal').classList.add('open');
   }, 400);
 }
@@ -2636,11 +2556,10 @@ function haversineDistance(lat1, lon1, lat2, lon2) { const R = 6371; const dLat 
 function extractCountryFromAddress(address) { if (!address) return null; const parts = address.split(',').map(s => s.trim()); if (parts.length >= 3) return parts[parts.length - 1]; if (parts.length === 2) return parts[1]; return null; }
 function extractCityFromAddress(address) { if (!address) return null; const parts = address.split(',').map(s => s.trim()); return parts[0] || null; }
 function calculateStats() {
-  const stats = { totalNotes: myNotes.length, totalFavorites: favoriteNotes.length, totalPhotos: myNotes.filter(n => n.photo).length, countries: new Set(), cities: new Set(), totalDistance: 0, totalTags: myNotes.reduce((acc, n) => acc + (n.tags?.length || 0), 0), totalReactions: Object.values(allReactions).flat().filter(r => { const note = notesByIdCache[r.noteId]; return note && note.userId === currentUser.uid; }).length, totalComments: Object.values(allComments).flat().filter(c => { const note = notesByIdCache[c.noteId]; return note && note.userId === currentUser.uid; }).length, tagCounts: {}, yearCounts: {}, monthCounts: {} };
+  const stats = { totalNotes: myNotes.length, totalFavorites: favoriteNotes.length, totalPhotos: myNotes.filter(n => n.photo).length, countries: new Set(), cities: new Set(), totalDistance: 0, totalReactions: Object.values(allReactions).flat().filter(r => { const note = notesByIdCache[r.noteId]; return note && note.userId === currentUser.uid; }).length, totalComments: Object.values(allComments).flat().filter(c => { const note = notesByIdCache[c.noteId]; return note && note.userId === currentUser.uid; }).length, yearCounts: {}, monthCounts: {} };
   myNotes.forEach(note => { if (note.address) { const country = extractCountryFromAddress(note.address); const city = extractCityFromAddress(note.address); if (country) stats.countries.add(country); if (city) stats.cities.add(city); } });
   const sortedNotes = [...myNotes].sort((a, b) => a.createdAt - b.createdAt);
   for (let i = 1; i < sortedNotes.length; i++) { const prev = sortedNotes[i-1]; const curr = sortedNotes[i]; stats.totalDistance += haversineDistance(prev.lat, prev.lng, curr.lat, curr.lng); }
-  myNotes.forEach(note => { (note.tags || []).forEach(tag => { stats.tagCounts[tag] = (stats.tagCounts[tag] || 0) + 1; }); });
   myNotes.forEach(note => { const date = note.userDate ? new Date(note.userDate) : new Date(note.createdAt); const year = date.getFullYear(); stats.yearCounts[year] = (stats.yearCounts[year] || 0) + 1; });
   return stats;
 }
@@ -2653,7 +2572,6 @@ const BADGES = [
   { id: 'marathon', icon: '📏', title: 'Marathonien', desc: '5000 km parcourus', check: (s) => s.totalDistance >= 5000 },
   { id: 'world_tour', icon: '🌎', title: 'Tour du monde', desc: '40000 km parcourus', check: (s) => s.totalDistance >= 40000 },
   { id: 'collector', icon: '⭐', title: 'Collectionneur', desc: '10 favoris', check: (s) => s.totalFavorites >= 10 },
-  { id: 'organizer', icon: '🏷️', title: 'Organisateur', desc: '5 tags différents', check: (s) => Object.keys(s.tagCounts).length >= 5 },
   { id: 'photographer', icon: '📸', title: 'Photographe', desc: '20 photos', check: (s) => s.totalPhotos >= 20 },
   { id: 'social', icon: '💬', title: 'Social', desc: '10 réactions reçues', check: (s) => s.totalReactions >= 10 },
   { id: 'popular', icon: '🌟', title: 'Populaire', desc: '10 commentaires reçus', check: (s) => s.totalComments >= 10 }
@@ -2663,8 +2581,7 @@ function renderStatsContent(tab) {
   const stats = calculateStats();
   if (tab === 'dashboard') { body.innerHTML = `<div class="stats-grid"><div class="stat-card"><span class="stat-icon">📌</span><div class="stat-value">${stats.totalNotes}</div><div class="stat-label">Souvenirs</div></div><div class="stat-card"><span class="stat-icon">🌍</span><div class="stat-value">${stats.countries.size}</div><div class="stat-label">Pays</div></div><div class="stat-card"><span class="stat-icon">🏙️</span><div class="stat-value">${stats.cities.size}</div><div class="stat-label">Villes</div></div><div class="stat-card"><span class="stat-icon">📏</span><div class="stat-value">${Math.round(stats.totalDistance).toLocaleString('fr-FR')}</div><div class="stat-label">km parcourus</div></div><div class="stat-card"><span class="stat-icon">⭐</span><div class="stat-value">${stats.totalFavorites}</div><div class="stat-label">Favoris</div></div><div class="stat-card"><span class="stat-icon">📸</span><div class="stat-value">${stats.totalPhotos}</div><div class="stat-label">Photos</div></div><div class="stat-card"><span class="stat-icon">💬</span><div class="stat-value">${stats.totalReactions}</div><div class="stat-label">Réactions reçues</div></div><div class="stat-card"><span class="stat-icon">🗨️</span><div class="stat-value">${stats.totalComments}</div><div class="stat-label">Commentaires</div></div></div>`; }
   else if (tab === 'badges') { const unlocked = BADGES.filter(b => b.check(stats)).length; body.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;"><div class="stats-section-title" style="margin: 0;">🏆 Badges débloqués</div><div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">${unlocked} / ${BADGES.length}</div></div><div class="badges-grid">${BADGES.map(badge => { const isUnlocked = badge.check(stats); return `<div class="badge-card ${isUnlocked ? 'unlocked' : ''}"><span class="badge-icon">${badge.icon}</span><div class="badge-title">${badge.title}</div><div class="badge-desc">${badge.desc}</div></div>`; }).join('')}</div>`; }
-  else if (tab === 'timeline') { if (myNotes.length === 0) { body.innerHTML = `<div class="stats-empty">Aucun souvenir à afficher dans la timeline.</div>`; return; } const sorted = [...myNotes].sort((a, b) => { const dateA = a.userDate ? new Date(a.userDate).getTime() : a.createdAt; const dateB = b.userDate ? new Date(b.userDate).getTime() : b.createdAt; return dateB - dateA; }); body.innerHTML = `<div class="stats-section-title">📅 Timeline de tes souvenirs</div><div class="timeline">${sorted.map((note, idx) => { const date = note.userDate ? new Date(note.userDate) : new Date(note.createdAt); const dateStr = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); const icon = note.icon || '📍'; return `<div class="timeline-item ${note.favorite ? 'favorite' : ''}" style="animation-delay: ${Math.min(idx * 0.03, 0.5)}s"><div class="timeline-date">${dateStr}</div><div class="timeline-place"><span>${icon}</span>${escapeHtml(note.place)}${note.favorite ? ' ⭐' : ''}</div><div class="timeline-text">${escapeHtml(note.text)}</div>${renderTagsHtml(note.tags)}</div>`; }).join('')}</div>`; }
-  else if (tab === 'tags') { const sortedTags = Object.entries(stats.tagCounts).sort((a, b) => b[1] - a[1]); if (sortedTags.length === 0) { body.innerHTML = `<div class="stats-empty">Aucun tag utilisé pour l'instant.<br>Ajoute des tags à tes souvenirs pour les voir ici !</div>`; return; } const maxCount = sortedTags[0][1]; body.innerHTML = `<div class="stats-section-title">🏷️ Tes tags les plus utilisés</div><div class="top-tags">${sortedTags.map(([tag, count]) => `<div class="top-tag-row"><div class="top-tag-name">#${escapeHtml(tag)}</div><div class="top-tag-bar"><div class="top-tag-fill" style="width: ${(count / maxCount) * 100}%"></div></div><div class="top-tag-count">${count}</div></div>`).join('')}</div>`; }
+  else if (tab === 'timeline') { if (myNotes.length === 0) { body.innerHTML = `<div class="stats-empty">Aucun souvenir à afficher dans la timeline.</div>`; return; } const sorted = [...myNotes].sort((a, b) => { const dateA = a.userDate ? new Date(a.userDate).getTime() : a.createdAt; const dateB = b.userDate ? new Date(b.userDate).getTime() : b.createdAt; return dateB - dateA; }); body.innerHTML = `<div class="stats-section-title">📅 Timeline de tes souvenirs</div><div class="timeline">${sorted.map((note, idx) => { const date = note.userDate ? new Date(note.userDate) : new Date(note.createdAt); const dateStr = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); const icon = note.icon || '📍'; return `<div class="timeline-item ${note.favorite ? 'favorite' : ''}" style="animation-delay: ${Math.min(idx * 0.03, 0.5)}s"><div class="timeline-date">${dateStr}</div><div class="timeline-place"><span>${icon}</span>${escapeHtml(note.place)}${note.favorite ? ' ⭐' : ''}</div><div class="timeline-text">${escapeHtml(note.text)}</div></div>`; }).join('')}</div>`; }
 }
 
 function editNoteFromPopup(id, event) {
@@ -2679,7 +2596,6 @@ function editNoteFromPopup(id, event) {
   pendingIcon = note.icon || '📍';
   pendingPhoto = note.photo || null;
   pendingIsFavorite = note.favorite === true;
-  pendingTags = note.tags ? [...note.tags] : [];
   pendingVisibility = note.visibility || 'all';
   const dateInput = document.getElementById('noteDate');
   if (note.userDate) dateInput.value = note.userDate; else dateInput.value = '';
@@ -2687,7 +2603,6 @@ function editNoteFromPopup(id, event) {
   document.querySelectorAll('.icon-choice').forEach(c => { c.classList.toggle('active', c.dataset.icon === (note.icon || '📍')); });
   if (note.photo) { document.getElementById('photoPreview').src = cloudinaryThumb(note.photo, 600); document.getElementById('photoPreviewWrapper').classList.add('visible'); document.getElementById('photoUploadZone').style.display = 'none'; }
   else { document.getElementById('photoPreview').src = ''; document.getElementById('photoPreviewWrapper').classList.remove('visible'); document.getElementById('photoUploadZone').style.display = ''; }
-  renderTagsInModal();
   if (note.address) showAddress(note.address); else hideAddress();
   updateLocationBox();
   updateVisibilityOptions();
@@ -2755,7 +2670,7 @@ function updateNotesCountInfo() { const info = document.getElementById('notesCou
 
 function exportNotes() {
   if (myNotes.length === 0) { showToast('⚠️ Aucun souvenir à exporter', 'error'); return; }
-  const exportData = { app: 'World Notes', version: 14, exportedAt: new Date().toISOString(), notesCount: myNotes.length, notes: myNotes.map(n => { const { userId, ...rest } = n; return rest; }) };
+  const exportData = { app: 'World Notes', version: 15, exportedAt: new Date().toISOString(), notesCount: myNotes.length, notes: myNotes.map(n => { const { userId, ...rest } = n; return rest; }) };
   const json = JSON.stringify(exportData, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -2778,7 +2693,7 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
     if (validNotes.length === 0) throw new Error('Aucune note valide');
     if (!confirm(`Importer ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} ?`)) { e.target.value = ''; return; }
     const batch = db.batch(); const notesRef = db.collection('notes');
-    validNotes.forEach(note => { const newRef = notesRef.doc(); batch.set(newRef, { userId: currentUser.uid, place: note.place, text: note.text, lat: note.lat, lng: note.lng, createdAt: note.createdAt || Date.now(), source: note.source || 'import', icon: note.icon || '📍', photo: note.photo || null, favorite: note.favorite || false, userDate: note.userDate || null, address: note.address || null, tags: note.tags || [], visibility: 'all' }); });
+    validNotes.forEach(note => { const newRef = notesRef.doc(); batch.set(newRef, { userId: currentUser.uid, place: note.place, text: note.text, lat: note.lat, lng: note.lng, createdAt: note.createdAt || Date.now(), source: note.source || 'import', icon: note.icon || '📍', photo: note.photo || null, favorite: note.favorite || false, userDate: note.userDate || null, address: note.address || null, visibility: 'all' }); });
     await batch.commit();
     showToast(`✅ ${validNotes.length} importé${validNotes.length > 1 ? 's' : ''} !`, 'success');
   } catch (err) { showToast('❌ Fichier invalide', 'error'); }
@@ -2839,9 +2754,8 @@ function wizardNext() {
   } else { saveNote(); }
 }
 function openAddModal() {
-  editingNoteId = null; pendingIsFavorite = false; pendingTags = [];
-  updateFavToggle(); renderTagsInModal();
-  document.getElementById('tagInputField').value = '';
+  editingNoteId = null; pendingIsFavorite = false;
+  updateFavToggle();
   document.getElementById('noteDate').value = '';
   document.getElementById('placeName').value = '';
   document.getElementById('noteText').value = '';
@@ -2871,10 +2785,9 @@ function closeAddModal() {
   document.getElementById('noteText').value = '';
   document.getElementById('searchInput').value = '';
   document.getElementById('noteDate').value = '';
-  document.getElementById('tagInputField').value = '';
   closeAutocomplete(); clearSearchButton(); hideAddress();
-  pendingLatLng = null; pendingSource = null; pendingIcon = '📍'; pendingIsFavorite = false; pendingTags = []; editingNoteId = null; pendingVisibility = 'all';
-  updateFavToggle(); renderTagsInModal(); removePhoto();
+  pendingLatLng = null; pendingSource = null; pendingIcon = '📍'; pendingIsFavorite = false; editingNoteId = null; pendingVisibility = 'all';
+  updateFavToggle(); removePhoto();
   document.querySelectorAll('.icon-choice').forEach(c => { c.classList.toggle('active', c.dataset.icon === '📍'); });
   if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
   const btn = document.getElementById('gpsBtn'); btn.disabled = false; btn.innerHTML = '🎯 GPS';
@@ -2983,7 +2896,6 @@ async function saveNote() {
   if (!currentUser) { showToast('⚠️ Tu dois être connecté', 'error'); return; }
   localStorage.removeItem(DRAFT_KEY);
   const db1 = document.getElementById('draftBanner'); if (db1) db1.classList.remove('visible');
-  if (tagInputField.value.trim()) { addTag(tagInputField.value); tagInputField.value = ''; }
   const saveBtn = document.getElementById('wizardNextBtn');
   saveBtn.disabled = true;
   const originalHTML = saveBtn.innerHTML;
@@ -2993,7 +2905,7 @@ async function saveNote() {
     const addressEl = document.getElementById('addressDisplay');
     const address = addressEl.classList.contains('visible') ? addressEl.textContent.replace('📍 Adresse détectée : ', '').trim() : null;
     if (editingNoteId) {
-      await db.collection('notes').doc(editingNoteId).update({ place, text, lat, lng, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, tags: pendingTags, visibility: pendingVisibility, updatedAt: Date.now() });
+      await db.collection('notes').doc(editingNoteId).update({ place, text, lat, lng, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, visibility: pendingVisibility, updatedAt: Date.now() });
       const updatedId = editingNoteId;
       editingNoteId = null;
       closeAddModal();
@@ -3002,7 +2914,7 @@ async function saveNote() {
       setTimeout(() => { const m = markers[updatedId]; if (m) m.openPopup(); }, 800);
     } else {
       const now = Date.now();
-      await db.collection('notes').add({ userId: currentUser.uid, place, text, lat, lng, createdAt: now, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, tags: pendingTags, visibility: pendingVisibility });
+      await db.collection('notes').add({ userId: currentUser.uid, place, text, lat, lng, createdAt: now, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, visibility: pendingVisibility });
       closeAddModal();
       showToast('☁️ Souvenir enregistré !', 'success');
       map.flyTo([lat, lng], 15, { duration: 1.2 });
@@ -3043,29 +2955,19 @@ document.getElementById('noteVisibility')?.addEventListener('change', (e) => { p
 document.getElementById('placeName')?.addEventListener('input', updateWizardNextState);
 document.getElementById('noteText')?.addEventListener('input', updateWizardNextState);
 
-/* ═══════════════════════════════════════════
-   📱 FIX CLAVIER MOBILE iOS (version finale)
-   ═══════════════════════════════════════════ */
 (function() {
   function onInputFocus(e) {
     const el = e.target;
     if (!el || (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA')) return;
     if (!el.closest('#wizardBody')) return;
-    
     setTimeout(() => {
       const yOffset = 20;
       const wizardBody = document.getElementById('wizardBody');
       if (!wizardBody) return;
-      
       const inputTop = el.offsetTop;
-      
-      wizardBody.scrollTo({
-        top: Math.max(0, inputTop - yOffset),
-        behavior: 'smooth'
-      });
+      wizardBody.scrollTo({ top: Math.max(0, inputTop - yOffset), behavior: 'smooth' });
     }, 400);
   }
-
   document.addEventListener('focusin', onInputFocus);
 })();
 </script>
