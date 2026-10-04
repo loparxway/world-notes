@@ -50,6 +50,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 @keyframes slideUpBanner{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 @keyframes onboardingIn{from{opacity:0;transform:translateY(30px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes reactionPulse{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes wizardSlideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes wizardSlideInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes wizardSlideInLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
 #landingScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);overflow-y:auto;z-index:10000;padding:20px}
 #landingScreen.hidden{display:none}
 .landing-container{max-width:900px;margin:0 auto;padding:60px 20px 80px}
@@ -126,6 +129,7 @@ header{position:fixed;top:0;left:0;right:0;height:64px;background:var(--bg-heade
 button{font-family:inherit;font-size:0.9rem;font-weight:600;padding:10px 18px;border:none;border-radius:10px;cursor:pointer;transition:all 0.25s}
 .btn-primary{background:linear-gradient(135deg,#f97316,#ea580c);color:white;box-shadow:0 4px 12px rgba(249,115,22,0.35)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(249,115,22,0.5)}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none !important;box-shadow:none !important}
 .btn-ghost{background:rgba(148,163,184,0.15);color:var(--text-primary);border:1px solid var(--border-hover)}
 .btn-ghost:hover{background:rgba(148,163,184,0.25);transform:translateY(-2px)}
 .btn-icon{padding:10px 14px;font-size:1.1rem;position:relative}
@@ -512,26 +516,257 @@ textarea{resize:vertical;min-height:90px}
 ::-webkit-scrollbar{width:8px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(148,163,184,0.3);border-radius:4px}
-@media (max-width:768px){
-.landing-hero h1{font-size:2.2rem}.landing-globe{font-size:4rem}.landing-container{padding:40px 16px 60px}.btn-landing-primary{padding:16px 32px;font-size:1rem}
-header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.3rem}.logo span:not(.globe){display:none}
-.actions{gap:6px}.actions button{padding:8px 10px;font-size:0.78rem;height:38px;display:flex;align-items:center;justify-content:center}
-.btn-icon{padding:8px 10px;font-size:1rem;min-width:38px}.user-avatar{width:34px;height:34px}
-#sidebar{width:100%}.modal{padding:22px}.settings-panel{width:calc(100% - 40px);right:20px;left:20px}
-.icon-picker{grid-template-columns:repeat(4,1fr)}.lightbox{padding:20px}
-.leaflet-bottom.leaflet-right{bottom:140px !important}.leaflet-bottom.leaflet-left{bottom:140px !important}
-.map-filter{left:12px;right:80px;bottom:16px;padding:5px;max-width:none}
-.filter-btn{padding:8px 8px;font-size:0.68rem;flex-shrink:0}.filter-btn .count{min-width:14px;padding:1px 4px;font-size:0.6rem}
-.sync-indicator{font-size:0.75rem;padding:6px 14px}.legal-modal-content{padding:22px}
-.floating-buttons{bottom:80px;right:12px;gap:10px}.btn-float{width:48px;height:48px;font-size:1.3rem}
-#map.with-sidebar{right:0}.stats-modal-content{max-height:100vh;border-radius:0}.stats-header{padding:20px}
-.stats-header h2{font-size:1.2rem}.stats-tabs{padding:12px 20px 0;overflow-x:auto}.stats-tab{padding:8px 12px;font-size:0.75rem;white-space:nowrap}
-.stats-body{padding:20px}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-card .stat-value{font-size:1.5rem}.badges-grid{grid-template-columns:repeat(2,1fr)}
-.onboarding-card{padding:28px 22px}
-.onboarding-header h1{font-size:1.3rem}
-.onboarding-globe{font-size:2.8rem}
-.onboarding-avatar-wrapper{width:90px;height:90px}
-.onboarding-avatar{width:90px;height:90px}
+
+/* ═══════════════════════════════════════════
+   🪄 WIZARD AJOUT SOUVENIR
+   ═══════════════════════════════════════════ */
+#modalOverlay {
+  padding: 0;
+  align-items: flex-end;
+}
+@media (min-width: 769px) {
+  #modalOverlay {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+.wizard-modal {
+  background: var(--bg-modal);
+  border: 1px solid var(--border-color);
+  width: 100%;
+  max-width: 560px;
+  height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: wizardSlideUp 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+  border-radius: 0;
+  box-shadow: var(--shadow-lg);
+}
+@media (min-width: 769px) {
+  .wizard-modal {
+    max-height: 92vh;
+    height: auto;
+    border-radius: 22px;
+    animation: onboardingIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+/* Header */
+.wizard-header {
+  flex-shrink: 0;
+  padding: calc(16px + env(safe-area-inset-top, 0)) 20px 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-modal);
+  position: relative;
+}
+.wizard-back {
+  background: rgba(148, 163, 184, 0.1);
+  border: none;
+  color: var(--text-primary);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+.wizard-back:hover {
+  background: rgba(148, 163, 184, 0.2);
+  transform: scale(1.05);
+}
+.wizard-back.hidden {
+  visibility: hidden;
+}
+.wizard-title-wrap {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+.wizard-step-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+.wizard-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.wizard-close {
+  background: rgba(148, 163, 184, 0.1);
+  border: none;
+  color: var(--text-muted);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+.wizard-close:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* Barre de progression */
+.wizard-progress {
+  flex-shrink: 0;
+  height: 3px;
+  background: rgba(148, 163, 184, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+.wizard-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 33.333%;
+  background: linear-gradient(90deg, #f97316, #fbbf24);
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 0 3px 3px 0;
+}
+
+/* Corps */
+.wizard-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+.wizard-step {
+  padding: 24px 20px 32px;
+  display: none;
+  animation: wizardSlideInRight 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+.wizard-step.active {
+  display: block;
+}
+.wizard-step.back {
+  animation: wizardSlideInLeft 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.wizard-step-headline {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.wizard-step-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 8px;
+}
+.wizard-step-headline h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.wizard-step-headline p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Champ position wizard */
+.wizard-location-box {
+  background: var(--bg-input);
+  border: 2px solid var(--border-hover);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.25s;
+}
+.wizard-location-box.gps,
+.wizard-location-box.manual,
+.wizard-location-box.search {
+  border-style: solid;
+}
+.wizard-location-box .coords {
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wizard-location-box.gps .coords { color: #22c55e; }
+.wizard-location-box.search .coords { color: #3b82f6; }
+.wizard-location-box.manual .coords { color: #f97316; }
+
+/* Boutons footer wizard */
+.wizard-footer {
+  flex-shrink: 0;
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0));
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-modal);
+  display: flex;
+  gap: 10px;
+}
+.wizard-footer .btn-next {
+  flex: 1;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.wizard-footer .btn-next:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.5);
+}
+.wizard-footer .btn-next:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Masquer les éléments inutiles du wizard */
+.wizard-step .help-text {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  margin-top: 6px;
+  line-height: 1.4;
+  text-align: center;
 }
 </style>
 </head><body>
@@ -580,7 +815,7 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
   </div>
 </div>
 
-<!-- ONBOARDING (première connexion) -->
+<!-- ONBOARDING -->
 <div id="onboardingScreen">
   <div class="onboarding-card">
     <div class="onboarding-header">
@@ -722,43 +957,151 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
     <div class="notes-list" id="notesList"><div class="empty-state">Aucun souvenir pour l'instant.</div></div>
   </aside>
 
+  <!-- ═══════════════════════════════════════════
+       🪄 WIZARD AJOUT SOUVENIR (3 étapes)
+       ═══════════════════════════════════════════ -->
   <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <h2 id="modalTitle">📍 Nouveau souvenir</h2>
-      <p class="subtitle" id="modalSubtitle">Cherche un lieu, clique sur la carte, ou utilise ton GPS.</p>
-      <div class="draft-restored-banner" id="draftBanner"><span>💾 Brouillon restauré</span><button onclick="clearDraft()">Effacer le brouillon</button></div>
-      <div class="form-group" id="visibilityGroupContainer" style="display: none;">
-        <label>👁️ Visible par</label>
-        <select id="noteVisibility">
-          <option value="all">🌍 Tout le monde (mes amis)</option>
-        </select>
-        <div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px;">
-          Choisis un groupe pour restreindre la visibilité
+    <div class="wizard-modal">
+      <!-- Header avec bouton ←, titre, ✕ -->
+      <div class="wizard-header">
+        <button class="wizard-back" id="wizardBackBtn" onclick="goToStep(currentWizardStep - 1)">←</button>
+        <div class="wizard-title-wrap">
+          <div class="wizard-step-label" id="wizardStepLabel">Étape 1 sur 3</div>
+          <div class="wizard-title" id="wizardTitle">📍 Où ?</div>
+        </div>
+        <button class="wizard-close" onclick="closeAddModal()">✕</button>
+      </div>
+
+      <!-- Barre de progression -->
+      <div class="wizard-progress">
+        <div class="wizard-progress-bar" id="wizardProgressBar"></div>
+      </div>
+
+      <!-- Corps scrollable -->
+      <div class="wizard-body" id="wizardBody">
+        <!-- ═══ ÉTAPE 1 : OÙ ? ═══ -->
+        <div class="wizard-step active" data-step="1">
+          <div class="wizard-step-headline">
+            <span class="wizard-step-icon">📍</span>
+            <h3>Où se passe ce souvenir ?</h3>
+            <p>Cherche un lieu, utilise ton GPS ou clique sur la carte</p>
+          </div>
+
+          <div class="draft-restored-banner" id="draftBanner">
+            <span>💾 Brouillon restauré</span>
+            <button onclick="clearDraft()">Effacer</button>
+          </div>
+
+          <div class="form-group">
+            <div class="search-wrapper">
+              <div class="search-input-wrapper">
+                <span class="search-icon">🔎</span>
+                <input type="text" id="searchInput" placeholder="Rechercher un lieu..." autocomplete="off" />
+                <div class="search-spinner" id="searchSpinner"></div>
+                <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
+              </div>
+              <div class="autocomplete-list" id="autocompleteList"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="wizard-location-box" id="locationBox">
+              <span class="icon" id="locationIcon">📌</span>
+              <span class="coords" id="coordsText">Aucune position sélectionnée</span>
+              <button class="btn-gps-inline" id="gpsBtn" onclick="useMyLocation()">🎯 GPS</button>
+            </div>
+            <div class="address-display" id="addressDisplay"></div>
+          </div>
+
+          <div class="form-group">
+            <input type="text" id="placeName" placeholder="Nom du lieu (ex: Tour Eiffel)" />
+          </div>
+        </div>
+
+        <!-- ═══ ÉTAPE 2 : QUOI ? ═══ -->
+        <div class="wizard-step" data-step="2">
+          <div class="wizard-step-headline">
+            <span class="wizard-step-icon">📝</span>
+            <h3>Raconte ce moment</h3>
+            <p>Ajoute une anecdote, une photo et la date</p>
+          </div>
+
+          <div class="form-group">
+            <textarea id="noteText" placeholder="Qu'est-ce qui a rendu ce moment spécial ?" style="min-height: 130px;"></textarea>
+          </div>
+
+          <div class="form-group">
+            <input type="date" id="noteDate" />
+            <div class="help-text">📅 Date du souvenir (optionnel)</div>
+          </div>
+
+          <div class="form-group">
+            <div class="photo-upload-zone" id="photoUploadZone" onclick="document.getElementById('photoInput').click()">
+              <span class="photo-upload-icon">📷</span>
+              <div class="photo-upload-text">Ajouter une photo <b>(optionnel)</b></div>
+            </div>
+            <input type="file" id="photoInput" accept="image/*" style="display: none;" />
+            <div class="photo-preview-wrapper" id="photoPreviewWrapper">
+              <img class="photo-preview" id="photoPreview" alt="Aperçu" />
+              <button class="photo-remove" onclick="removePhoto(event)">×</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ ÉTAPE 3 : DÉTAILS ═══ -->
+        <div class="wizard-step" data-step="3">
+          <div class="wizard-step-headline">
+            <span class="wizard-step-icon">🎨</span>
+            <h3>Personnalise ton souvenir</h3>
+            <p>Ajoute une catégorie, des tags et tes préférences</p>
+          </div>
+
+          <div class="form-group">
+            <div class="fav-toggle" id="favToggle" onclick="toggleFavInModal()">
+              <span class="fav-icon" id="favIcon">🤍</span>
+              <span class="fav-label" id="favLabel">Marquer comme favori</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; display: block;">Catégorie</label>
+            <div class="icon-picker" id="iconPicker">
+              <div class="icon-choice active" data-icon="📍" onclick="chooseIcon(this)">📍</div>
+              <div class="icon-choice" data-icon="🏖️" onclick="chooseIcon(this)">🏖️</div>
+              <div class="icon-choice" data-icon="🏛️" onclick="chooseIcon(this)">🏛️</div>
+              <div class="icon-choice" data-icon="🍕" onclick="chooseIcon(this)">🍕</div>
+              <div class="icon-choice" data-icon="⛰️" onclick="chooseIcon(this)">⛰️</div>
+              <div class="icon-choice" data-icon="🌃" onclick="chooseIcon(this)">🌃</div>
+              <div class="icon-choice" data-icon="🏨" onclick="chooseIcon(this)">🏨</div>
+              <div class="icon-choice" data-icon="🎭" onclick="chooseIcon(this)">🎭</div>
+              <div class="icon-choice" data-icon="🌊" onclick="chooseIcon(this)">🌊</div>
+              <div class="icon-choice" data-icon="🛍️" onclick="chooseIcon(this)">🛍️</div>
+              <div class="icon-choice" data-icon="🌲" onclick="chooseIcon(this)">🌲</div>
+              <div class="icon-choice" data-icon="❤️" onclick="chooseIcon(this)">❤️</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; display: block;">Tags (max 5)</label>
+            <div class="tags-input-wrapper" id="tagsInputWrapper" onclick="document.getElementById('tagInputField').focus()">
+              <input type="text" id="tagInputField" placeholder="Ex: été, famille..." maxlength="20" />
+            </div>
+            <div class="help-text">Appuie sur <b>Entrée</b> pour valider un tag</div>
+          </div>
+
+          <div class="form-group" id="visibilityGroupContainer" style="display: none;">
+            <label style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; display: block;">👁️ Visible par</label>
+            <select id="noteVisibility">
+              <option value="all">🌍 Tout le monde (mes amis)</option>
+            </select>
+          </div>
         </div>
       </div>
-      <div class="form-group"><label>⭐ Favori</label><div class="fav-toggle" id="favToggle" onclick="toggleFavInModal()"><span class="fav-icon" id="favIcon">🤍</span><span class="fav-label" id="favLabel">Marquer comme favori</span></div></div>
-      <div class="form-group"><label>Catégorie</label><div class="icon-picker" id="iconPicker">
-        <div class="icon-choice active" data-icon="📍" onclick="chooseIcon(this)">📍</div>
-        <div class="icon-choice" data-icon="🏖️" onclick="chooseIcon(this)">🏖️</div>
-        <div class="icon-choice" data-icon="🏛️" onclick="chooseIcon(this)">🏛️</div>
-        <div class="icon-choice" data-icon="🍕" onclick="chooseIcon(this)">🍕</div>
-        <div class="icon-choice" data-icon="⛰️" onclick="chooseIcon(this)">⛰️</div>
-        <div class="icon-choice" data-icon="🌃" onclick="chooseIcon(this)">🌃</div>
-        <div class="icon-choice" data-icon="🏨" onclick="chooseIcon(this)">🏨</div>
-        <div class="icon-choice" data-icon="🎭" onclick="chooseIcon(this)">🎭</div>
-        <div class="icon-choice" data-icon="🌊" onclick="chooseIcon(this)">🌊</div>
-        <div class="icon-choice" data-icon="🛍️" onclick="chooseIcon(this)">🛍️</div>
-        <div class="icon-choice" data-icon="🌲" onclick="chooseIcon(this)">🌲</div>
-        <div class="icon-choice" data-icon="❤️" onclick="chooseIcon(this)">❤️</div>
-      </div></div>
-      <div class="form-group"><label>🏷️ Tags</label><div class="tags-input-wrapper" id="tagsInputWrapper" onclick="document.getElementById('tagInputField').focus()"><input type="text" id="tagInputField" placeholder="Ajouter un tag..." maxlength="20" /></div><div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px;">Appuie sur <b>Entrée</b> ou <b>virgule</b> pour valider un tag (max 5)</div></div>
-      <div class="form-group"><label for="searchInput">🔎 Rechercher un lieu</label><div class="search-wrapper"><div class="search-input-wrapper"><span class="search-icon">🔎</span><input type="text" id="searchInput" placeholder="Ex: Paris, Tokyo..." autocomplete="off" /><div class="search-spinner" id="searchSpinner"></div><button class="search-clear" id="searchClear" onclick="clearSearch()">×</button></div><div class="autocomplete-list" id="autocompleteList"></div></div></div>
-      <div class="form-group"><label>Position</label><div class="location-box" id="locationBox"><span class="icon" id="locationIcon">📌</span><span class="coords" id="coordsText">Aucune position sélectionnée</span><button class="btn-gps-inline" id="gpsBtn" onclick="useMyLocation()">🎯 Ma position</button></div><div class="address-display" id="addressDisplay"></div></div>
-      <div class="form-group"><label for="placeName">Lieu</label><input type="text" id="placeName" placeholder="Ex: Paris, France" /></div>
-      <div class="form-group"><label for="noteDate">📅 Date du souvenir</label><input type="date" id="noteDate" /><div style="font-size: 0.7rem; color: var(--text-faint); margin-top: 4px;">Laisse vide pour utiliser la date du jour</div></div>
-      <div class="form-group"><label for="noteText">Votre anecdote</label><textarea id="noteText" placeholder="Raconte ton souvenir..."></textarea></div>
-      <div class="form-group"><label>📸 Photo (optionnel)</label><div class="photo-upload-zone" id="photoUploadZone" onclick="document.getElementById('photoInput').click()"><span class="photo-upload-icon">📷</span><div class="photo-upload-text"><b>Clique</b> pour ajouter une photo</div></div><input type="file" id="photoInput" accept="image/*" style="display: none;" /><div class="photo-preview-wrapper" id="photoPreviewWrapper"><img class="photo-preview" id="photoPreview" alt="Aperçu" /><button class="photo-remove" onclick="removePhoto(event)">×</button></div></div>
-      <div class="modal-actions"><button class="btn-ghost" onclick="closeAddModal()">Annuler</button><button class="btn-primary" id="saveNoteBtn" onclick="saveNote()">💾 Enregistrer</button></div>
+
+      <!-- Footer -->
+      <div class="wizard-footer">
+        <button class="btn-next" id="wizardNextBtn" onclick="wizardNext()">Continuer →</button>
+      </div>
     </div>
   </div>
 
@@ -1058,6 +1401,7 @@ let currentEditingGroupId = null;
 let currentViewingGroupId = null;
 let pendingGroupEmoji = '🏖️';
 let unsubscribeGroups = null;
+let currentWizardStep = 1;
 
 /* 🔐 AUTH */
 function signInWithGoogle() {
@@ -2106,14 +2450,13 @@ function focusNote(id) {
 async function deleteNote(id, event) { event.stopPropagation(); if (!confirm('Supprimer ce souvenir ?')) return; try { await db.collection('notes').doc(id).delete(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
 async function deleteNoteFromPopup(id, event) { if (event) event.stopPropagation(); if (!confirm('Supprimer ce souvenir ? Action définitive.')) return; try { await db.collection('notes').doc(id).delete(); map.closePopup(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
 
-/* ⚡ RÉACTIONS - VERSION CORRIGÉE */
+/* ⚡ RÉACTIONS */
 const pendingReactions = new Set();
 
 async function toggleReaction(noteId, emoji, event) {
   if (event) event.stopPropagation();
   if (!currentUser) return;
 
-  // 🔒 Anti double-clic
   const key = `${noteId}_${emoji}`;
   if (pendingReactions.has(key)) return;
   pendingReactions.add(key);
@@ -2121,7 +2464,6 @@ async function toggleReaction(noteId, emoji, event) {
   const reactions = allReactions[noteId] || [];
   const existing = reactions.find(r => r.userId === currentUser.uid && r.emoji === emoji);
 
-  // ⚡ Mise à jour optimiste de l'UI (instantané)
   if (!allReactions[noteId]) allReactions[noteId] = [];
 
   if (existing) {
@@ -2137,7 +2479,6 @@ async function toggleReaction(noteId, emoji, event) {
     });
   }
 
-  // 🔄 Rafraîchit IMMÉDIATEMENT l'UI
   updateReactionsUI(noteId, emoji);
 
   try {
@@ -2155,7 +2496,6 @@ async function toggleReaction(noteId, emoji, event) {
   } catch (err) {
     console.error('Erreur toggleReaction:', err);
     showToast('❌ Erreur', 'error');
-    // ↩️ Rollback en cas d'erreur
     if (existing) {
       allReactions[noteId].push(existing);
     } else {
@@ -2169,7 +2509,6 @@ async function toggleReaction(noteId, emoji, event) {
   }
 }
 
-// 🔄 Met à jour la barre de réactions dans TOUTES les vues ouvertes
 function updateReactionsUI(noteId, clickedEmoji) {
   const newHtml = renderReactionsHtml(noteId);
 
@@ -2190,18 +2529,15 @@ function updateReactionsUI(noteId, clickedEmoji) {
     }
   };
 
-  // 1) Popup Leaflet ouvert
   if (map && map._popup && openPopupNoteId === noteId) {
     replaceBar(map._popup.getElement());
   }
 
-  // 2) Modale détail note (mobile)
   const detailModal = document.getElementById('noteDetailModal');
   if (detailModal && detailModal.classList.contains('open')) {
     replaceBar(detailModal);
   }
 
-  // 3) Modale "Souvenir aléatoire"
   const randomModal = document.getElementById('randomNoteModal');
   if (randomModal && randomModal.classList.contains('open') && currentRandomNoteId === noteId) {
     replaceBar(randomModal);
@@ -2785,9 +3121,8 @@ function renderStatsContent(tab) {
 function editNoteFromPopup(id, event) {
   if (event) event.stopPropagation();
   const note = notesByIdCache[id]; if (!note || note.userId !== currentUser.uid) return;
-  editingNoteId = id; map.closePopup();
-  document.getElementById('modalTitle').textContent = '✏️ Modifier le souvenir';
-  document.getElementById('modalSubtitle').textContent = 'Modifie les infos puis enregistre.';
+  editingNoteId = id;
+  if (map) map.closePopup();
   document.getElementById('placeName').value = note.place;
   document.getElementById('noteText').value = note.text;
   pendingLatLng = { lat: note.lat, lng: note.lng };
@@ -2807,7 +3142,8 @@ function editNoteFromPopup(id, event) {
   if (note.address) showAddress(note.address); else hideAddress();
   updateLocationBox();
   updateVisibilityOptions();
-  document.getElementById('saveNoteBtn').innerHTML = '💾 Mettre à jour';
+  // Ouvre le wizard en mode édition, à l'étape 3 avec bouton "Terminer"
+  goToStep(3, true);
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('placeName').focus(), 100);
 }
@@ -2927,24 +3263,120 @@ function updateVisibilityOptions() {
   });
   select.value = pendingVisibility;
 }
+
+/* ═══════════════════════════════════════════
+   🪄 WIZARD LOGIC
+   ═══════════════════════════════════════════ */
+function goToStep(step, isEdit = false) {
+  if (step < 1 || step > 3) return;
+  const previousStep = currentWizardStep;
+  currentWizardStep = step;
+
+  // Animation direction
+  const steps = document.querySelectorAll('.wizard-step');
+  steps.forEach(s => {
+    s.classList.remove('active', 'back');
+  });
+  const activeStep = document.querySelector(`.wizard-step[data-step="${step}"]`);
+  if (activeStep) {
+    activeStep.classList.add('active');
+    if (step < previousStep) activeStep.classList.add('back');
+  }
+
+  // Header
+  const stepInfo = {
+    1: { label: 'Étape 1 sur 3', title: '📍 Où ?' },
+    2: { label: 'Étape 2 sur 3', title: '📝 Quoi ?' },
+    3: { label: 'Étape 3 sur 3', title: '🎨 Détails' }
+  };
+  document.getElementById('wizardStepLabel').textContent = stepInfo[step].label;
+  document.getElementById('wizardTitle').textContent = stepInfo[step].title;
+
+  // Barre de progression
+  document.getElementById('wizardProgressBar').style.width = (step / 3 * 100) + '%';
+
+  // Bouton ← (masqué à l'étape 1)
+  const backBtn = document.getElementById('wizardBackBtn');
+  if (step === 1) backBtn.classList.add('hidden');
+  else backBtn.classList.remove('hidden');
+
+  // Bouton principal
+  const nextBtn = document.getElementById('wizardNextBtn');
+  if (step === 3) {
+    nextBtn.innerHTML = isEdit ? '💾 Mettre à jour' : '✓ Terminer';
+    nextBtn.disabled = false;
+  } else {
+    nextBtn.innerHTML = 'Continuer →';
+    updateWizardNextState();
+  }
+
+  // Scroll en haut du corps
+  document.getElementById('wizardBody').scrollTop = 0;
+}
+
+function updateWizardNextState() {
+  const nextBtn = document.getElementById('wizardNextBtn');
+  if (currentWizardStep === 1) {
+    const hasPosition = !!(pendingLatLng && pendingLatLng.lat && pendingLatLng.lng);
+    const hasPlace = document.getElementById('placeName').value.trim().length > 0;
+    nextBtn.disabled = !(hasPosition && hasPlace);
+  } else if (currentWizardStep === 2) {
+    const hasText = document.getElementById('noteText').value.trim().length > 0;
+    nextBtn.disabled = !hasText;
+  } else {
+    nextBtn.disabled = false;
+  }
+}
+
+function wizardNext() {
+  if (currentWizardStep < 3) {
+    // Validation avant de passer
+    if (currentWizardStep === 1) {
+      if (!pendingLatLng) { showToast('⚠️ Choisis une position', 'error'); return; }
+      if (!document.getElementById('placeName').value.trim()) { showToast('⚠️ Donne un nom à ce lieu', 'error'); return; }
+    }
+    if (currentWizardStep === 2) {
+      if (!document.getElementById('noteText').value.trim()) { showToast('⚠️ Écris ton anecdote', 'error'); return; }
+    }
+    goToStep(currentWizardStep + 1);
+  } else {
+    saveNote();
+  }
+}
+
 function openAddModal() {
   editingNoteId = null; pendingIsFavorite = false; pendingTags = [];
   updateFavToggle(); renderTagsInModal();
   document.getElementById('tagInputField').value = '';
-  document.getElementById('modalTitle').textContent = '📍 Nouveau souvenir';
-  document.getElementById('modalSubtitle').textContent = 'Cherche un lieu, clique sur la carte, ou utilise ton GPS.';
-  document.getElementById('saveNoteBtn').innerHTML = '💾 Enregistrer';
   document.getElementById('noteDate').value = '';
+  document.getElementById('placeName').value = '';
+  document.getElementById('noteText').value = '';
+  document.getElementById('searchInput').value = '';
+  removePhoto();
   hideAddress();
   updateVisibilityOptions();
   if (!pendingLatLng) { const c = map.getCenter(); pendingLatLng = { lat: c.lat, lng: c.lng }; pendingSource = 'manual'; }
   updateLocationBox();
+
+  // Reset wizard à l'étape 1
+  goToStep(1);
+
   document.getElementById('modalOverlay').classList.add('open');
-  setTimeout(() => document.getElementById('searchInput').focus(), 100);
+  setTimeout(() => document.getElementById('searchInput').focus(), 350);
+
   const draft = loadDraft();
   if (draft) setTimeout(() => restoreDraft(draft), 150);
-  ['placeName', 'noteText', 'noteDate'].forEach(id => { const el = document.getElementById(id); if (el && !el.dataset.draftListener) { el.addEventListener('input', scheduleSaveDraft); el.addEventListener('change', scheduleSaveDraft); el.dataset.draftListener = 'true'; } });
+
+  ['placeName', 'noteText', 'noteDate'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.dataset.draftListener) {
+      el.addEventListener('input', () => { scheduleSaveDraft(); updateWizardNextState(); });
+      el.addEventListener('change', scheduleSaveDraft);
+      el.dataset.draftListener = 'true';
+    }
+  });
 }
+
 function closeAddModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.getElementById('placeName').value = '';
@@ -2957,12 +3389,11 @@ function closeAddModal() {
   updateFavToggle(); renderTagsInModal(); removePhoto();
   document.querySelectorAll('.icon-choice').forEach(c => { c.classList.toggle('active', c.dataset.icon === '📍'); });
   if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
-  const btn = document.getElementById('gpsBtn'); btn.disabled = false; btn.innerHTML = '🎯 Ma position';
-  document.getElementById('modalTitle').textContent = '📍 Nouveau souvenir';
-  document.getElementById('modalSubtitle').textContent = 'Cherche un lieu, clique sur la carte, ou utilise ton GPS.';
-  document.getElementById('saveNoteBtn').innerHTML = '💾 Enregistrer';
+  const btn = document.getElementById('gpsBtn'); btn.disabled = false; btn.innerHTML = '🎯 GPS';
   const db1 = document.getElementById('draftBanner'); if (db1) db1.classList.remove('visible');
+  currentWizardStep = 1;
 }
+
 function updateLocationBox() {
   const box = document.getElementById('locationBox'); const icon = document.getElementById('locationIcon'); const coords = document.getElementById('coordsText');
   box.classList.remove('gps', 'manual', 'search');
@@ -2971,11 +3402,12 @@ function updateLocationBox() {
   if (pendingSource === 'gps') { box.classList.add('gps'); icon.textContent = '🎯'; coords.textContent = coordStr; }
   else if (pendingSource === 'search') { box.classList.add('search'); icon.textContent = '🔎'; coords.textContent = coordStr; }
   else { box.classList.add('manual'); icon.textContent = '📌'; coords.textContent = coordStr; }
+  updateWizardNextState();
 }
 function useMyLocation() {
   const btn = document.getElementById('gpsBtn');
   if (!navigator.geolocation) { showToast('❌ Géolocalisation non supportée', 'error'); return; }
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>...';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
   navigator.geolocation.getCurrentPosition(async (position) => {
     const { latitude: lat, longitude: lng, accuracy } = position.coords;
     if (userLocationMarker) map.removeLayer(userLocationMarker);
@@ -2984,13 +3416,13 @@ function useMyLocation() {
     userLocationCircle = L.circle([lat, lng], { radius: accuracy, color: '#22c55e', fillColor: '#22c55e', fillOpacity: 0.15, weight: 1 }).addTo(map);
     map.flyTo([lat, lng], 16, { duration: 1.5 });
     pendingLatLng = { lat, lng }; pendingSource = 'gps'; updateLocationBox();
-    showToast(`🎯 Position trouvée (±${Math.round(accuracy)}m)`, 'success');
+    showToast(`🎯 Position trouvée`, 'success');
     showToast('🔎 Recherche de l\'adresse...', 'info');
     const address = await reverseGeocode(lat, lng);
-    if (address) { showAddress(address); const placeInput = document.getElementById('placeName'); if (!placeInput.value.trim()) placeInput.value = address; }
-    else showToast('⚠️ Adresse non trouvée', 'info');
-    btn.disabled = false; btn.innerHTML = '✅ OK'; setTimeout(() => { btn.innerHTML = '🎯 Ma position'; }, 2000);
-  }, (error) => { btn.disabled = false; btn.innerHTML = '🎯 Ma position'; let msg = '❌ Impossible de te localiser.'; if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.'; showToast(msg, 'error'); }, { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 });
+    if (address) { showAddress(address); const placeInput = document.getElementById('placeName'); if (!placeInput.value.trim()) placeInput.value = address; updateWizardNextState(); }
+    btn.disabled = false; btn.innerHTML = '✅';
+    setTimeout(() => { btn.innerHTML = '🎯 GPS'; }, 2000);
+  }, (error) => { btn.disabled = false; btn.innerHTML = '🎯 GPS'; let msg = '❌ Impossible de te localiser.'; if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.'; showToast(msg, 'error'); }, { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 });
 }
 
 /* 🔎 RECHERCHE */
@@ -3049,7 +3481,7 @@ function selectSearchResult(result) {
   else map.flyTo([lat, lng], 13, { duration: 1.5 });
   closeAutocomplete(); searchInput.value = shortName; searchClear.classList.add('visible');
   showToast(`📍 ${shortName}`, 'success');
-  setTimeout(() => document.getElementById('noteText').focus(), 500);
+  updateWizardNextState();
 }
 function closeAutocomplete() { autocompleteList.classList.remove('open'); activeIndex = -1; }
 function clearSearch() { searchInput.value = ''; searchClear.classList.remove('visible'); closeAutocomplete(); searchInput.focus(); }
@@ -3067,7 +3499,7 @@ async function saveNote() {
   localStorage.removeItem(DRAFT_KEY);
   const db1 = document.getElementById('draftBanner'); if (db1) db1.classList.remove('visible');
   if (tagInputField.value.trim()) { addTag(tagInputField.value); tagInputField.value = ''; }
-  const saveBtn = document.getElementById('saveNoteBtn');
+  const saveBtn = document.getElementById('wizardNextBtn');
   saveBtn.disabled = true;
   const originalHTML = saveBtn.innerHTML;
   saveBtn.innerHTML = '<span class="cloud-loader"></span>Enregistrement...';
@@ -3090,8 +3522,7 @@ async function saveNote() {
       showToast('☁️ Souvenir enregistré !', 'success');
       map.flyTo([lat, lng], 15, { duration: 1.2 });
     }
-  } catch (err) { showToast('❌ Erreur de sauvegarde: ' + err.message, 'error'); }
-  finally { saveBtn.disabled = false; saveBtn.innerHTML = originalHTML; }
+  } catch (err) { showToast('❌ Erreur: ' + err.message, 'error'); saveBtn.disabled = false; saveBtn.innerHTML = originalHTML; }
 }
 
 /* 🍞 TOAST */
@@ -3123,7 +3554,7 @@ document.addEventListener('keydown', (e) => {
     else if (document.getElementById('qrModal').classList.contains('open')) closeQRModal();
     else if (document.getElementById('deleteAccountModal').classList.contains('open')) closeDeleteAccountModal();
     else if (document.getElementById('noteDetailModal').classList.contains('open')) closeNoteDetail();
-    else closeAddModal();
+    else if (document.getElementById('modalOverlay').classList.contains('open')) closeAddModal();
   }
   if (e.key === 'r' && !e.ctrlKey && !e.metaKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') showRandomNote();
   if (e.key === 's' && !e.ctrlKey && !e.metaKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') openStatsModal();
@@ -3135,6 +3566,8 @@ showIOSBannerIfNeeded();
 document.getElementById('noteVisibility')?.addEventListener('change', (e) => {
   pendingVisibility = e.target.value;
 });
+document.getElementById('placeName')?.addEventListener('input', updateWizardNextState);
+document.getElementById('noteText')?.addEventListener('input', updateWizardNextState);
 </script>
 
 </body>
