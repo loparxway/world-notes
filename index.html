@@ -1566,8 +1566,16 @@ function renderAllMarkers() {
     const q = sidebarSearchQuery.toLowerCase().trim();
     notesToShow = notesToShow.filter(n => { const inPlace = (n.place || '').toLowerCase().includes(q); const inText = (n.text || '').toLowerCase().includes(q); const inTags = (n.tags || []).some(t => t.toLowerCase().includes(q)); return inPlace || inText || inTags; });
   }
+    // 🆕 Sauvegarder l'ID du marqueur dont la popup est ouverte
+  const openPopupId = map._popup && map._popup._source ? Object.keys(markers).find(id => markers[id] === map._popup._source) : null;
+
   const idsToShow = new Set(notesToShow.map(n => n.id));
-  Object.keys(markers).forEach(id => { if (!idsToShow.has(id)) { markersCluster.removeLayer(markers[id]); delete markers[id]; } });
+  Object.keys(markers).forEach(id => { 
+    if (!idsToShow.has(id) && id !== openPopupId) { 
+      markersCluster.removeLayer(markers[id]); 
+      delete markers[id]; 
+    } 
+  });
   notesToShow.forEach(note => { if (!markers[note.id]) addMarkerToMap(note); });
   refreshOpenPopup(); renderSidebar(); updateNotesCountInfo();
 }
