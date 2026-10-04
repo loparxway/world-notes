@@ -1412,8 +1412,24 @@ function initMap() {
   map.addControl(new RecenterControl());
   markersCluster = L.markerClusterGroup({ maxClusterRadius: 0, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true, spiderLegPolylineOptions: { weight: 1.5, color: '#f97316', opacity: 0.6 }, iconCreateFunction: function(cluster) { return L.divIcon({ html: `<div class="custom-marker">${cluster.getChildCount()}</div>`, className: '', iconSize: [32, 32] }); } });
   map.addLayer(markersCluster);
-  map.on('click', (e) => { if (map._popup) { map.closePopup(); return; } pendingLatLng = { lat: e.latlng.lat, lng: e.latlng.lng }; pendingSource = 'manual'; openAddModal(); });
-}
+  let lastMapClickTime = 0;
+map.on('click', (e) => {
+  const now = Date.now();
+  // Ignore les clics < 400ms après un autre (clic fantôme mobile)
+  if (now - lastMapClickTime < 400) {
+    lastMapClickTime = now;
+    return;
+  }
+  lastMapClickTime = now;
+  
+  if (map._popup) {
+    map.closePopup();
+    return;
+  }
+  pendingLatLng = { lat: e.latlng.lat, lng: e.latlng.lng };
+  pendingSource = 'manual';
+  openAddModal();
+});
 function recenterToMyLocation(btn) {
   if (!navigator.geolocation) { showToast('❌ Géolocalisation non supportée', 'error'); return; }
   btn.innerHTML = '<span class="spinner"></span>';
@@ -1447,6 +1463,7 @@ function createUserLocationIcon() { return L.divIcon({ className: '', html: '<di
 function createTempMarkerIcon() { return L.divIcon({ className: '', html: '<div class="temp-marker"></div>', iconSize: [26, 26], iconAnchor: [13, 13] }); }
 function addMarkerToMap(note) {
   const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, minWidth: 240, autoPanPadding: [10, 10] });
+  marker.on('click', (e) => { L.DomEvent.stopPropagation(e); });
   markers[note.id] = marker;
   markersCluster.addLayer(marker);
   return marker;
