@@ -1486,7 +1486,7 @@ function initMap() {
   tileLayer = L.tileLayer(SATELLITE_URL, { attribution: SATELLITE_ATTRIBUTION, maxZoom: 19 }).addTo(map);
   const RecenterControl = L.Control.extend({ options: { position: 'bottomright' }, onAdd: function () { const container = L.DomUtil.create('div', 'leaflet-control-recenter'); container.innerHTML = '🎯'; container.title = 'Recentrer sur ma position'; L.DomEvent.disableClickPropagation(container); L.DomEvent.on(container, 'click', function (e) { L.DomEvent.stopPropagation(e); recenterToMyLocation(container); }); return container; } });
   map.addControl(new RecenterControl());
-  markersCluster = L.markerClusterGroup({ maxClusterRadius: 0, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true, spiderLegPolylineOptions: { weight: 1.5, color: '#f97316', opacity: 0.6 }, iconCreateFunction: function(cluster) { return L.divIcon({ html: `<div class="custom-marker">${cluster.getChildCount()}</div>`, className: '', iconSize: [32, 32] }); } });
+  markersCluster = L.markerClusterGroup({ maxClusterRadius: 0, spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: true, spiderLegPolylineOptions: { weight: 1.5, color: '#f97316', opacity: 0.6 }, iconCreateFunction: function(cluster) { return L.divIcon({ html: `<div class="custom-marker">${cluster.getChildCount()}</div>`, className: '', iconSize: [32, 32] }); } });
   map.addLayer(markersCluster);
   let lastMapClickTime = 0;
   map.on('click', (e) => {
