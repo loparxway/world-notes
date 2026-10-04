@@ -48,6 +48,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 @keyframes randomIn{from{opacity:0;transform:scale(0.9) rotate(-2deg)}to{opacity:1;transform:scale(1) rotate(0)}}
 @keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}
 @keyframes slideUpBanner{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes onboardingIn{from{opacity:0;transform:translateY(30px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 #landingScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);overflow-y:auto;z-index:10000;padding:20px}
 #landingScreen.hidden{display:none}
 .landing-container{max-width:900px;margin:0 auto;padding:60px 20px 80px}
@@ -91,6 +92,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .btn-google svg{width:22px;height:22px}
 .login-note{margin-top:24px;font-size:0.78rem;color:#64748b;line-height:1.5}
 .login-back{display:block;margin-top:20px;background:none;border:none;color:#f97316;font-size:0.85rem;cursor:pointer;margin-left:auto;margin-right:auto}
+#onboardingScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);display:none;align-items:center;justify-content:center;z-index:10000;padding:20px;overflow-y:auto}
+#onboardingScreen.visible{display:flex}
+.onboarding-card{background:rgba(30,41,59,0.85);backdrop-filter:blur(20px);border:1px solid rgba(148,163,184,0.2);border-radius:24px;padding:40px 36px;max-width:460px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,0.7);animation:onboardingIn 0.5s cubic-bezier(0.34,1.56,0.64,1)}
+.onboarding-header{text-align:center;margin-bottom:24px}
+.onboarding-globe{font-size:3.5rem;display:block;margin-bottom:12px;animation:gentleFloat 4s ease-in-out infinite}
+.onboarding-header h1{font-size:1.6rem;color:white;margin-bottom:10px;font-weight:800;background:linear-gradient(135deg,#f97316,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.onboarding-subtitle{color:#94a3b8;font-size:0.9rem;line-height:1.5}
+.onboarding-subtitle b{color:#f97316}
+.onboarding-avatar-wrapper{position:relative;width:110px;height:110px;margin:0 auto 8px}
+.onboarding-avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid rgba(249,115,22,0.6);box-shadow:0 8px 24px rgba(0,0,0,0.4);background:#0f172a}
+.onboarding-avatar-edit{position:absolute;bottom:0;right:0;background:linear-gradient(135deg,#f97316,#ea580c);color:white;border:3px solid #1e293b;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:transform 0.2s}
+.onboarding-avatar-edit:hover{transform:scale(1.1)}
+.onboarding-avatar-hint{text-align:center;font-size:0.72rem;color:#64748b;margin-bottom:24px}
+.onboarding-input-wrapper{position:relative}
+.onboarding-input-prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#f97316;font-weight:700;font-size:0.95rem;pointer-events:none}
+.onboarding-input-wrapper input{padding-left:32px}
+.onboarding-help{font-size:0.7rem;color:#64748b;margin-top:4px}
+.onboarding-feedback{font-size:0.75rem;margin-top:6px;min-height:16px;font-weight:600;transition:color 0.2s}
+.onboarding-feedback.checking{color:#94a3b8}
+.onboarding-feedback.ok{color:#22c55e}
+.onboarding-feedback.taken{color:#ef4444}
+.onboarding-feedback.error{color:#ef4444}
+.onboarding-submit{width:100%;margin-top:24px;justify-content:center}
+.onboarding-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none !important;box-shadow:0 8px 24px rgba(249,115,22,0.4) !important}
+.onboarding-logout{display:block;margin:16px auto 0;background:none;border:none;color:#64748b;font-size:0.8rem;cursor:pointer;padding:8px}
+.onboarding-logout:hover{color:#ef4444}
 header{position:fixed;top:0;left:0;right:0;height:64px;background:var(--bg-header);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:1000;padding-top:env(safe-area-inset-top,0);height:calc(64px + env(safe-area-inset-top,0))}
 .logo{font-size:1.4rem;font-weight:700;display:flex;align-items:center;gap:10px;color:var(--text-primary)}
 .logo span.globe{font-size:1.6rem;display:inline-block;animation:gentleFloat 4s ease-in-out infinite}
@@ -478,7 +505,8 @@ textarea{resize:vertical;min-height:90px}
 .group-filter-badge.show{transform:translateX(-50%) translateY(0)}
 .group-filter-badge .badge-close{background:rgba(255,255,255,0.25);border:none;color:white;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;transition:all 0.2s}
 .group-filter-badge .badge-close:hover{background:rgba(255,255,255,0.4);transform:scale(1.1)}
-.group-filter-badge .badge-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}::-webkit-scrollbar{width:8px}
+.group-filter-badge .badge-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+::-webkit-scrollbar{width:8px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(148,163,184,0.3);border-radius:4px}
 @media (max-width:768px){
@@ -496,6 +524,11 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
 #map.with-sidebar{right:0}.stats-modal-content{max-height:100vh;border-radius:0}.stats-header{padding:20px}
 .stats-header h2{font-size:1.2rem}.stats-tabs{padding:12px 20px 0;overflow-x:auto}.stats-tab{padding:8px 12px;font-size:0.75rem;white-space:nowrap}
 .stats-body{padding:20px}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-card .stat-value{font-size:1.5rem}.badges-grid{grid-template-columns:repeat(2,1fr)}
+.onboarding-card{padding:28px 22px}
+.onboarding-header h1{font-size:1.3rem}
+.onboarding-globe{font-size:2.8rem}
+.onboarding-avatar-wrapper{width:90px;height:90px}
+.onboarding-avatar{width:90px;height:90px}
 }
 </style>
 </head><body>
@@ -541,6 +574,60 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
     </button>
     <p class="login-note">En te connectant tu acceptes nos<br><a style="color: #f97316; cursor: pointer; text-decoration: underline;" onclick="openLegalModal('terms')">Conditions</a> et notre <a style="color: #f97316; cursor: pointer; text-decoration: underline;" onclick="openLegalModal('privacy')">Politique de confidentialité</a>.</p>
     <button class="login-back" onclick="goToLanding()">← Retour à l'accueil</button>
+  </div>
+</div>
+
+<!-- ONBOARDING (première connexion) -->
+<div id="onboardingScreen">
+  <div class="onboarding-card">
+    <div class="onboarding-header">
+      <span class="onboarding-globe">🌍</span>
+      <h1>Bienvenue sur World Notes !</h1>
+      <p class="onboarding-subtitle">
+        Avant de commencer, dis-nous qui tu es.<br>
+        Ton email ne sera <b>jamais</b> partagé.
+      </p>
+    </div>
+
+    <div class="onboarding-avatar-wrapper">
+      <img id="onboardingAvatar" class="onboarding-avatar" src="" alt="Avatar" />
+      <button class="onboarding-avatar-edit" onclick="document.getElementById('onboardingPhotoInput').click()" title="Changer la photo">📷</button>
+      <input type="file" id="onboardingPhotoInput" accept="image/*" style="display: none;" />
+    </div>
+    <p class="onboarding-avatar-hint">Photo de profil (optionnel)</p>
+
+    <div class="form-group">
+      <label for="onboardingUsername">Pseudo <span style="color: #ef4444;">*</span></label>
+      <div class="onboarding-input-wrapper">
+        <span class="onboarding-input-prefix">@</span>
+        <input type="text" id="onboardingUsername" placeholder="ex: matheo_voyageur" maxlength="20" autocomplete="off" />
+      </div>
+      <div class="onboarding-feedback" id="onboardingUsernameFeedback"></div>
+      <div class="onboarding-help">
+        3 à 20 caractères • lettres minuscules, chiffres et _ uniquement
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="onboardingBio">Bio (optionnel)</label>
+      <textarea id="onboardingBio" placeholder="Ex: Voyageur passionné ✈️ Amateur de street food 🍜" maxlength="150" style="min-height: 80px;"></textarea>
+      <div class="onboarding-help" style="text-align: right;">
+        <span id="onboardingBioCounter">0</span> / 150
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="onboardingLocation">Localisation (optionnel)</label>
+      <input type="text" id="onboardingLocation" placeholder="Ex: Paris, France" maxlength="50" />
+    </div>
+
+    <button class="btn-landing-primary onboarding-submit" id="onboardingSubmitBtn" onclick="submitOnboarding()">
+      🚀 Commencer l'aventure
+    </button>
+
+    <button class="onboarding-logout" onclick="signOutFromOnboarding()">
+      Se déconnecter
+    </button>
   </div>
 </div>
 
@@ -850,7 +937,6 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
     <button class="badge-close" onclick="clearGroupFilter()" title="Retirer le filtre">×</button>
   </div>
 
-  <!-- 📝 Modale détail d'une note (mobile) -->
   <div class="modal-overlay" id="noteDetailModal">
     <div class="modal" id="noteDetailContent"></div>
   </div>
@@ -900,7 +986,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
-// ⚠️ Persistance Firestore DÉSACTIVÉE : bug "INTERNAL ASSERTION FAILED" avec trop de listeners
 
 /* 📱 PWA */
 if ('serviceWorker' in navigator) {
@@ -1007,8 +1092,27 @@ function cleanupListeners() {
 }
 
 auth.onAuthStateChanged(async (user) => {
-  if (user) { currentUser = user; showApp(); await ensureUserProfile(); loadProfile(); loadIncomingRequests(); loadOutgoingRequests(); loadFriends(); loadGroups(); updateFriendBadge(); handleUrlParams(); }
-  else { currentUser = null; cleanupListeners(); showLogin(); }
+  if (user) {
+    currentUser = user;
+    const profile = await ensureUserProfile();
+    if (!profile || !profile.username || profile.username.trim() === '') {
+      showOnboarding(profile);
+      return;
+    }
+    showApp();
+    loadProfile();
+    loadIncomingRequests();
+    loadOutgoingRequests();
+    loadFriends();
+    loadGroups();
+    updateFriendBadge();
+    handleUrlParams();
+  } else {
+    currentUser = null;
+    cleanupListeners();
+    showLogin();
+    hideOnboarding();
+  }
 });
 function handleUrlParams() {
   const params = new URLSearchParams(window.location.search);
@@ -1026,12 +1130,192 @@ function showLogin() {
   document.getElementById('landingScreen').classList.remove('hidden');
   document.getElementById('loginScreen').classList.remove('visible');
   document.getElementById('app').style.display = 'none';
+  document.getElementById('onboardingScreen').classList.remove('visible');
   const btn = document.getElementById('googleBtn');
   if (btn) { btn.disabled = false; btn.innerHTML = `<svg viewBox="0 0 48 48" style="width:22px;height:22px;"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34.2 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34.2 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C39.2 37.1 44 31 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>Se connecter avec Google`; }
 }
+
+/* ═══════════════════════════════════════════
+   🎉 ONBOARDING (première connexion)
+   ═══════════════════════════════════════════ */
+let onboardingPhotoUrl = null;
+let onboardingUsernameOk = false;
+let onboardingCheckTimeout = null;
+let currentOnboardingProfile = null;
+
+function showOnboarding(profile) {
+  currentOnboardingProfile = profile;
+  onboardingPhotoUrl = null;
+  onboardingUsernameOk = false;
+
+  document.getElementById('landingScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('visible');
+  document.getElementById('app').style.display = 'none';
+
+  const avatar = document.getElementById('onboardingAvatar');
+  avatar.src = (profile && profile.photoURL) || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
+
+  document.getElementById('onboardingUsername').value = '';
+  document.getElementById('onboardingBio').value = '';
+  document.getElementById('onboardingLocation').value = '';
+  document.getElementById('onboardingBioCounter').textContent = '0';
+  document.getElementById('onboardingUsernameFeedback').textContent = '';
+  document.getElementById('onboardingUsernameFeedback').className = 'onboarding-feedback';
+  document.getElementById('onboardingSubmitBtn').disabled = true;
+
+  document.getElementById('onboardingScreen').classList.add('visible');
+  setTimeout(() => document.getElementById('onboardingUsername').focus(), 300);
+}
+
+function hideOnboarding() {
+  document.getElementById('onboardingScreen').classList.remove('visible');
+  onboardingPhotoUrl = null;
+  onboardingUsernameOk = false;
+  currentOnboardingProfile = null;
+}
+
+function signOutFromOnboarding() {
+  if (!confirm('Se déconnecter ?')) return;
+  hideOnboarding();
+  auth.signOut().catch(() => {});
+}
+
+document.getElementById('onboardingPhotoInput')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('⚠️ Photo trop lourde (max 5 Mo)', 'error');
+    return;
+  }
+  try {
+    showToast('⏳ Envoi de la photo...', 'info');
+    const url = await uploadToCloudinary(file);
+    onboardingPhotoUrl = url;
+    document.getElementById('onboardingAvatar').src = url;
+    showToast('✅ Photo prête !', 'success');
+  } catch (err) {
+    showToast('❌ Erreur photo : ' + err.message, 'error');
+  }
+});
+
+document.getElementById('onboardingBio')?.addEventListener('input', (e) => {
+  document.getElementById('onboardingBioCounter').textContent = e.target.value.length;
+});
+
+const onboardingUsernameInput = document.getElementById('onboardingUsername');
+onboardingUsernameInput?.addEventListener('input', (e) => {
+  let val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+  if (val !== e.target.value) e.target.value = val;
+
+  clearTimeout(onboardingCheckTimeout);
+  const feedback = document.getElementById('onboardingUsernameFeedback');
+  const submitBtn = document.getElementById('onboardingSubmitBtn');
+
+  onboardingUsernameOk = false;
+  submitBtn.disabled = true;
+
+  if (val.length === 0) {
+    feedback.textContent = '';
+    feedback.className = 'onboarding-feedback';
+    return;
+  }
+  if (val.length < 3) {
+    feedback.textContent = '⚠️ Au moins 3 caractères';
+    feedback.className = 'onboarding-feedback error';
+    return;
+  }
+  if (val.length > 20) {
+    feedback.textContent = '⚠️ Maximum 20 caractères';
+    feedback.className = 'onboarding-feedback error';
+    return;
+  }
+
+  feedback.textContent = '🔍 Vérification...';
+  feedback.className = 'onboarding-feedback checking';
+
+  onboardingCheckTimeout = setTimeout(async () => {
+    try {
+      const snap = await db.collection('users').where('username', '==', val).limit(1).get({ source: 'server' });
+      const isTaken = !snap.empty && snap.docs[0].id !== currentUser.uid;
+      if (isTaken) {
+        feedback.textContent = '❌ Ce pseudo est déjà pris';
+        feedback.className = 'onboarding-feedback taken';
+        onboardingUsernameOk = false;
+        submitBtn.disabled = true;
+      } else {
+        feedback.textContent = '✅ Pseudo disponible !';
+        feedback.className = 'onboarding-feedback ok';
+        onboardingUsernameOk = true;
+        submitBtn.disabled = false;
+      }
+    } catch (err) {
+      feedback.textContent = '⚠️ Impossible de vérifier, réessaie';
+      feedback.className = 'onboarding-feedback error';
+      onboardingUsernameOk = false;
+      submitBtn.disabled = true;
+    }
+  }, 400);
+});
+
+async function submitOnboarding() {
+  const username = document.getElementById('onboardingUsername').value.trim().toLowerCase();
+  const bio = document.getElementById('onboardingBio').value.trim();
+  const location = document.getElementById('onboardingLocation').value.trim();
+
+  if (!onboardingUsernameOk || username.length < 3) {
+    showToast('⚠️ Choisis un pseudo valide', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('onboardingSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="cloud-loader"></span>Création...';
+
+  try {
+    const snap = await db.collection('users').where('username', '==', username).limit(1).get({ source: 'server' });
+    if (!snap.empty && snap.docs[0].id !== currentUser.uid) {
+      showToast('❌ Ce pseudo vient d\'être pris !', 'error');
+      document.getElementById('onboardingUsernameFeedback').textContent = '❌ Ce pseudo est déjà pris';
+      document.getElementById('onboardingUsernameFeedback').className = 'onboarding-feedback taken';
+      btn.disabled = false;
+      btn.innerHTML = '🚀 Commencer l\'aventure';
+      return;
+    }
+
+    const updates = {
+      username,
+      bio,
+      location,
+      onboardedAt: Date.now()
+    };
+    if (onboardingPhotoUrl) updates.photoURL = onboardingPhotoUrl;
+
+    await db.collection('users').doc(currentUser.uid).update(updates);
+
+    showToast('🎉 Bienvenue sur World Notes !', 'success');
+    hideOnboarding();
+
+    showApp();
+    loadProfile();
+    loadIncomingRequests();
+    loadOutgoingRequests();
+    loadFriends();
+    loadGroups();
+    updateFriendBadge();
+    handleUrlParams();
+  } catch (err) {
+    console.error('Erreur onboarding:', err);
+    showToast('❌ Erreur : ' + err.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = '🚀 Commencer l\'aventure';
+  }
+}
+
 function showApp() {
   document.getElementById('landingScreen').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('visible');
+  document.getElementById('onboardingScreen').classList.remove('visible');
   document.getElementById('app').style.display = 'block';
   document.getElementById('userAvatar').src = currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
   document.getElementById('userName').textContent = currentUser.displayName || 'Utilisateur';
@@ -1053,12 +1337,17 @@ async function ensureUserProfile() {
     const userRef = db.collection('users').doc(currentUser.uid);
     const doc = await userRef.get({ source: 'server' });
     if (!doc.exists) {
-      await userRef.set({
+      const baseProfile = {
         displayName: currentUser.displayName || 'Utilisateur',
         photoURL: currentUser.photoURL || '',
-        username: '', bio: '', location: '',
-        friends: [], createdAt: Date.now()
-      });
+        username: '',
+        bio: '',
+        location: '',
+        friends: [],
+        createdAt: Date.now()
+      };
+      await userRef.set(baseProfile);
+      return baseProfile;
     } else {
       const data = doc.data();
       const updates = { displayName: currentUser.displayName || 'Utilisateur' };
@@ -1070,8 +1359,12 @@ async function ensureUserProfile() {
         try { await userRef.update({ email: firebase.firestore.FieldValue.delete() }); } catch(e) {}
       }
       await userRef.update(updates);
+      return { ...data, ...updates };
     }
-  } catch (err) { console.warn('ensureUserProfile:', err); }
+  } catch (err) {
+    console.warn('ensureUserProfile:', err);
+    return null;
+  }
 }
 function loadProfile() {
   if (unsubscribeProfile) unsubscribeProfile();
