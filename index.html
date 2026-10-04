@@ -449,7 +449,6 @@ textarea{resize:vertical;min-height:90px}
 .draft-restored-banner{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(22,163,74,.1));border:1px solid rgba(34,197,94,.4);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:.82rem;color:#22c55e;display:none;align-items:center;gap:8px;justify-content:space-between}
 .draft-restored-banner.visible{display:flex}
 .draft-restored-banner button{background:none;border:1px solid rgba(34,197,94,.5);color:#22c55e;font-size:.72rem;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600}
-/* 📁 GROUPES */
 .groups-list{display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto;padding:4px}
 .group-card{background:var(--bg-input);border:1px solid var(--border-subtle);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.25s}
 .group-card:hover{background:var(--bg-card-hover);border-color:rgba(249,115,22,0.5);transform:translateY(-2px)}
@@ -475,8 +474,6 @@ textarea{resize:vertical;min-height:90px}
 .group-member-action{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
 .group-member-action:hover{background:rgba(239,68,68,0.9);color:white}
 .group-owner-badge{background:linear-gradient(135deg,#fbbf24,#d97706);color:white;font-size:0.6rem;font-weight:700;padding:2px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0}
-
-/* 📍 Pastille filtre groupe (sur la carte) */
 .group-filter-badge{position:fixed;top:calc(76px + env(safe-area-inset-top,0));left:50%;transform:translateX(-50%) translateY(-100px);background:linear-gradient(135deg,#f97316,#ea580c);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:8px 16px;font-size:0.85rem;font-weight:600;color:white;box-shadow:0 8px 24px rgba(249,115,22,0.5);z-index:998;display:flex;align-items:center;gap:10px;transition:transform 0.35s;max-width:calc(100vw - 32px)}
 .group-filter-badge.show{transform:translateX(-50%) translateY(0)}
 .group-filter-badge .badge-close{background:rgba(255,255,255,0.25);border:none;color:white;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;transition:all 0.2s}
@@ -563,7 +560,7 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
     <div class="actions">
       <button class="btn-ghost btn-toggle-notes" onclick="toggleSidebar()">📖 Notes</button>
       <button class="btn-ghost btn-icon" onclick="openFriendsModal()" title="Amis">👥<span class="badge" id="friendBadge" style="display: none;">0</span></button>
-            <button class="btn-ghost btn-icon" onclick="openGroupsModal()" title="Groupes">📁</button>
+      <button class="btn-ghost btn-icon" onclick="openGroupsModal()" title="Groupes">📁</button>
       <button class="btn-ghost btn-icon" onclick="toggleSettings()" title="Réglages">⚙️</button>
       <button class="btn-primary" onclick="openAddModal()">➕ Ajouter</button>
       <div class="user-menu">
@@ -640,7 +637,7 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
       <h2 id="modalTitle">📍 Nouveau souvenir</h2>
       <p class="subtitle" id="modalSubtitle">Cherche un lieu, clique sur la carte, ou utilise ton GPS.</p>
       <div class="draft-restored-banner" id="draftBanner"><span>💾 Brouillon restauré</span><button onclick="clearDraft()">Effacer le brouillon</button></div>
-            <div class="form-group" id="visibilityGroupContainer" style="display: none;">
+      <div class="form-group" id="visibilityGroupContainer" style="display: none;">
         <label>👁️ Visible par</label>
         <select id="noteVisibility">
           <option value="all">🌍 Tout le monde (mes amis)</option>
@@ -779,32 +776,23 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
       <button class="banner-close" onclick="closeIOSBanner()">×</button>
     </div>
   </div>
-    <!-- 📁 Modale Groupes (liste) -->
+
   <div class="modal-overlay" id="groupsModalOverlay">
     <div class="modal modal-friends">
       <h2>📁 Mes groupes</h2>
       <p class="subtitle">Regroupe tes amis par contexte (voyage, famille, etc.).</p>
-
-      <button class="btn-full edit-profile" onclick="openCreateGroup()" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
-        ➕ Créer un groupe
-      </button>
-
+      <button class="btn-full edit-profile" onclick="openCreateGroup()" style="background: linear-gradient(135deg, #22c55e, #16a34a);">➕ Créer un groupe</button>
       <div class="groups-list" id="groupsList">
         <div class="empty-state">Aucun groupe pour l'instant.<br>Crée ton premier groupe !</div>
       </div>
-
-      <div class="modal-actions">
-        <button class="btn-ghost" onclick="closeGroupsModal()">Fermer</button>
-      </div>
+      <div class="modal-actions"><button class="btn-ghost" onclick="closeGroupsModal()">Fermer</button></div>
     </div>
   </div>
 
-  <!-- 📁 Modale Créer/Éditer un groupe -->
   <div class="modal-overlay" id="editGroupModalOverlay">
     <div class="modal">
       <h2 id="groupModalTitle">➕ Nouveau groupe</h2>
       <p class="subtitle" id="groupModalSubtitle">Donne-lui un nom et un emoji.</p>
-
       <div class="form-group">
         <label>Emoji</label>
         <div class="emoji-picker-group" id="groupEmojiPicker">
@@ -822,12 +810,10 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
           <div class="emoji-choice-group" data-emoji="❤️" onclick="chooseGroupEmoji(this)">❤️</div>
         </div>
       </div>
-
       <div class="form-group">
         <label for="groupName">Nom du groupe</label>
         <input type="text" id="groupName" placeholder="Ex: Vacances été 2025" maxlength="40" />
       </div>
-
       <div class="modal-actions">
         <button class="btn-ghost" onclick="closeEditGroupModal()">Annuler</button>
         <button class="btn-primary" id="saveGroupBtn" onclick="saveGroup()">💾 Enregistrer</button>
@@ -835,7 +821,6 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
     </div>
   </div>
 
-  <!-- 📁 Modale Vue détail d'un groupe -->
   <div class="modal-overlay" id="groupDetailModalOverlay">
     <div class="modal modal-friends">
       <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
@@ -845,20 +830,14 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
           <p id="detailGroupMeta" style="font-size: 0.8rem; color: var(--text-muted);">0 membres</p>
         </div>
       </div>
-
-      <button class="btn-full" onclick="applyGroupFilterFromDetail()" style="background: linear-gradient(135deg, #f97316, #ea580c); color: white; margin-bottom: 16px;">
-        👁️ Voir les souvenirs du groupe sur la carte
-      </button>
-
+      <button class="btn-full" onclick="applyGroupFilterFromDetail()" style="background: linear-gradient(135deg, #f97316, #ea580c); color: white; margin-bottom: 16px;">👁️ Voir les souvenirs du groupe sur la carte</button>
       <label style="margin-top: 10px;">Membres du groupe</label>
       <div class="group-members-list" id="groupMembersList"></div>
-
       <label style="margin-top: 16px;">➕ Ajouter un ami</label>
       <div style="display: flex; gap: 6px; margin-bottom: 16px;">
         <input type="text" id="groupAddFriendInput" placeholder="pseudo de ton ami" maxlength="20" style="flex: 1;" />
         <button class="btn-primary" style="background: linear-gradient(135deg, #22c55e, #16a34a);" onclick="addFriendToGroup()">➕</button>
       </div>
-
       <div class="modal-actions" style="justify-content: space-between;">
         <button class="btn-ghost" id="deleteOrLeaveGroupBtn" onclick="deleteOrLeaveGroup()">🗑️ Supprimer</button>
         <button class="btn-ghost" onclick="closeGroupDetail()">Fermer</button>
@@ -866,14 +845,11 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
     </div>
   </div>
 
-  <!-- 📁 Pastille filtre groupe (sur la carte) -->
   <div class="group-filter-badge" id="groupFilterBadge">
     <span class="badge-text" id="groupFilterText">🏖️ Groupe</span>
     <button class="badge-close" onclick="clearGroupFilter()" title="Retirer le filtre">×</button>
   </div>
 
-
-  <!-- ⚠️ Modal suppression compte -->
   <div class="modal-overlay" id="deleteAccountModal">
     <div class="modal" style="max-width: 480px;">
       <h2 style="color: #ef4444;">⚠️ Supprimer mon compte</h2>
@@ -902,7 +878,8 @@ header{padding:0 12px}.logo{font-size:1rem;gap:6px}.logo span.globe{font-size:1.
   </div>
 
   <div class="toast" id="toast"></div>
-</div><script>
+</div>
+<script>
 /* =========================================================
    🔥 FIREBASE
    ========================================================= */
@@ -969,6 +946,8 @@ let uiTheme = localStorage.getItem('worldnotes_theme') || 'dark';
 document.documentElement.setAttribute('data-theme', uiTheme);
 let currentUser = null, myProfile = null, myFriends = [], friendsProfiles = {}, allProfiles = {}, incomingRequests = [], outgoingRequests = [];
 let allNotes = [], myNotes = [], friendNotes = [], favoriteNotes = [], allReactions = {}, allComments = {};
+let groupNotes = {};      // 🆕 { groupId: [notes] } - notes par groupe
+let noteUnsubs = [];      // 🆕 listeners notes actifs
 let mapFilter = 'all', sidebarSearchQuery = '', pendingProfilePhoto = null, editingNoteId = null;
 let pendingIsFavorite = false, pendingTags = [], currentRandomNoteId = null, currentStatsTab = 'dashboard';
 let notesByIdCache = {};
@@ -1007,12 +986,23 @@ function signInWithGoogle() {
 }
 auth.getRedirectResult().catch(() => {});
 function signOut() { if (!confirm('Se déconnecter ?')) return; cleanupListeners(); auth.signOut().catch(() => {}); }
+
+/* 🆕 CLEANUP complet */
 function cleanupListeners() {
-  [unsubscribeProfile, unsubscribeNotes, unsubscribeFriends, unsubscribeIncoming, unsubscribeOutgoing, unsubscribeReactions, unsubscribeComments].forEach(u => { if (u) try { u(); } catch(e){} });
-  unsubscribeProfile = unsubscribeNotes = unsubscribeFriends = unsubscribeIncoming = unsubscribeOutgoing = unsubscribeReactions = unsubscribeComments = null;
+  [unsubscribeProfile, unsubscribeNotes, unsubscribeFriends,
+   unsubscribeIncoming, unsubscribeOutgoing, unsubscribeReactions,
+   unsubscribeComments, unsubscribeGroups].forEach(u => {
+    if (u) try { u(); } catch(e) { console.warn('cleanup:', e); }
+  });
+  unsubscribeProfile = unsubscribeNotes = unsubscribeFriends =
+    unsubscribeIncoming = unsubscribeOutgoing = unsubscribeReactions =
+    unsubscribeComments = unsubscribeGroups = null;
+  noteUnsubs = [];
+  groupNotes = {};
 }
+
 auth.onAuthStateChanged(async (user) => {
-  if (user) { currentUser = user; showApp(); await ensureUserProfile(); loadProfile(); loadIncomingRequests(); loadOutgoingRequests(); loadFriends(); loadAllNotes(); loadGroups(); updateFriendBadge(); handleUrlParams(); }
+  if (user) { currentUser = user; showApp(); await ensureUserProfile(); loadProfile(); loadIncomingRequests(); loadOutgoingRequests(); loadFriends(); loadGroups(); updateFriendBadge(); handleUrlParams(); }
   else { currentUser = null; cleanupListeners(); showLogin(); }
 });
 function handleUrlParams() {
@@ -1057,17 +1047,27 @@ async function ensureUserProfile() {
   try {
     const userRef = db.collection('users').doc(currentUser.uid);
     const doc = await userRef.get({ source: 'server' });
-    if (!doc.exists) { await userRef.set({ displayName: currentUser.displayName || 'Utilisateur', email: currentUser.email || '', photoURL: currentUser.photoURL || '', username: '', bio: '', location: '', friends: [], createdAt: Date.now() }); }
-    else {
+    if (!doc.exists) {
+      await userRef.set({
+        displayName: currentUser.displayName || 'Utilisateur',
+        photoURL: currentUser.photoURL || '',
+        username: '', bio: '', location: '',
+        friends: [], createdAt: Date.now()
+      });
+    } else {
       const data = doc.data();
-      const updates = { displayName: currentUser.displayName || 'Utilisateur', email: currentUser.email || '' };
+      const updates = { displayName: currentUser.displayName || 'Utilisateur' };
       if (!data.photoURL) updates.photoURL = currentUser.photoURL || '';
       if (!data.friends) updates.friends = [];
       if (data.bio === undefined) updates.bio = '';
       if (data.location === undefined) updates.location = '';
+      // 🧹 Migration : supprimer l'email s'il existe encore
+      if (data.email !== undefined) {
+        try { await userRef.update({ email: firebase.firestore.FieldValue.delete() }); } catch(e) {}
+      }
       await userRef.update(updates);
     }
-  } catch (err) {}
+  } catch (err) { console.warn('ensureUserProfile:', err); }
 }
 function loadProfile() {
   if (unsubscribeProfile) unsubscribeProfile();
@@ -1171,9 +1171,13 @@ function loadFriends() {
     const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
     myFriends = newFriends;
     await loadFriendsProfiles();
-    if (changed) loadAllNotes();
+    if (changed) {
+      // 🆕 Recharger les notes si la liste d'amis change
+      if (allGroups !== undefined) loadAllNotes();
+    }
   });
 }
+
 async function loadFriendsProfiles() {
   friendsProfiles = {};
   if (myFriends.length === 0) { renderFriendsContent(); return; }
@@ -1185,12 +1189,8 @@ async function loadFriendsProfiles() {
       snap.forEach(doc => { friendsProfiles[doc.id] = { uid: doc.id, ...doc.data() }; });
     }
   } catch (err) { console.error('Erreur loadFriendsProfiles:', err); }
-  
   Object.assign(allProfiles, friendsProfiles);
-  
   renderFriendsContent();
-  
-  // Rafraîchir aussi la modale groupe si ouverte
   const activeDetail = document.getElementById('groupDetailModalOverlay');
   if (activeDetail && activeDetail.classList.contains('open') && currentViewingGroupId) {
     const group = allGroups.find(g => g.id === currentViewingGroupId);
@@ -1247,12 +1247,19 @@ async function sendFriendRequest() {
   } catch (err) { console.error('Erreur sendFriendRequest:', err); showToast('❌ Erreur: ' + err.message, 'error'); }
   finally { input.disabled = false; }
 }
+
+/* 🆕 ORDRE CORRIGÉ : d'abord accepter la demande, ensuite batch friends */
 async function acceptFriendRequest(requestId) {
   try {
     const reqDoc = await db.collection('friendRequests').doc(requestId).get();
     if (!reqDoc.exists) { showToast('❌ Demande introuvable', 'error'); return; }
     const req = reqDoc.data();
     if (req.to !== currentUser.uid) { showToast('❌ Cette demande ne t\'est pas destinée', 'error'); return; }
+    
+    // 1️⃣ D'abord marquer la demande comme acceptée
+    await db.collection('friendRequests').doc(requestId).update({ status: 'accepted', acceptedAt: Date.now() });
+    
+    // 2️⃣ Ensuite, récupérer les listes actuelles et mettre à jour les deux users
     const myRef = db.collection('users').doc(currentUser.uid);
     const theirRef = db.collection('users').doc(req.from);
     const [myDoc, theirDoc] = await Promise.all([myRef.get(), theirRef.get()]);
@@ -1263,8 +1270,8 @@ async function acceptFriendRequest(requestId) {
     const batch = db.batch();
     batch.update(myRef, { friends: myFriendsList });
     batch.update(theirRef, { friends: theirFriendsList });
-    batch.update(db.collection('friendRequests').doc(requestId), { status: 'accepted', acceptedAt: Date.now() });
     await batch.commit();
+    
     incomingRequests = incomingRequests.filter(r => r.id !== requestId);
     updateFriendBadge(); renderFriendsContent();
     setTimeout(refreshFriendsData, 500);
@@ -1276,6 +1283,8 @@ async function declineFriendRequest(requestId) {
   try { await db.collection('friendRequests').doc(requestId).update({ status: 'declined' }); incomingRequests = incomingRequests.filter(r => r.id !== requestId); updateFriendBadge(); renderFriendsContent(); showToast('Demande refusée', 'info'); }
   catch (err) { console.error('Erreur declineFriendRequest:', err); showToast('❌ Erreur', 'error'); }
 }
+
+/* 🆕 ORDRE CORRIGÉ : d'abord retirer des friends, ensuite supprimer les requests */
 async function removeFriend(friendUid) {
   const friend = friendsProfiles[friendUid];
   const name = friend ? (friend.username ? '@' + friend.username : friend.displayName) : 'cet ami';
@@ -1286,14 +1295,23 @@ async function removeFriend(friendUid) {
     const [myDoc, theirDoc] = await Promise.all([myRef.get(), theirRef.get()]);
     const myFriendsList = (myDoc.data().friends || []).filter(uid => uid !== friendUid);
     const theirFriendsList = (theirDoc.data().friends || []).filter(uid => uid !== currentUser.uid);
+    
+    // 1️⃣ D'abord retirer des listes friends (avant de supprimer les requests)
     const batch = db.batch();
     batch.update(myRef, { friends: myFriendsList });
     batch.update(theirRef, { friends: theirFriendsList });
-    const requests1 = await db.collection('friendRequests').where('from', '==', currentUser.uid).where('to', '==', friendUid).get();
-    const requests2 = await db.collection('friendRequests').where('from', '==', friendUid).where('to', '==', currentUser.uid).get();
-    requests1.forEach(doc => batch.delete(doc.ref));
-    requests2.forEach(doc => batch.delete(doc.ref));
     await batch.commit();
+    
+    // 2️⃣ Ensuite, supprimer les friendRequests associées
+    try {
+      const requests1 = await db.collection('friendRequests').where('from', '==', currentUser.uid).where('to', '==', friendUid).get();
+      const requests2 = await db.collection('friendRequests').where('from', '==', friendUid).where('to', '==', currentUser.uid).get();
+      const batch2 = db.batch();
+      requests1.forEach(doc => batch2.delete(doc.ref));
+      requests2.forEach(doc => batch2.delete(doc.ref));
+      if (!requests1.empty || !requests2.empty) await batch2.commit();
+    } catch(e) { console.warn('Nettoyage requests:', e); }
+    
     showToast('🗑️ Ami retiré', 'info');
   } catch (err) { console.error('Erreur removeFriend:', err); showToast('❌ Erreur: ' + err.message, 'error'); }
 }
@@ -1322,14 +1340,14 @@ function renderFriendsContent(tab = null) {
       const name = profile.displayName || 'Utilisateur';
       const username = profile.username ? '@' + profile.username : '';
       const bio = profile.bio || 'Aucune bio';
-      return `<div class="friend-card" onclick="viewFriendProfile('${uid}')"><img class="friend-avatar" src="${avatar}" alt="${escapeHtml(name)}" loading="lazy" /><div class="friend-info"><div class="friend-name">${escapeHtml(name)}</div>${username ? `<div class="friend-username">${escapeHtml(username)}</div>` : ''}<div class="friend-bio-preview">${escapeHtml(bio)}</div></div><div class="friend-actions" onclick="event.stopPropagation()"><button class="friend-btn danger" onclick="removeFriend('${uid}')" title="Retirer">🗑️</button></div></div>`;
+      return `<div class="friend-card" onclick="viewFriendProfile('${uid}')"><img class="friend-avatar" src="${avatar}" alt="${escapeAttr(name)}" loading="lazy" /><div class="friend-info"><div class="friend-name">${escapeHtml(name)}</div>${username ? `<div class="friend-username">${escapeHtml(username)}</div>` : ''}<div class="friend-bio-preview">${escapeHtml(bio)}</div></div><div class="friend-actions" onclick="event.stopPropagation()"><button class="friend-btn danger" onclick="removeFriend('${uid}')" title="Retirer">🗑️</button></div></div>`;
     }).join('');
   } else if (tab === 'requests') {
     if (incomingRequests.length === 0) { content.innerHTML = `<div class="empty-state">📨 Aucune demande d'ami en attente.</div>`; return; }
     content.innerHTML = incomingRequests.map(req => {
       const username = req.fromUsername || '?';
       const avatar = req.fromPhotoURL ? cloudinaryThumb(req.fromPhotoURL, 100) : 'https://www.gravatar.com/avatar/?d=mp';
-      return `<div class="friend-card" style="cursor: default;"><img class="friend-avatar" src="${avatar}" alt="@${escapeHtml(username)}" /><div class="friend-info"><div class="friend-name">@${escapeHtml(username)}</div><div class="friend-bio-preview">Veut être ton ami</div></div><div class="friend-actions"><button class="friend-btn accept" onclick="acceptFriendRequest('${req.id}')">✓ Accepter</button><button class="friend-btn danger" onclick="declineFriendRequest('${req.id}')">✕</button></div></div>`;
+      return `<div class="friend-card" style="cursor: default;"><img class="friend-avatar" src="${avatar}" alt="${escapeAttr('@' + username)}" /><div class="friend-info"><div class="friend-name">@${escapeHtml(username)}</div><div class="friend-bio-preview">Veut être ton ami</div></div><div class="friend-actions"><button class="friend-btn accept" onclick="acceptFriendRequest('${req.id}')">✓ Accepter</button><button class="friend-btn danger" onclick="declineFriendRequest('${req.id}')">✕</button></div></div>`;
     }).join('');
   } else if (tab === 'sent') {
     if (outgoingRequests.length === 0) { content.innerHTML = `<div class="empty-state">📤 Aucune demande envoyée en attente.</div>`; return; }
@@ -1346,36 +1364,87 @@ async function cancelFriendRequest(requestId) {
   catch (err) { console.error('Erreur cancelFriendRequest:', err); }
 }
 
-/* ☁️ NOTES */
+/* 🆕 REFACTOR : loadAllNotes() avec requêtes séparées */
 function loadAllNotes() {
   if (unsubscribeNotes) unsubscribeNotes();
+  noteUnsubs.forEach(u => { try { u(); } catch(e){} });
+  noteUnsubs = [];
   showSyncIndicator('Chargement des souvenirs...', false);
-  unsubscribeNotes = db.collection('notes').orderBy('createdAt', 'desc').limit(500).onSnapshot((snapshot) => {
-    const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-    // 1. Notes de moi + mes amis
-    const allowed = new Set([currentUser.uid, ...myFriends]);
-    const byAmis = all.filter(n => allowed.has(n.userId));
-    
-    // 2. Notes des groupes dont je suis membre
-    const myGroupIds = new Set(allGroups.map(g => g.id));
-    const byGroups = all.filter(n => {
-      return n.visibility 
-        && n.visibility !== 'all' 
-        && myGroupIds.has(n.visibility)
-        && !allowed.has(n.userId);
+
+  let _mine = [];
+  let _friends = {}; // { uid: [notes] }
+  let _groups = {};  // { groupId: [notes] }
+
+  function mergeAndRender() {
+    myNotes = _mine;
+    friendNotes = Object.values(_friends).flat();
+    groupNotes = _groups;
+    const seen = new Set();
+    const merged = [];
+    [...myNotes, ...friendNotes, ...Object.values(_groups).flat()].forEach(n => {
+      if (!seen.has(n.id)) { seen.add(n.id); merged.push(n); }
     });
-    
-    // 3. Fusionner
-    allNotes = [...byAmis, ...byGroups];
+    allNotes = merged;
     notesByIdCache = {};
     allNotes.forEach(n => { notesByIdCache[n.id] = n; });
-    myNotes = allNotes.filter(n => n.userId === currentUser.uid);
-    friendNotes = allNotes.filter(n => n.userId !== currentUser.uid);
     favoriteNotes = allNotes.filter(n => n.favorite === true);
-    loadAllReactions(); loadAllComments();
-    renderAllMarkers(); updateFilters(); showSyncIndicator('Synchronisé', true);
-  }, () => { showToast('❌ Erreur de chargement', 'error'); });
+    loadAllReactions();
+    loadAllComments();
+    renderAllMarkers();
+    updateFilters();
+    showSyncIndicator('Synchronisé', true);
+  }
+
+  // ───── Requête 1 : MES notes ─────
+  const u1 = db.collection('notes')
+    .where('userId', '==', currentUser.uid)
+    .orderBy('createdAt', 'desc')
+    .limit(500)
+    .onSnapshot(snap => {
+      _mine = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      mergeAndRender();
+    }, err => console.error('❌ notes/mine:', err.code, err.message));
+  noteUnsubs.push(u1);
+
+  // ───── Requête 2 : notes de mes AMIS (visibilité 'all') ─────
+  if (myFriends.length > 0) {
+    for (let i = 0; i < myFriends.length; i += 10) {
+      const chunk = myFriends.slice(i, i + 10);
+      const u = db.collection('notes')
+        .where('userId', 'in', chunk)
+        .where('visibility', '==', 'all')
+        .orderBy('createdAt', 'desc')
+        .limit(300)
+        .onSnapshot(snap => {
+          chunk.forEach(uid => { delete _friends[uid]; });
+          snap.docs.forEach(d => {
+            const note = { id: d.id, ...d.data() };
+            if (!_friends[note.userId]) _friends[note.userId] = [];
+            _friends[note.userId].push(note);
+          });
+          mergeAndRender();
+        }, err => console.error('❌ notes/friends:', err.code, err.message));
+      noteUnsubs.push(u);
+    }
+  }
+
+  // ───── Requête 3 : notes de mes GROUPES ─────
+  allGroups.forEach(group => {
+    const u = db.collection('notes')
+      .where('visibility', '==', group.id)
+      .orderBy('createdAt', 'desc')
+      .limit(300)
+      .onSnapshot(snap => {
+        _groups[group.id] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        mergeAndRender();
+      }, err => console.error('❌ notes/group', group.id, ':', err.code, err.message));
+    noteUnsubs.push(u);
+  });
+
+  unsubscribeNotes = () => {
+    noteUnsubs.forEach(u => { try { u(); } catch(e){} });
+    noteUnsubs = [];
+  };
 }
 function loadAllReactions() {
   if (unsubscribeReactions) unsubscribeReactions();
@@ -1422,23 +1491,18 @@ function initMap() {
   markersCluster = L.markerClusterGroup({ maxClusterRadius: 0, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true, spiderLegPolylineOptions: { weight: 1.5, color: '#f97316', opacity: 0.6 }, iconCreateFunction: function(cluster) { return L.divIcon({ html: `<div class="custom-marker">${cluster.getChildCount()}</div>`, className: '', iconSize: [32, 32] }); } });
   map.addLayer(markersCluster);
   let lastMapClickTime = 0;
-map.on('click', (e) => {
-  const now = Date.now();
-  // Ignore les clics < 400ms après un autre (clic fantôme mobile)
-  if (now - lastMapClickTime < 400) {
+  map.on('click', (e) => {
+    const now = Date.now();
+    if (now - lastMapClickTime < 400) { lastMapClickTime = now; return; }
     lastMapClickTime = now;
-    return;
-  }
-  lastMapClickTime = now;
-  
- if (map._popup && (Date.now() - (window._popupOpenedAt || 0)) > 500) {
-    map.closePopup();
-    return;
-  }
-  pendingLatLng = { lat: e.latlng.lat, lng: e.latlng.lng };
-  pendingSource = 'manual';
-  openAddModal();
-});
+    if (map._popup && (Date.now() - (window._popupOpenedAt || 0)) > 500) {
+      map.closePopup();
+      return;
+    }
+    pendingLatLng = { lat: e.latlng.lat, lng: e.latlng.lng };
+    pendingSource = 'manual';
+    openAddModal();
+  });
 }
 function recenterToMyLocation(btn) {
   if (!navigator.geolocation) { showToast('❌ Géolocalisation non supportée', 'error'); return; }
@@ -1472,7 +1536,7 @@ function createMarkerIcon(note) {
 function createUserLocationIcon() { return L.divIcon({ className: '', html: '<div class="user-location-marker"></div>', iconSize: [20, 20], iconAnchor: [10, 10] }); }
 function createTempMarkerIcon() { return L.divIcon({ className: '', html: '<div class="temp-marker"></div>', iconSize: [26, 26], iconAnchor: [13, 13] }); }
 function addMarkerToMap(note) {
-   const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, minWidth: 240, autoPanPadding: [10, 10] });
+  const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, minWidth: 240, autoPanPadding: [10, 10] });
   marker.on('click', (e) => { L.DomEvent.stopPropagation(e); });
   marker.on('mousedown', (e) => { L.DomEvent.stopPropagation(e); });
   marker.on('touchstart', (e) => { L.DomEvent.stopPropagation(e); });
@@ -1502,7 +1566,7 @@ function renderCommentsHtml(noteId) {
       const authorAvatar = isMe ? (cloudinaryThumb(myProfile?.photoURL || currentUser.photoURL, 60) || 'https://www.gravatar.com/avatar/?d=mp') : (cloudinaryThumb(authorProfile?.photoURL, 60) || 'https://www.gravatar.com/avatar/?d=mp');
       const date = new Date(c.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
       const canDelete = isMe || isMyNote;
-      return `<div class="comment-item"><img class="comment-avatar" src="${authorAvatar}" alt="${escapeHtml(authorName)}" loading="lazy" /><div class="comment-body"><div class="comment-author">${escapeHtml(authorName)}</div><div class="comment-text">${escapeHtml(c.text)}</div><div class="comment-meta"><span>${date}</span>${canDelete ? `<button class="comment-delete" onclick="deleteComment('${c.id}', '${noteId}', event)">🗑️ Supprimer</button>` : ''}</div></div></div>`;
+      return `<div class="comment-item"><img class="comment-avatar" src="${authorAvatar}" alt="${escapeAttr(authorName)}" loading="lazy" /><div class="comment-body"><div class="comment-author">${escapeHtml(authorName)}</div><div class="comment-text">${escapeHtml(c.text)}</div><div class="comment-meta"><span>${date}</span>${canDelete ? `<button class="comment-delete" onclick="deleteComment('${c.id}', '${noteId}', event)">🗑️ Supprimer</button>` : ''}</div></div></div>`;
     }).join('');
   }
   return `<div class="comments-section"><div class="comments-header">💬 Commentaires (${comments.length})</div><div class="comments-list">${commentsListHtml}</div><div class="comment-input-wrapper"><input type="text" id="commentInput_${noteId}" placeholder="Écrire un commentaire..." maxlength="300" onkeydown="if(event.key==='Enter'){event.preventDefault();addComment('${noteId}');}" /><button class="comment-send" onclick="addComment('${noteId}')" title="Envoyer">➤</button></div></div>`;
@@ -1519,7 +1583,7 @@ function buildPopupContent(note) {
     const authorProfile = friendsProfiles[note.userId];
     const authorName = authorProfile ? (authorProfile.username ? '@' + authorProfile.username : authorProfile.displayName) : 'Un ami';
     const authorAvatar = cloudinaryThumb(authorProfile?.photoURL, 60) || 'https://www.gravatar.com/avatar/?d=mp';
-    authorHtml = `<div class="popup-author" onclick="viewFriendProfile('${note.userId}')"><img src="${authorAvatar}" alt="${escapeHtml(authorName)}" loading="lazy" /><span>${escapeHtml(authorName)}</span></div>`;
+    authorHtml = `<div class="popup-author" onclick="viewFriendProfile('${note.userId}')"><img src="${authorAvatar}" alt="${escapeAttr(authorName)}" loading="lazy" /><span>${escapeHtml(authorName)}</span></div>`;
   }
   const favStar = isMine ? `<span class="popup-fav" onclick="toggleFavoriteFromPopup('${note.id}', event)" title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">${isFav ? '⭐' : '🤍'}</span>` : (isFav ? '<span class="popup-fav" style="cursor:default;">⭐</span>' : '');
   let actionBtns = '';
@@ -1534,29 +1598,19 @@ function renderAllMarkers() {
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
 
-  // 🔒 Filtre strict : cacher les notes privées dont je ne suis pas membre
   notesToShow = notesToShow.filter(n => {
-    // Ma note → toujours visible
     if (n.userId === currentUser.uid) return true;
-    
-    // Note "all" d'un ami → visible
     if ((!n.visibility || n.visibility === 'all') && myFriends.includes(n.userId)) return true;
-    
-    // Note de groupe dont je suis membre → visible
     if (n.visibility && n.visibility !== 'all' && allGroups.some(g => g.id === n.visibility)) return true;
-    
-    // Sinon → caché
     return false;
   });
 
-  // 📁 Filtre groupe actif
   if (activeGroupId) {
     const group = allGroups.find(g => g.id === activeGroupId);
     if (group) {
       const memberSet = new Set(group.members || []);
       notesToShow = notesToShow.filter(n => memberSet.has(n.userId));
     } else {
-      // Le groupe n'existe plus, on désactive le filtre
       activeGroupId = null;
       const badge = document.getElementById('groupFilterBadge');
       if (badge) badge.classList.remove('show');
@@ -1566,9 +1620,7 @@ function renderAllMarkers() {
     const q = sidebarSearchQuery.toLowerCase().trim();
     notesToShow = notesToShow.filter(n => { const inPlace = (n.place || '').toLowerCase().includes(q); const inText = (n.text || '').toLowerCase().includes(q); const inTags = (n.tags || []).some(t => t.toLowerCase().includes(q)); return inPlace || inText || inTags; });
   }
-    // 🆕 Sauvegarder l'ID du marqueur dont la popup est ouverte
   const openPopupId = map._popup && map._popup._source ? Object.keys(markers).find(id => markers[id] === map._popup._source) : null;
-
   const idsToShow = new Set(notesToShow.map(n => n.id));
   Object.keys(markers).forEach(id => { 
     if (!idsToShow.has(id) && id !== openPopupId) { 
@@ -1599,7 +1651,6 @@ function renderSidebar() {
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
 
-  // 🔒 Filtre strict : cacher les notes privées dont je ne suis pas membre
   notesToShow = notesToShow.filter(n => {
     if (n.userId === currentUser.uid) return true;
     if ((!n.visibility || n.visibility === 'all') && myFriends.includes(n.userId)) return true;
@@ -1623,7 +1674,7 @@ function renderSidebar() {
       const authorProfile = friendsProfiles[note.userId];
       const authorName = authorProfile ? (authorProfile.username ? '@' + authorProfile.username : authorProfile.displayName) : 'Ami';
       const authorAvatar = cloudinaryThumb(authorProfile?.photoURL, 40) || 'https://www.gravatar.com/avatar/?d=mp';
-      authorHtml = `<div class="note-author"><img src="${authorAvatar}" alt="${escapeHtml(authorName)}" loading="lazy" /><span>${escapeHtml(authorName)}</span></div>`;
+      authorHtml = `<div class="note-author"><img src="${authorAvatar}" alt="${escapeAttr(authorName)}" loading="lazy" /><span>${escapeHtml(authorName)}</span></div>`;
     }
     const favStar = isMine ? `<span class="fav-star" onclick="toggleFavorite('${note.id}', event)" title="${isFav ? 'Retirer' : 'Ajouter aux favoris'}">${isFav ? '⭐' : '🤍'}</span>` : (isFav ? '<span class="fav-star" style="cursor:default;">⭐</span>' : '');
     const deleteBtn = isMine ? `<button class="delete-note" onclick="deleteNote('${note.id}', event)">🗑️</button>` : '';
@@ -1712,6 +1763,7 @@ async function toggleFavoriteFromPopup(id, event) {
   const newVal = !note.favorite;
   try { await db.collection('notes').doc(id).update({ favorite: newVal }); showToast(newVal ? '⭐ Ajouté aux favoris !' : 'Retiré des favoris', newVal ? 'success' : 'info'); } catch (err) { showToast('❌ Erreur', 'error'); }
 }
+
 /* 📁 GROUPES */
 function loadGroups() {
   if (unsubscribeGroups) unsubscribeGroups();
@@ -1719,18 +1771,27 @@ function loadGroups() {
     .where('members', 'array-contains', currentUser.uid)
     .onSnapshot(
       (snapshot) => {
-        allGroups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        allGroups.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                renderGroupsList();
+        const newGroups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        newGroups.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        // 🆕 Détecter un changement de LISTE des groupes (pas juste contenu)
+        const oldIds = allGroups.map(g => g.id).sort().join(',');
+        const newIds = newGroups.map(g => g.id).sort().join(',');
+        const groupIdsChanged = oldIds !== newIds;
+        allGroups = newGroups;
+        renderGroupsList();
         updateFilters();
-        loadAllNotes();
+        if (groupIdsChanged) {
+          loadAllNotes();
+        } else {
+          // Juste refresh des marqueurs si le contenu a changé
+          renderAllMarkers();
+        }
       },
       (error) => {
         console.error('Erreur loadGroups:', error);
       }
     );
 }
-// 🆕 Charge les profils des membres d'un groupe (même s'ils ne sont pas amis)
 async function loadGroupMembersProfiles(group) {
   if (!group || !group.members) return;
   const missingUids = group.members.filter(uid => !allProfiles[uid] && uid !== currentUser.uid);
@@ -1744,17 +1805,13 @@ async function loadGroupMembersProfiles(group) {
     }
   } catch (err) { console.error('Erreur loadGroupMembersProfiles:', err); }
 }
-
-/* 📁 GROUPES - FONCTIONS */
 function renderGroupsList() {
   const list = document.getElementById('groupsList');
   if (!list) return;
-
   if (allGroups.length === 0) {
     list.innerHTML = `<div class="empty-state">📁 Aucun groupe pour l'instant.<br>Crée ton premier groupe !</div>`;
     return;
   }
-
   list.innerHTML = allGroups.map(g => {
     const memberCount = (g.members || []).length;
     const isOwner = g.ownerId === currentUser.uid;
@@ -1772,16 +1829,8 @@ function renderGroupsList() {
     `;
   }).join('');
 }
-
-function openGroupsModal() {
-  document.getElementById('groupsModalOverlay').classList.add('open');
-  renderGroupsList();
-}
-
-function closeGroupsModal() {
-  document.getElementById('groupsModalOverlay').classList.remove('open');
-}
-
+function openGroupsModal() { document.getElementById('groupsModalOverlay').classList.add('open'); renderGroupsList(); }
+function closeGroupsModal() { document.getElementById('groupsModalOverlay').classList.remove('open'); }
 function openCreateGroup() {
   currentEditingGroupId = null;
   pendingGroupEmoji = '🏖️';
@@ -1796,50 +1845,28 @@ function openCreateGroup() {
   document.getElementById('editGroupModalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('groupName').focus(), 200);
 }
-
 function chooseGroupEmoji(el) {
   document.querySelectorAll('#groupEmojiPicker .emoji-choice-group').forEach(e => e.classList.remove('active'));
   el.classList.add('active');
   pendingGroupEmoji = el.dataset.emoji;
 }
-
 function closeEditGroupModal() {
   document.getElementById('editGroupModalOverlay').classList.remove('open');
   currentEditingGroupId = null;
-  if (allGroups.length > 0 || true) {
-    document.getElementById('groupsModalOverlay').classList.add('open');
-  }
+  document.getElementById('groupsModalOverlay').classList.add('open');
 }
-
 async function saveGroup() {
   const name = document.getElementById('groupName').value.trim();
-  if (name.length < 2) {
-    showToast('⚠️ Le nom doit faire au moins 2 caractères', 'error');
-    return;
-  }
-
+  if (name.length < 2) { showToast('⚠️ Le nom doit faire au moins 2 caractères', 'error'); return; }
   const saveBtn = document.getElementById('saveGroupBtn');
   saveBtn.disabled = true;
   saveBtn.innerHTML = '<span class="cloud-loader"></span>Enregistrement...';
-
   try {
     if (currentEditingGroupId) {
-      // Modification
-      await db.collection('groups').doc(currentEditingGroupId).update({
-        name: name,
-        emoji: pendingGroupEmoji,
-        updatedAt: Date.now()
-      });
+      await db.collection('groups').doc(currentEditingGroupId).update({ name: name, emoji: pendingGroupEmoji, updatedAt: Date.now() });
       showToast('✅ Groupe modifié !', 'success');
     } else {
-      // Création
-      await db.collection('groups').add({
-        name: name,
-        emoji: pendingGroupEmoji,
-        ownerId: currentUser.uid,
-        members: [currentUser.uid],
-        createdAt: Date.now()
-      });
+      await db.collection('groups').add({ name: name, emoji: pendingGroupEmoji, ownerId: currentUser.uid, members: [currentUser.uid], createdAt: Date.now() });
       showToast('✅ Groupe créé !', 'success');
     }
     closeEditGroupModal();
@@ -1851,39 +1878,28 @@ async function saveGroup() {
     saveBtn.innerHTML = currentEditingGroupId ? '💾 Mettre à jour' : '💾 Créer le groupe';
   }
 }
-
 async function openGroupDetail(groupId) {
   const group = allGroups.find(g => g.id === groupId);
   if (!group) return;
-
   currentViewingGroupId = groupId;
   await loadGroupMembersProfiles(group);
   document.getElementById('detailGroupEmoji').textContent = group.emoji || '📁';
   document.getElementById('detailGroupName').textContent = group.name || 'Sans nom';
   const memberCount = (group.members || []).length;
   document.getElementById('detailGroupMeta').textContent = `${memberCount} membre${memberCount > 1 ? 's' : ''}`;
-
   const isOwner = group.ownerId === currentUser.uid;
   const btn = document.getElementById('deleteOrLeaveGroupBtn');
   btn.innerHTML = isOwner ? '🗑️ Supprimer le groupe' : '🚪 Quitter le groupe';
   btn.onclick = () => isOwner ? confirmDeleteGroup(groupId) : leaveGroup(groupId);
-
   renderGroupMembers(group);
-
   document.getElementById('groupsModalOverlay').classList.remove('open');
   document.getElementById('groupDetailModalOverlay').classList.add('open');
 }
-
 function renderGroupMembers(group) {
   const list = document.getElementById('groupMembersList');
   if (!list) return;
-
   const members = group.members || [];
-  if (members.length === 0) {
-    list.innerHTML = `<div class="empty-state">Aucun membre</div>`;
-    return;
-  }
-
+  if (members.length === 0) { list.innerHTML = `<div class="empty-state">Aucun membre</div>`; return; }
   list.innerHTML = members.map(uid => {
     const isMe = uid === currentUser.uid;
     const isOwner = uid === group.ownerId;
@@ -1891,12 +1907,10 @@ function renderGroupMembers(group) {
     let name = 'Toi';
     let username = '';
     let avatar = myProfile?.photoURL || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
-
     if (!isMe) {
-            profile = allProfiles[uid];
+      profile = allProfiles[uid];
       if (!profile) {
         name = 'Chargement...';
-        // Charger le profil en arrière-plan
         if (group) {
           loadGroupMembersProfiles(group).then(() => {
             setTimeout(() => renderGroupMembers(group), 200);
@@ -1911,12 +1925,10 @@ function renderGroupMembers(group) {
       name = (myProfile?.displayName || 'Toi') + ' (toi)';
       username = myProfile?.username ? '@' + myProfile.username : '';
     }
-
     const canRemove = !isMe && !isOwner && group.ownerId === currentUser.uid;
-
     return `
       <div class="group-member-row">
-        <img src="${avatar}" alt="${escapeHtml(name)}" loading="lazy" />
+        <img src="${avatar}" alt="${escapeAttr(name)}" loading="lazy" />
         <div class="group-member-info">
           <div class="group-member-name">${escapeHtml(name)}</div>
           ${username ? `<div class="group-member-username">${escapeHtml(username)}</div>` : ''}
@@ -1927,71 +1939,31 @@ function renderGroupMembers(group) {
     `;
   }).join('');
 }
-
 function closeGroupDetail() {
   document.getElementById('groupDetailModalOverlay').classList.remove('open');
   currentViewingGroupId = null;
   document.getElementById('groupsModalOverlay').classList.add('open');
   renderGroupsList();
 }
-
 async function addFriendToGroup() {
   if (!currentViewingGroupId) return;
   const input = document.getElementById('groupAddFriendInput');
   const username = input.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
-
-  if (username.length < 3) {
-    showToast('⚠️ Pseudo invalide', 'error');
-    return;
-  }
-
+  if (username.length < 3) { showToast('⚠️ Pseudo invalide', 'error'); return; }
   const group = allGroups.find(g => g.id === currentViewingGroupId);
   if (!group) return;
-
   input.disabled = true;
-
   try {
-    // Trouver l'ami par pseudo
-    const usersSnap = await db.collection('users')
-      .where('username', '==', username)
-      .limit(1)
-      .get({ source: 'server' });
-
-    if (usersSnap.empty) {
-      showToast('❌ Aucun utilisateur avec ce pseudo', 'error');
-      input.disabled = false;
-      return;
-    }
-
+    const usersSnap = await db.collection('users').where('username', '==', username).limit(1).get({ source: 'server' });
+    if (usersSnap.empty) { showToast('❌ Aucun utilisateur avec ce pseudo', 'error'); input.disabled = false; return; }
     const targetUid = usersSnap.docs[0].id;
-
-    if (targetUid === currentUser.uid) {
-      showToast('⚠️ Tu es déjà dans ce groupe', 'error');
-      input.disabled = false;
-      return;
-    }
-
-    if (!myFriends.includes(targetUid)) {
-      showToast('⚠️ Cet utilisateur n\'est pas dans tes amis', 'error');
-      input.disabled = false;
-      return;
-    }
-
-    if ((group.members || []).includes(targetUid)) {
-      showToast('ℹ️ Cet ami est déjà dans le groupe', 'info');
-      input.disabled = false;
-      return;
-    }
-
+    if (targetUid === currentUser.uid) { showToast('⚠️ Tu es déjà dans ce groupe', 'error'); input.disabled = false; return; }
+    if (!myFriends.includes(targetUid)) { showToast('⚠️ Cet utilisateur n\'est pas dans tes amis', 'error'); input.disabled = false; return; }
+    if ((group.members || []).includes(targetUid)) { showToast('ℹ️ Cet ami est déjà dans le groupe', 'info'); input.disabled = false; return; }
     const newMembers = [...(group.members || []), targetUid];
-    await db.collection('groups').doc(currentViewingGroupId).update({
-      members: newMembers
-    });
-
+    await db.collection('groups').doc(currentViewingGroupId).update({ members: newMembers });
     input.value = '';
     showToast(`✅ @${username} ajouté au groupe !`, 'success');
-
-    // Rafraîchir la vue
     setTimeout(() => {
       const updatedGroup = allGroups.find(g => g.id === currentViewingGroupId);
       if (updatedGroup) {
@@ -2007,26 +1979,15 @@ async function addFriendToGroup() {
     input.disabled = false;
   }
 }
-
 async function removeMemberFromGroup(groupId, memberUid) {
   const group = allGroups.find(g => g.id === groupId);
   if (!group) return;
-
-  if (group.ownerId !== currentUser.uid) {
-    showToast('⚠️ Seul le créateur peut retirer des membres', 'error');
-    return;
-  }
-
+  if (group.ownerId !== currentUser.uid) { showToast('⚠️ Seul le créateur peut retirer des membres', 'error'); return; }
   if (!confirm('Retirer ce membre du groupe ?')) return;
-
   try {
     const newMembers = (group.members || []).filter(uid => uid !== memberUid);
-    await db.collection('groups').doc(groupId).update({
-      members: newMembers
-    });
-
+    await db.collection('groups').doc(groupId).update({ members: newMembers });
     showToast('✅ Membre retiré', 'info');
-
     setTimeout(() => {
       const updatedGroup = allGroups.find(g => g.id === groupId);
       if (updatedGroup) {
@@ -2040,23 +2001,14 @@ async function removeMemberFromGroup(groupId, memberUid) {
     showToast('❌ Erreur : ' + err.message, 'error');
   }
 }
-
 async function leaveGroup(groupId) {
   if (!confirm('Quitter ce groupe ?')) return;
-
   try {
     const group = allGroups.find(g => g.id === groupId);
     if (!group) return;
     const newMembers = (group.members || []).filter(uid => uid !== currentUser.uid);
-
-    await db.collection('groups').doc(groupId).update({
-      members: newMembers
-    });
-
-    if (activeGroupId === groupId) {
-      clearGroupFilter();
-    }
-
+    await db.collection('groups').doc(groupId).update({ members: newMembers });
+    if (activeGroupId === groupId) { clearGroupFilter(); }
     showToast('🚪 Tu as quitté le groupe', 'info');
     closeGroupDetail();
   } catch (err) {
@@ -2064,28 +2016,15 @@ async function leaveGroup(groupId) {
     showToast('❌ Erreur : ' + err.message, 'error');
   }
 }
-
 async function confirmDeleteGroup(groupId) {
   const group = allGroups.find(g => g.id === groupId);
   if (!group) return;
-
-  if (group.ownerId !== currentUser.uid) {
-    showToast('⚠️ Seul le créateur peut supprimer le groupe', 'error');
-    return;
-  }
-
+  if (group.ownerId !== currentUser.uid) { showToast('⚠️ Seul le créateur peut supprimer le groupe', 'error'); return; }
   if (!confirm(`Supprimer définitivement le groupe "${group.name}" ?`)) return;
-
   try {
     await db.collection('groups').doc(groupId).delete();
-
-    if (activeGroupId === groupId) {
-      clearGroupFilter();
-    }
-
+    if (activeGroupId === groupId) { clearGroupFilter(); }
     showToast('🗑️ Groupe supprimé', 'info');
-
-    // Fermer les modales éventuelles
     document.getElementById('groupDetailModalOverlay').classList.remove('open');
     document.getElementById('groupsModalOverlay').classList.add('open');
   } catch (err) {
@@ -2093,51 +2032,38 @@ async function confirmDeleteGroup(groupId) {
     showToast('❌ Erreur : ' + err.message, 'error');
   }
 }
-/* 📁 FILTRE GROUPE */
 function applyGroupFilterFromDetail() {
   if (!currentViewingGroupId) return;
   const group = allGroups.find(g => g.id === currentViewingGroupId);
   if (!group) return;
-
   activeGroupId = currentViewingGroupId;
   showToast(`${group.emoji || '📁'} Filtre "${group.name}" activé`, 'success');
-
-  // Met à jour la pastille
   const badge = document.getElementById('groupFilterBadge');
   const badgeText = document.getElementById('groupFilterText');
   if (badge && badgeText) {
     badgeText.textContent = `${group.emoji || '📁'} ${group.name}`;
     badge.classList.add('show');
   }
-
-  // Ferme la modale et retourne à la carte
   document.getElementById('groupDetailModalOverlay').classList.remove('open');
   document.getElementById('groupsModalOverlay').classList.remove('open');
   currentViewingGroupId = null;
-
-  // Applique le filtre
   renderAllMarkers();
   updateFilters();
 }
-
 function applyGroupFilter(groupId) {
   if (!groupId) return;
   const group = allGroups.find(g => g.id === groupId);
   if (!group) return;
-
   activeGroupId = groupId;
-
   const badge = document.getElementById('groupFilterBadge');
   const badgeText = document.getElementById('groupFilterText');
   if (badge && badgeText) {
     badgeText.textContent = `${group.emoji || '📁'} ${group.name}`;
     badge.classList.add('show');
   }
-
   renderAllMarkers();
   updateFilters();
 }
-
 function clearGroupFilter() {
   activeGroupId = null;
   const badge = document.getElementById('groupFilterBadge');
@@ -2251,7 +2177,7 @@ function renderTagsInModal() {
   const wrapper = document.getElementById('tagsInputWrapper');
   const input = document.getElementById('tagInputField');
   wrapper.querySelectorAll('.tag-chip-modal').forEach(c => c.remove());
-  pendingTags.forEach(tag => { const chip = document.createElement('div'); chip.className = 'tag-chip-modal'; chip.innerHTML = `#${escapeHtml(tag)}<span class="remove-tag" data-tag="${escapeHtml(tag)}">×</span>`; wrapper.insertBefore(chip, input); });
+  pendingTags.forEach(tag => { const chip = document.createElement('div'); chip.className = 'tag-chip-modal'; chip.innerHTML = `#${escapeHtml(tag)}<span class="remove-tag" data-tag="${escapeAttr(tag)}">×</span>`; wrapper.insertBefore(chip, input); });
   wrapper.querySelectorAll('.remove-tag').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); removeTag(btn.dataset.tag); }); });
 }
 function addTag(tagText) {
@@ -2290,7 +2216,7 @@ function showRandomNote() {
     const icon = random.icon || '📍';
     const date = new Date(random.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     let authorHtml = '';
-    if (!isMine) { const authorProfile = friendsProfiles[random.userId]; const authorName = authorProfile ? (authorProfile.username ? '@' + authorProfile.username : authorProfile.displayName) : 'Un ami'; const authorAvatar = cloudinaryThumb(authorProfile?.photoURL, 60) || 'https://www.gravatar.com/avatar/?d=mp'; authorHtml = `<div class="popup-author" style="cursor:default;"><img src="${authorAvatar}" alt="${escapeHtml(authorName)}" loading="lazy" /><span>${escapeHtml(authorName)}</span></div>`; }
+    if (!isMine) { const authorProfile = friendsProfiles[random.userId]; const authorName = authorProfile ? (authorProfile.username ? '@' + authorProfile.username : authorProfile.displayName) : 'Un ami'; const authorAvatar = cloudinaryThumb(authorProfile?.photoURL, 60) || 'https://www.gravatar.com/avatar/?d=mp'; authorHtml = `<div class="popup-author" style="cursor:default;"><img src="${authorAvatar}" alt="${escapeAttr(authorName)}" loading="lazy" /><span>${escapeHtml(authorName)}</span></div>`; }
     let photoHtml = '';
     if (random.photo) photoHtml = `<img class="popup-photo" src="${cloudinaryThumb(random.photo, 700)}" alt="Photo" loading="lazy" onclick="openLightbox('${random.id}', event)" />`;
     const tagsHtml = renderTagsHtml(random.tags);
@@ -2359,7 +2285,7 @@ function editNoteFromPopup(id, event) {
   pendingPhoto = note.photo || null;
   pendingIsFavorite = note.favorite === true;
   pendingTags = note.tags ? [...note.tags] : [];
-    pendingVisibility = note.visibility || 'all';
+  pendingVisibility = note.visibility || 'all';
   const dateInput = document.getElementById('noteDate');
   if (note.userDate) dateInput.value = note.userDate; else dateInput.value = '';
   updateFavToggle();
@@ -2369,6 +2295,7 @@ function editNoteFromPopup(id, event) {
   renderTagsInModal();
   if (note.address) showAddress(note.address); else hideAddress();
   updateLocationBox();
+  updateVisibilityOptions();
   document.getElementById('saveNoteBtn').innerHTML = '💾 Mettre à jour';
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('placeName').focus(), 100);
@@ -2386,8 +2313,6 @@ function setMapFilter(filter) {
 }
 function updateFilters() {
   let notesForCounts = allNotes;
-
-  // 📁 Si filtre groupe actif, on ne compte que ses notes
   if (activeGroupId) {
     const group = allGroups.find(g => g.id === activeGroupId);
     if (group) {
@@ -2395,7 +2320,6 @@ function updateFilters() {
       notesForCounts = allNotes.filter(n => memberSet.has(n.userId));
     }
   }
-
   document.getElementById('countAll').textContent = notesForCounts.length;
   document.getElementById('countMine').textContent = notesForCounts.filter(n => n.userId === currentUser.uid).length;
   document.getElementById('countFriends').textContent = notesForCounts.filter(n => n.userId !== currentUser.uid).length;
@@ -2464,7 +2388,7 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
     if (validNotes.length === 0) throw new Error('Aucune note valide');
     if (!confirm(`Importer ${validNotes.length} souvenir${validNotes.length > 1 ? 's' : ''} ?`)) { e.target.value = ''; return; }
     const batch = db.batch(); const notesRef = db.collection('notes');
-    validNotes.forEach(note => { const newRef = notesRef.doc(); batch.set(newRef, { userId: currentUser.uid, place: note.place, text: note.text, lat: note.lat, lng: note.lng, createdAt: note.createdAt || Date.now(), source: note.source || 'import', icon: note.icon || '📍', photo: note.photo || null, favorite: note.favorite || false, userDate: note.userDate || null, address: note.address || null, tags: note.tags || [] }); });
+    validNotes.forEach(note => { const newRef = notesRef.doc(); batch.set(newRef, { userId: currentUser.uid, place: note.place, text: note.text, lat: note.lat, lng: note.lng, createdAt: note.createdAt || Date.now(), source: note.source || 'import', icon: note.icon || '📍', photo: note.photo || null, favorite: note.favorite || false, userDate: note.userDate || null, address: note.address || null, tags: note.tags || [], visibility: 'all' }); });
     await batch.commit();
     showToast(`✅ ${validNotes.length} importé${validNotes.length > 1 ? 's' : ''} !`, 'success');
   } catch (err) { showToast('❌ Fichier invalide', 'error'); }
@@ -2477,23 +2401,19 @@ function updateVisibilityOptions() {
   const container = document.getElementById('visibilityGroupContainer');
   const select = document.getElementById('noteVisibility');
   if (!container || !select) return;
-  
   if (allGroups.length === 0) {
     container.style.display = 'none';
     pendingVisibility = 'all';
     return;
   }
-  
   container.style.display = 'block';
   select.innerHTML = '<option value="all">🌍 Tout le monde (mes amis)</option>';
-  
   allGroups.forEach(g => {
     const opt = document.createElement('option');
     opt.value = g.id;
     opt.textContent = `${g.emoji || '📁'} ${g.name} (groupe)`;
     select.appendChild(opt);
   });
-  
   select.value = pendingVisibility;
 }
 function openAddModal() {
@@ -2505,7 +2425,7 @@ function openAddModal() {
   document.getElementById('saveNoteBtn').innerHTML = '💾 Enregistrer';
   document.getElementById('noteDate').value = '';
   hideAddress();
-    updateVisibilityOptions();
+  updateVisibilityOptions();
   if (!pendingLatLng) { const c = map.getCenter(); pendingLatLng = { lat: c.lat, lng: c.lng }; pendingSource = 'manual'; }
   updateLocationBox();
   document.getElementById('modalOverlay').classList.add('open');
@@ -2522,7 +2442,7 @@ function closeAddModal() {
   document.getElementById('noteDate').value = '';
   document.getElementById('tagInputField').value = '';
   closeAutocomplete(); clearSearchButton(); hideAddress();
-    pendingLatLng = null; pendingSource = null; pendingIcon = '📍'; pendingIsFavorite = false; pendingTags = []; editingNoteId = null; pendingVisibility = 'all';
+  pendingLatLng = null; pendingSource = null; pendingIcon = '📍'; pendingIsFavorite = false; pendingTags = []; editingNoteId = null; pendingVisibility = 'all';
   updateFavToggle(); renderTagsInModal(); removePhoto();
   document.querySelectorAll('.icon-choice').forEach(c => { c.classList.toggle('active', c.dataset.icon === '📍'); });
   if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
@@ -2645,7 +2565,7 @@ async function saveNote() {
     const addressEl = document.getElementById('addressDisplay');
     const address = addressEl.classList.contains('visible') ? addressEl.textContent.replace('📍 Adresse détectée : ', '').trim() : null;
     if (editingNoteId) {
-      await db.collection('notes').doc(editingNoteId).update({ place, text, lat, lng, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, tags: pendingTags, updatedAt: Date.now() });
+      await db.collection('notes').doc(editingNoteId).update({ place, text, lat, lng, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, tags: pendingTags, visibility: pendingVisibility, updatedAt: Date.now() });
       const updatedId = editingNoteId;
       editingNoteId = null;
       closeAddModal();
@@ -2654,7 +2574,7 @@ async function saveNote() {
       setTimeout(() => { const m = markers[updatedId]; if (m) m.openPopup(); }, 800);
     } else {
       const now = Date.now();
-            await db.collection('notes').add({ userId: currentUser.uid, place, text, lat, lng, createdAt: now, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, tags: pendingTags, visibility: pendingVisibility });
+      await db.collection('notes').add({ userId: currentUser.uid, place, text, lat, lng, createdAt: now, source: pendingSource, icon: pendingIcon, photo: pendingPhoto, favorite: pendingIsFavorite, userDate: userDate || null, address: address, tags: pendingTags, visibility: pendingVisibility });
       closeAddModal();
       showToast('☁️ Souvenir enregistré !', 'success');
       map.flyTo([lat, lng], 15, { duration: 1.2 });
@@ -2667,6 +2587,15 @@ async function saveNote() {
 let toastTimer;
 function showToast(msg, type = '') { const toast = document.getElementById('toast'); toast.textContent = msg; toast.className = 'toast show ' + type; clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 3200); }
 function escapeHtml(str) { if (str === undefined || str === null) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+/* 🆕 Anti-XSS attributs HTML */
+function escapeAttr(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
 
 /* ⌨️ RACCOURCIS */
 document.addEventListener('keydown', (e) => {
