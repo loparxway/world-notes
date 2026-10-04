@@ -1431,7 +1431,7 @@ map.on('click', (e) => {
   }
   lastMapClickTime = now;
   
-  if (map._popup) {
+ if (map._popup && (Date.now() - (window._popupOpenedAt || 0)) > 500) {
     map.closePopup();
     return;
   }
@@ -1472,8 +1472,11 @@ function createMarkerIcon(note) {
 function createUserLocationIcon() { return L.divIcon({ className: '', html: '<div class="user-location-marker"></div>', iconSize: [20, 20], iconAnchor: [10, 10] }); }
 function createTempMarkerIcon() { return L.divIcon({ className: '', html: '<div class="temp-marker"></div>', iconSize: [26, 26], iconAnchor: [13, 13] }); }
 function addMarkerToMap(note) {
-  const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, minWidth: 240, autoPanPadding: [10, 10] });
+   const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, minWidth: 240, autoPanPadding: [10, 10] });
   marker.on('click', (e) => { L.DomEvent.stopPropagation(e); });
+  marker.on('mousedown', (e) => { L.DomEvent.stopPropagation(e); });
+  marker.on('touchstart', (e) => { L.DomEvent.stopPropagation(e); });
+  marker.on('popupopen', () => { window._popupOpenedAt = Date.now(); });
   markers[note.id] = marker;
   markersCluster.addLayer(marker);
   return marker;
