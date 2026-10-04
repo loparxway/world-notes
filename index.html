@@ -1634,11 +1634,59 @@ function refreshOpenPopup() {
   const marker = openPopup._source; if (!marker) return;
   const noteId = Object.keys(markers).find(id => markers[id] === marker); if (!noteId) return;
   const note = notesByIdCache[noteId]; if (!note) return;
+  
+  // 🆕 Sur iOS : mise à jour ciblée pour ne PAS reconstruire la popup en entier
+  // (sinon iOS la ferme automatiquement)
+  const popupEl = openPopup.getElement();
+  if (!popupEl) return;
+  
+  const reactionsEl = popupEl.querySelector('.reactions-bar');
+  const commentsEl = popupEl.querySelector('.comments-section');
+  
+  // Sauvegarder le focus du champ commentaire s'il est actif
   let savedFocus = null, savedValue = '', savedSelection = null;
   const activeEl = document.activeElement;
-  if (activeEl && activeEl.id && activeEl.id.startsWith('commentInput_')) { savedFocus = activeEl.id; savedValue = activeEl.value; try { savedSelection = [activeEl.selectionStart, activeEl.selectionEnd]; } catch(e) {} }
-  openPopup.setContent(buildPopupContent(note));
-  if (savedFocus) { const newEl = document.getElementById(savedFocus); if (newEl) { newEl.value = savedValue; newEl.focus(); if (savedSelection) { try { newEl.setSelectionRange(savedSelection[0], savedSelection[1]); } catch(e) {} } } }
+  if (activeEl && activeEl.id && activeEl.id.startsWith('commentInput_')) {
+    savedFocus = activeEl.id;
+    savedValue = activeEl.value;
+    try { savedSelection = [activeEl.selectionStart, activeEl.selectionEnd]; } catch(e) {}
+  }
+  
+  // Mise à jour CIBLÉE (ne touche pas au reste de la popup)
+  if (reactionsEl) {
+    const newReactionsHtml = renderReactionsHtml(noteId);
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = newReactionsHtml;
+    const newReactionsEl = tempDiv.firstElementChild;
+    if (newReactionsEl) {
+      reactionsEl.replaceWith(newReactionsEl);
+    }
+  }
+  
+  if (commentsEl) {
+    const newCommentsHtml = renderCommentsHtml(noteId);
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = newCommentsHtml;
+    const newCommentsEl = tempDiv.firstElementChild;
+    if (newCommentsEl) {
+      // Sauvegarder la position de scroll des commentaires
+      const scrollTop = commentsEl.scrollTop;
+      commentsEl.replaceWith(newCommentsEl);
+      newCommentsEl.scrollTop = scrollTop;
+    }
+  }
+  
+  // Restaurer le focus du champ commentaire si besoin
+  if (savedFocus) {
+    const newEl = document.getElementById(savedFocus);
+    if (newEl) {
+      newEl.value = savedValue;
+      newEl.focus();
+      if (savedSelection) {
+        try { newEl.setSelectionRange(savedSelection[0], savedSelection[1]); } catch(e) {}
+      }
+    }
+  }
 }
 function renderSidebar() {
   const list = document.getElementById('notesList');
