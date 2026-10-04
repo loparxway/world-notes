@@ -26,9 +26,9 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <style>
 :root[data-theme="dark"]{--bg-primary:#0f172a;--bg-secondary:#1e293b;--bg-tertiary:#0b1220;--bg-card:rgba(30,41,59,0.7);--bg-card-hover:rgba(51,65,85,0.8);--bg-overlay:rgba(15,23,42,0.85);--bg-modal:#1e293b;--bg-input:#0f172a;--bg-header:rgba(15,23,42,0.85);--text-primary:#e2e8f0;--text-secondary:#cbd5e1;--text-muted:#94a3b8;--text-faint:#64748b;--border-color:rgba(148,163,184,0.2);--border-subtle:rgba(148,163,184,0.15);--border-hover:rgba(148,163,184,0.3);--shadow-sm:0 2px 8px rgba(0,0,0,0.3);--shadow-md:0 4px 12px rgba(0,0,0,0.4);--shadow-lg:0 20px 60px rgba(0,0,0,0.6);--favorite:#fbbf24;--tag-bg:rgba(139,92,246,0.15);--tag-color:#a78bfa;--tag-border:rgba(139,92,246,0.3)}
 :root[data-theme="light"]{--bg-primary:#f1f5f9;--bg-secondary:#ffffff;--bg-tertiary:#e2e8f0;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(241,245,249,0.95);--bg-overlay:rgba(255,255,255,0.9);--bg-modal:#ffffff;--bg-input:#f8fafc;--bg-header:rgba(255,255,255,0.9);--text-primary:#0f172a;--text-secondary:#1e293b;--text-muted:#475569;--text-faint:#64748b;--border-color:rgba(15,23,42,0.15);--border-subtle:rgba(15,23,42,0.08);--border-hover:rgba(15,23,42,0.25);--shadow-sm:0 2px 8px rgba(15,23,42,0.08);--shadow-md:0 4px 12px rgba(15,23,42,0.1);--shadow-lg:0 20px 60px rgba(15,23,42,0.15);--favorite:#d97706;--tag-bg:rgba(139,92,246,0.1);--tag-color:#7c3aed;--tag-border:rgba(139,92,246,0.25)}
@@ -895,11 +895,10 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
-// ⚠️ Persistance Firestore désactivée : bug "INTERNAL ASSERTION FAILED" avec trop de listeners
-// db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-//   if (err.code === 'failed-precondition') console.warn('Persistance : autre onglet ouvert');
-//   else if (err.code === 'unimplemented') console.warn('Persistance non supportée');
-// });
+db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+  if (err.code === 'failed-precondition') console.warn('Persistance : autre onglet ouvert');
+  else if (err.code === 'unimplemented') console.warn('Persistance non supportée');
+});
 
 /* 📱 PWA */
 if ('serviceWorker' in navigator) {
