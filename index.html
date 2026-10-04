@@ -950,6 +950,7 @@ let pendingIsFavorite = false, pendingTags = [], currentRandomNoteId = null, cur
 let notesByIdCache = {};
 let unsubscribeProfile = null, unsubscribeNotes = null, unsubscribeFriends = null, unsubscribeIncoming = null, unsubscribeOutgoing = null, unsubscribeReactions = null, unsubscribeComments = null;
 let map = null, tileLayer = null, pendingLatLng = null, pendingSource = null, pendingIcon = '📍', pendingPhoto = null;
+let openPopupNoteId = null; // 🆕 ID de la note dont la popup est ouverte (fix iOS)
 let markers = {}, markersCluster = null, userLocationMarker = null, userLocationCircle = null, tempMarker = null;
 const REACTION_EMOJIS = ['❤️', '😂', '😍', '🔥', '👏', '😮'];
 const FIRESTORE_IN_LIMIT = 30;
@@ -1537,7 +1538,14 @@ function addMarkerToMap(note) {
   marker.on('click', (e) => { L.DomEvent.stopPropagation(e); });
   marker.on('mousedown', (e) => { L.DomEvent.stopPropagation(e); });
   marker.on('touchstart', (e) => { L.DomEvent.stopPropagation(e); });
-  marker.on('popupopen', () => { window._popupOpenedAt = Date.now(); });
+  // 🆕 On track nous-mêmes quel marqueur a sa popup ouverte (fix iOS)
+  marker.on('popupopen', () => {
+    window._popupOpenedAt = Date.now();
+    openPopupNoteId = note.id;
+  });
+  marker.on('popupclose', () => {
+    if (openPopupNoteId === note.id) openPopupNoteId = null;
+  });
   markers[note.id] = marker;
   markersCluster.addLayer(marker);
   return marker;
@@ -1617,7 +1625,7 @@ function renderAllMarkers() {
     const q = sidebarSearchQuery.toLowerCase().trim();
     notesToShow = notesToShow.filter(n => { const inPlace = (n.place || '').toLowerCase().includes(q); const inText = (n.text || '').toLowerCase().includes(q); const inTags = (n.tags || []).some(t => t.toLowerCase().includes(q)); return inPlace || inText || inTags; });
   }
-  const openPopupId = map._popup && map._popup._source ? Object.keys(markers).find(id => markers[id] === map._popup._source) : null;
+  const openPopupId = openPopupNoteId;
   const idsToShow = new Set(notesToShow.map(n => n.id));
   Object.keys(markers).forEach(id => { 
     if (!idsToShow.has(id) && id !== openPopupId) { 
@@ -1631,8 +1639,7 @@ function renderAllMarkers() {
 function refreshOpenPopup() {
   if (!map) return;
   const openPopup = map._popup; if (!openPopup) return;
-  const marker = openPopup._source; if (!marker) return;
-  const noteId = Object.keys(markers).find(id => markers[id] === marker); if (!noteId) return;
+  const noteId = openPopupNoteId; if (!noteId) return; // 🆕 Utilise notre variable (fix iOS)
   const note = notesByIdCache[noteId]; if (!note) return;
   
   // 🆕 Sur iOS : mise à jour ciblée pour ne PAS reconstruire la popup en entier
@@ -1729,9 +1736,16 @@ function renderSidebar() {
 function focusNote(id) {
   const note = notesByIdCache[id]; if (!note) return;
   map.flyTo([note.lat, note.lng], 14, { duration: 1.2 });
-  const marker = markers[id]; if (marker) setTimeout(() => marker.openPopup(), 700);
+  const marker = markers[id]; 
+  if (marker) {
+    setTimeout(() => {
+      openPopupNoteId = id;
+      marker.openPopup();
+    }, 700);
+  }
   if (window.innerWidth <= 768) toggleSidebar();
 }
+
 async function deleteNote(id, event) { event.stopPropagation(); if (!confirm('Supprimer ce souvenir ?')) return; try { await db.collection('notes').doc(id).delete(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
 async function deleteNoteFromPopup(id, event) { if (event) event.stopPropagation(); if (!confirm('Supprimer ce souvenir ? Action définitive.')) return; try { await db.collection('notes').doc(id).delete(); map.closePopup(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
 async function toggleReaction(noteId, emoji, event) {
