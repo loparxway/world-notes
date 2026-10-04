@@ -49,6 +49,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 @keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}
 @keyframes slideUpBanner{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 @keyframes onboardingIn{from{opacity:0;transform:translateY(30px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes reactionPulse{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 #landingScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);overflow-y:auto;z-index:10000;padding:20px}
 #landingScreen.hidden{display:none}
 .landing-container{max-width:900px;margin:0 auto;padding:60px 20px 80px}
@@ -281,10 +282,12 @@ textarea{resize:vertical;min-height:90px}
 .popup-delete-btn{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#ef4444;font-size:0.75rem;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer}
 .popup-delete-btn:hover{background:rgba(239,68,68,0.9);color:white}
 .reactions-bar{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-subtle)}
-.reaction-btn{display:inline-flex;align-items:center;gap:4px;background:var(--bg-input);border:1px solid var(--border-subtle);padding:4px 10px;border-radius:20px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;font-weight:600;color:var(--text-secondary)}
+.reaction-btn{display:inline-flex;align-items:center;gap:4px;background:var(--bg-input);border:1.5px solid rgba(148,163,184,0.25);padding:4px 10px;border-radius:20px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;font-weight:600;color:var(--text-secondary)}
 .reaction-btn:hover{background:rgba(249,115,22,0.15);border-color:rgba(249,115,22,0.4);transform:scale(1.05)}
-.reaction-btn.reacted{background:rgba(249,115,22,0.2);border-color:rgba(249,115,22,0.6);color:#f97316}
+.reaction-btn.reacted{background:rgba(249,115,22,0.25);border:2px solid #f97316;color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,0.15)}
+.reaction-btn.reacted .emoji{filter:drop-shadow(0 0 4px rgba(249,115,22,0.6))}
 .reaction-btn .emoji{font-size:1rem}
+.reaction-btn.pop{animation:reactionPulse 0.35s cubic-bezier(0.34,1.56,0.64,1)}
 .comments-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle)}
 .comments-header{font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .comment-item{display:flex;gap:8px;margin-bottom:10px;animation:fadeIn 0.3s ease}
@@ -1853,12 +1856,22 @@ function addMarkerToMap(note) {
 }
 
 function renderTagsHtml(tags) { if (!tags || tags.length === 0) return ''; return `<div class="note-tags">${tags.map(t => `<span class="tag-chip">#${escapeHtml(t)}</span>`).join('')}</div>`; }
+
 function renderReactionsHtml(noteId) {
   const reactions = allReactions[noteId] || [];
   const counts = {};
-  reactions.forEach(r => { if (!counts[r.emoji]) counts[r.emoji] = { count: 0, userReacted: false }; counts[r.emoji].count++; if (r.userId === currentUser.uid) counts[r.emoji].userReacted = true; });
-  return `<div class="reactions-bar">${REACTION_EMOJIS.map(emoji => { const data = counts[emoji] || { count: 0, userReacted: false }; return `<button class="reaction-btn ${data.userReacted ? 'reacted' : ''}" onclick="toggleReaction('${noteId}', '${emoji}', event)"><span class="emoji">${emoji}</span>${data.count > 0 ? `<span>${data.count}</span>` : ''}</button>`; }).join('')}</div>`;
+  reactions.forEach(r => {
+    if (!counts[r.emoji]) counts[r.emoji] = { count: 0, userReacted: false };
+    counts[r.emoji].count++;
+    if (r.userId === currentUser.uid) counts[r.emoji].userReacted = true;
+  });
+  return `<div class="reactions-bar">${REACTION_EMOJIS.map(emoji => {
+    const data = counts[emoji] || { count: 0, userReacted: false };
+    const reactedClass = data.userReacted === true ? ' reacted' : '';
+    return `<button class="reaction-btn${reactedClass}" onclick="event.stopPropagation(); event.preventDefault(); toggleReaction('${noteId}', '${emoji}', event);" ontouchstart="event.stopPropagation();"><span class="emoji">${emoji}</span>${data.count > 0 ? `<span>${data.count}</span>` : ''}</button>`;
+  }).join('')}</div>`;
 }
+
 function renderCommentsHtml(noteId) {
   const comments = allComments[noteId] || [];
   const note = notesByIdCache[noteId];
@@ -2092,12 +2105,109 @@ function focusNote(id) {
 
 async function deleteNote(id, event) { event.stopPropagation(); if (!confirm('Supprimer ce souvenir ?')) return; try { await db.collection('notes').doc(id).delete(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
 async function deleteNoteFromPopup(id, event) { if (event) event.stopPropagation(); if (!confirm('Supprimer ce souvenir ? Action définitive.')) return; try { await db.collection('notes').doc(id).delete(); map.closePopup(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
+
+/* ⚡ RÉACTIONS - VERSION CORRIGÉE */
+const pendingReactions = new Set();
+
 async function toggleReaction(noteId, emoji, event) {
-  if (event) event.stopPropagation(); if (!currentUser) return;
+  if (event) event.stopPropagation();
+  if (!currentUser) return;
+
+  // 🔒 Anti double-clic
+  const key = `${noteId}_${emoji}`;
+  if (pendingReactions.has(key)) return;
+  pendingReactions.add(key);
+
   const reactions = allReactions[noteId] || [];
   const existing = reactions.find(r => r.userId === currentUser.uid && r.emoji === emoji);
-  try { if (existing) { await db.collection('reactions').doc(existing.id).delete(); } else { await db.collection('reactions').add({ noteId, userId: currentUser.uid, emoji, createdAt: Date.now() }); } } catch (err) { showToast('❌ Erreur', 'error'); }
+
+  // ⚡ Mise à jour optimiste de l'UI (instantané)
+  if (!allReactions[noteId]) allReactions[noteId] = [];
+
+  if (existing) {
+    allReactions[noteId] = allReactions[noteId].filter(r => r.id !== existing.id);
+  } else {
+    const reactionId = `${noteId}_${currentUser.uid}_${emoji}`;
+    allReactions[noteId].push({
+      id: reactionId,
+      noteId,
+      userId: currentUser.uid,
+      emoji,
+      createdAt: Date.now()
+    });
+  }
+
+  // 🔄 Rafraîchit IMMÉDIATEMENT l'UI
+  updateReactionsUI(noteId, emoji);
+
+  try {
+    if (existing) {
+      await db.collection('reactions').doc(existing.id).delete();
+    } else {
+      const reactionId = `${noteId}_${currentUser.uid}_${emoji}`;
+      await db.collection('reactions').doc(reactionId).set({
+        noteId,
+        userId: currentUser.uid,
+        emoji,
+        createdAt: Date.now()
+      });
+    }
+  } catch (err) {
+    console.error('Erreur toggleReaction:', err);
+    showToast('❌ Erreur', 'error');
+    // ↩️ Rollback en cas d'erreur
+    if (existing) {
+      allReactions[noteId].push(existing);
+    } else {
+      allReactions[noteId] = allReactions[noteId].filter(
+        r => !(r.userId === currentUser.uid && r.emoji === emoji)
+      );
+    }
+    updateReactionsUI(noteId);
+  } finally {
+    setTimeout(() => pendingReactions.delete(key), 500);
+  }
 }
+
+// 🔄 Met à jour la barre de réactions dans TOUTES les vues ouvertes
+function updateReactionsUI(noteId, clickedEmoji) {
+  const newHtml = renderReactionsHtml(noteId);
+
+  const replaceBar = (root) => {
+    if (!root) return;
+    const oldBar = root.querySelector('.reactions-bar');
+    if (oldBar) {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = newHtml;
+      const newBar = tempDiv.firstElementChild;
+      if (newBar) {
+        if (clickedEmoji) {
+          const btn = newBar.querySelector(`.reaction-btn[data-emoji="${clickedEmoji}"]`);
+          if (btn) btn.classList.add('pop');
+        }
+        oldBar.replaceWith(newBar);
+      }
+    }
+  };
+
+  // 1) Popup Leaflet ouvert
+  if (map && map._popup && openPopupNoteId === noteId) {
+    replaceBar(map._popup.getElement());
+  }
+
+  // 2) Modale détail note (mobile)
+  const detailModal = document.getElementById('noteDetailModal');
+  if (detailModal && detailModal.classList.contains('open')) {
+    replaceBar(detailModal);
+  }
+
+  // 3) Modale "Souvenir aléatoire"
+  const randomModal = document.getElementById('randomNoteModal');
+  if (randomModal && randomModal.classList.contains('open') && currentRandomNoteId === noteId) {
+    replaceBar(randomModal);
+  }
+}
+
 async function addComment(noteId) {
   const input = document.getElementById(`commentInput_${noteId}`); if (!input) return;
   const text = input.value.trim();
