@@ -408,18 +408,49 @@ textarea{resize:vertical;min-height:90px}
 .cloud-loader{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin2 0.8s linear infinite;vertical-align:middle;margin-right:8px}
 .marker-cluster,.marker-cluster div{background:transparent !important;color:transparent !important;box-shadow:none !important}
 @media (max-width:768px){
-.leaflet-popup-content-wrapper{max-width:calc(100vw - 60px) !important;width:auto !important}
-.leaflet-popup-content{width:auto !important;max-width:calc(100vw - 30px) !important}
+/* 📱 Popup mobile : plus large, scrollable, ne déborde pas */
+.leaflet-popup{max-width:calc(100vw - 24px) !important;margin-bottom:0 !important}
+.leaflet-popup-content-wrapper{
+  max-width:calc(100vw - 24px) !important;
+  width:auto !important;
+  max-height:65vh !important;
+  overflow:hidden !important;
+  border-radius:16px !important;
+}
+.leaflet-popup-content{
+  width:auto !important;
+  max-width:calc(100vw - 24px) !important;
+  margin:0 !important;
+  max-height:65vh !important;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch !important;
+}
 .popup-photo{max-width:100% !important;height:auto !important;max-height:180px !important}
-.popup-body{padding:12px 14px !important}
-.popup-place{font-size:0.92rem !important}
-.popup-text{font-size:0.85rem !important}
-.reactions-bar{gap:5px !important}
-.reaction-btn{padding:3px 8px !important;font-size:0.78rem !important}
-.comments-section{max-height:200px !important;overflow-y:auto !important}
-.comment-input-wrapper input{font-size:0.78rem !important;padding:7px 10px !important}
-.comment-send{width:32px !important;height:32px !important;font-size:0.9rem !important}
-.leaflet-popup-close-button{width:32px !important;height:32px !important;font-size:24px !important;line-height:30px !important;color:var(--text-primary) !important;padding:0 !important}
+.popup-body{padding:14px 16px !important}
+.popup-place{font-size:0.95rem !important}
+.popup-text{font-size:0.88rem !important}
+.reactions-bar{gap:6px !important;justify-content:center !important}
+.reaction-btn{padding:5px 10px !important;font-size:0.82rem !important}
+.comments-section{max-height:none !important;overflow-y:visible !important}
+.comment-input-wrapper{position:sticky !important;bottom:0 !important;background:var(--bg-modal) !important;padding-top:8px !important;padding-bottom:4px !important}
+.comment-input-wrapper input{font-size:0.82rem !important;padding:8px 12px !important}
+.comment-send{width:36px !important;height:36px !important;font-size:0.95rem !important}
+.leaflet-popup-close-button{
+  width:36px !important;
+  height:36px !important;
+  font-size:26px !important;
+  line-height:34px !important;
+  color:var(--text-primary) !important;
+  padding:0 !important;
+  top:8px !important;
+  right:8px !important;
+  background:rgba(0,0,0,0.35) !important;
+  border-radius:50% !important;
+  z-index:20 !important;
+}
+/* 🆕 Position de la popup en bas de l'écran (bottom-sheet style) */
+.leaflet-popup{position:fixed !important;left:12px !important;right:12px !important;bottom:80px !important;top:auto !important;transform:none !important;margin:0 !important;width:auto !important}
+.leaflet-popup-tip{display:none !important}
 }
 .share-menu{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:8000;padding:20px}
 .share-menu.open{display:flex}
