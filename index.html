@@ -1534,7 +1534,14 @@ function createMarkerIcon(note) {
 function createUserLocationIcon() { return L.divIcon({ className: '', html: '<div class="user-location-marker"></div>', iconSize: [20, 20], iconAnchor: [10, 10] }); }
 function createTempMarkerIcon() { return L.divIcon({ className: '', html: '<div class="temp-marker"></div>', iconSize: [26, 26], iconAnchor: [13, 13] }); }
 function addMarkerToMap(note) {
-  const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, minWidth: 240, autoPanPadding: [10, 10] });
+  const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { 
+  maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, 
+  minWidth: 240, 
+  autoPanPadding: [50, 50],
+  autoPan: false,          // 🆕 Désactive le déplacement auto de la carte
+  keepInView: false,       // 🆕 Ne force pas à garder la popup dans le cadre
+  closeOnClick: false      // 🆕 Ne ferme pas au clic ailleurs
+});
   marker.on('click', (e) => { 
   L.DomEvent.stopPropagation(e); 
   // 🆕 Set AVANT que popupopen ne se déclenche (fix iOS timing)
