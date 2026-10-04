@@ -1439,6 +1439,7 @@ map.on('click', (e) => {
   pendingSource = 'manual';
   openAddModal();
 });
+}
 function recenterToMyLocation(btn) {
   if (!navigator.geolocation) { showToast('❌ Géolocalisation non supportée', 'error'); return; }
   btn.innerHTML = '<span class="spinner"></span>';
