@@ -134,8 +134,36 @@ button{font-family:inherit;font-size:0.9rem;font-weight:600;padding:10px 18px;bo
 .btn-ghost:hover{background:rgba(148,163,184,0.25);transform:translateY(-2px)}
 .btn-icon{padding:10px 14px;font-size:1.1rem;position:relative}
 .badge{position:absolute;top:4px;right:4px;background:#ef4444;color:white;font-size:0.65rem;font-weight:700;padding:2px 5px;border-radius:10px;min-width:16px;text-align:center;line-height:1.2;box-shadow:0 2px 6px rgba(239,68,68,0.5)}
-.user-menu{position:relative;z-index:1100}
-.user-avatar{width:38px;height:38px;border-radius:50%;border:2px solid rgba(249,115,22,0.6);cursor:pointer;object-fit:cover;transition:all 0.25s;pointer-events:auto}
+.user-menu{position:relative;z-index:1100;pointer-events:auto}
+.user-avatar{
+  width:38px;height:38px;border-radius:50%;
+  border:2px solid rgba(249,115,22,0.6);
+  cursor:pointer;
+  object-fit:cover;
+  transition:all 0.25s;
+  pointer-events:auto;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  user-select:none;
+}
+.user-dropdown{
+  position:absolute;
+  top:50px;
+  right:0;
+  background:var(--bg-modal);
+  border:1px solid var(--border-color);
+  border-radius:12px;
+  padding:8px;
+  min-width:240px;
+  box-shadow:var(--shadow-lg);
+  display:none;
+  z-index:1101;
+  pointer-events:auto;
+}
+.user-dropdown.open{
+  display:block;
+  animation:fadeIn 0.2s ease;
+}
 .user-avatar:hover{transform:scale(1.08);border-color:#f97316}
 .user-dropdown{position:absolute;top:50px;right:0;background:var(--bg-modal);border:1px solid var(--border-color);border-radius:12px;padding:8px;min-width:240px;box-shadow:var(--shadow-lg);display:none;z-index:1101}
 .user-dropdown.open{display:block}
@@ -2739,17 +2767,18 @@ async function handlePhotoFile(file) {
 }
 function removePhoto(event) { if (event) event.stopPropagation(); pendingPhoto = null; photoPreview.src = ''; photoPreviewWrapper.classList.remove('visible'); photoUploadZone.style.display = ''; photoInput.value = ''; }
 
-/* ===== FIX USER MENU ===== */
+/* ===== FIX USER MENU (mobile-friendly) ===== */
 function toggleUserMenu(event) {
   if (event) {
     event.stopPropagation();
-    event.preventDefault();
+    // ❌ NE PAS appeler preventDefault — ça bloque les événements tactiles sur certains mobiles
   }
   const dropdown = document.getElementById('userDropdown');
   if (!dropdown) return;
   dropdown.classList.toggle('open');
 }
 
+// Utilise à la fois click ET touchend pour couvrir tous les cas
 document.addEventListener('click', (e) => {
   const userMenu = document.querySelector('.user-menu');
   if (userMenu && !userMenu.contains(e.target)) {
@@ -2758,6 +2787,27 @@ document.addEventListener('click', (e) => {
   }
   if (livePanelOpen && !e.target.closest('#livePanel') && !e.target.closest('[onclick*="toggleLivePanel"]')) {
     closeLivePanel();
+  }
+}, true); // ← capture phase : garantit que ça se déclenche
+// Fix mobile : ajouter des listeners directs sur l'avatar
+document.addEventListener('DOMContentLoaded', () => {
+  const avatarEl = document.getElementById('userAvatar');
+  if (avatarEl) {
+    // Enlever l'ancien onclick inline pour éviter les doublons
+    avatarEl.removeAttribute('onclick');
+
+    // Click (souris + tap mobile moderne)
+    avatarEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleUserMenu(e);
+    });
+
+    // Fallback touchend (anciens navigateurs mobiles)
+    avatarEl.addEventListener('touchend', (e) => {
+      e.stopPropagation();
+      e.preventDefault(); // empêche le click fantôme
+      toggleUserMenu(e);
+    }, { passive: false });
   }
 });
 
