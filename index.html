@@ -895,10 +895,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
-db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-  if (err.code === 'failed-precondition') console.warn('Persistance : autre onglet ouvert');
-  else if (err.code === 'unimplemented') console.warn('Persistance non supportée');
-});
+// ⚠️ Persistance Firestore DÉSACTIVÉE : bug "INTERNAL ASSERTION FAILED" avec trop de listeners
 
 /* 📱 PWA */
 if ('serviceWorker' in navigator) {
