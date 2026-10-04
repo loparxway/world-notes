@@ -967,7 +967,7 @@ const SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Worl
 const SATELLITE_ATTRIBUTION = '© Esri, Maxar, Earthstar Geographics';
 let uiTheme = localStorage.getItem('worldnotes_theme') || 'dark';
 document.documentElement.setAttribute('data-theme', uiTheme);
-let currentUser = null, myProfile = null, myFriends = [], friendsProfiles = {}, incomingRequests = [], outgoingRequests = [];
+let currentUser = null, myProfile = null, myFriends = [], friendsProfiles = {}, allProfiles = {}, incomingRequests = [], outgoingRequests = [];
 let allNotes = [], myNotes = [], friendNotes = [], favoriteNotes = [], allReactions = {}, allComments = {};
 let mapFilter = 'all', sidebarSearchQuery = '', pendingProfilePhoto = null, editingNoteId = null;
 let pendingIsFavorite = false, pendingTags = [], currentRandomNoteId = null, currentStatsTab = 'dashboard';
