@@ -516,444 +516,79 @@ textarea{resize:vertical;min-height:90px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(148,163,184,0.3);border-radius:4px}
 
-/* ═══════════════════════════════════════════
-   🎯 CONTRÔLES LEAFLET EN BAS À DROITE
-   ═══════════════════════════════════════════ */
-.leaflet-bottom.leaflet-right {
-  bottom: 12px !important;
-  right: 12px !important;
+.leaflet-bottom.leaflet-right{bottom:12px !important;right:12px !important}
+.leaflet-control-zoom{margin-bottom:12px !important;margin-right:0 !important;border-radius:10px !important;overflow:hidden;box-shadow:var(--shadow-md) !important;border:1px solid var(--border-hover) !important;background:var(--bg-modal) !important}
+.leaflet-control-zoom a{width:42px !important;height:42px !important;line-height:42px !important;font-size:1.3rem !important;background:var(--bg-modal) !important;color:var(--text-primary) !important;border-bottom:1px solid var(--border-subtle) !important;transition:all 0.2s}
+.leaflet-control-zoom a:last-child{border-bottom:none !important}
+.leaflet-control-zoom a:hover{background:rgba(249,115,22,0.15) !important;color:#f97316 !important}
+.leaflet-control-recenter{margin-bottom:12px !important;margin-right:0 !important;background:var(--bg-modal) !important;border:1px solid var(--border-hover) !important;border-radius:10px !important;width:42px !important;height:42px !important;display:flex !important;align-items:center !important;justify-content:center !important;cursor:pointer !important;font-size:1.3rem !important;color:var(--text-primary) !important;box-shadow:var(--shadow-md) !important;transition:all 0.2s}
+.leaflet-control-recenter:hover{background:rgba(249,115,22,0.15) !important;transform:scale(1.05)}
+
+#modalOverlay{padding:0;align-items:flex-end}
+@media (min-width:769px){#modalOverlay{align-items:center;padding:20px}}
+.wizard-modal{background:var(--bg-modal);border:1px solid var(--border-color);width:100%;max-width:560px;height:100vh;max-height:100vh;display:flex;flex-direction:column;overflow:hidden;animation:wizardSlideUp 0.35s cubic-bezier(0.34,1.2,0.64,1);border-radius:0;box-shadow:var(--shadow-lg)}
+@media (min-width:769px){.wizard-modal{max-height:92vh;height:auto;border-radius:22px;animation:onboardingIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}}
+.wizard-header{flex-shrink:0;padding:calc(16px + env(safe-area-inset-top,0)) 20px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border-subtle);background:var(--bg-modal);position:relative}
+.wizard-back{background:rgba(148,163,184,0.1);border:none;color:var(--text-primary);width:38px;height:38px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;padding:0;line-height:1}
+.wizard-back:hover{background:rgba(148,163,184,0.2);transform:scale(1.05)}
+.wizard-back.hidden{visibility:hidden}
+.wizard-title-wrap{flex:1;min-width:0;text-align:center}
+.wizard-step-label{font-size:0.68rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.wizard-title{font-size:1rem;font-weight:700;color:var(--text-primary);display:flex;align-items:center;justify-content:center;gap:8px}
+.wizard-close{background:rgba(148,163,184,0.1);border:none;color:var(--text-muted);width:38px;height:38px;border-radius:50%;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;padding:0;line-height:1}
+.wizard-close:hover{background:rgba(239,68,68,0.15);color:#ef4444}
+.wizard-progress{flex-shrink:0;height:3px;background:rgba(148,163,184,0.15);position:relative;overflow:hidden}
+.wizard-progress-bar{position:absolute;top:0;left:0;height:100%;width:33.333%;background:linear-gradient(90deg,#f97316,#fbbf24);transition:width 0.4s cubic-bezier(0.34,1.56,0.64,1);border-radius:0 3px 3px 0}
+.wizard-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative}
+.wizard-step{padding:24px 20px 32px;display:none;animation:wizardSlideInRight 0.35s cubic-bezier(0.34,1.2,0.64,1)}
+.wizard-step.active{display:block}
+.wizard-step.back{animation:wizardSlideInLeft 0.35s cubic-bezier(0.34,1.2,0.64,1)}
+.wizard-step-headline{text-align:center;margin-bottom:24px}
+.wizard-step-icon{font-size:2.5rem;display:block;margin-bottom:8px}
+.wizard-step-headline h3{font-size:1.15rem;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+.wizard-step-headline p{font-size:0.82rem;color:var(--text-muted);line-height:1.4}
+.wizard-location-box{background:var(--bg-input);border:2px solid var(--border-hover);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;transition:all 0.25s}
+.wizard-location-box.gps,.wizard-location-box.manual,.wizard-location-box.search{border-style:solid}
+.wizard-location-box .coords{font-family:'SF Mono',Monaco,monospace;font-size:0.8rem;font-weight:700;color:var(--text-primary);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wizard-location-box.gps .coords{color:#22c55e}
+.wizard-location-box.search .coords{color:#3b82f6}
+.wizard-location-box.manual .coords{color:#f97316}
+.wizard-footer{flex-shrink:0;padding:16px 20px calc(16px + env(safe-area-inset-bottom,0));border-top:1px solid var(--border-subtle);background:var(--bg-modal);display:flex;gap:10px}
+.wizard-footer .btn-next{flex:1;padding:15px 20px;background:linear-gradient(135deg,#f97316,#ea580c);color:white;font-size:0.95rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 12px rgba(249,115,22,0.35);display:flex;align-items:center;justify-content:center;gap:8px}
+.wizard-footer .btn-next:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(249,115,22,0.5)}
+.wizard-footer .btn-next:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+.wizard-step .help-text{font-size:0.72rem;color:var(--text-faint);margin-top:6px;line-height:1.4;text-align:center}
+
+.show-mobile{display:none}
+.hide-mobile{display:inline}
+
+@media (max-width:768px){
+  header{padding:0 10px;gap:6px;overflow:hidden}
+  .logo{font-size:1.4rem;gap:0;flex-shrink:0;min-width:0}
+  .logo span.globe{font-size:1.5rem}
+  .logo span:not(.globe){display:none !important}
+  .actions{gap:6px;flex:1;justify-content:flex-end;min-width:0;overflow:hidden}
+  .actions .btn-ghost,.actions .btn-primary{padding:8px 10px;font-size:0.78rem;height:38px;min-width:38px;white-space:nowrap;flex-shrink:0}
+  .btn-icon{padding:8px 10px;font-size:1rem;min-width:38px}
+  .user-avatar{width:36px;height:36px}
+  .actions .btn-primary{padding:8px 14px;font-size:0.95rem;font-weight:800}
+  .actions .btn-primary .hide-mobile{display:none !important}
+  .actions .btn-primary .show-mobile{display:inline !important}
+  .floating-buttons{bottom:200px;right:12px;gap:10px}
+  .btn-float{width:50px;height:50px;font-size:1.3rem}
+  .map-filter{left:12px;right:80px;bottom:16px;padding:5px;max-width:none}
+  .filter-btn{padding:7px 8px;font-size:0.68rem;flex-shrink:0}
+  .filter-btn .count{min-width:14px;padding:1px 4px;font-size:0.6rem}
+  .hint{display:none !important}
 }
 
-.leaflet-control-zoom {
-  margin-bottom: 12px !important;
-  margin-right: 0 !important;
-  border-radius: 10px !important;
-  overflow: hidden;
-  box-shadow: var(--shadow-md) !important;
-  border: 1px solid var(--border-hover) !important;
-  background: var(--bg-modal) !important;
-}
-
-.leaflet-control-zoom a {
-  width: 42px !important;
-  height: 42px !important;
-  line-height: 42px !important;
-  font-size: 1.3rem !important;
-  background: var(--bg-modal) !important;
-  color: var(--text-primary) !important;
-  border-bottom: 1px solid var(--border-subtle) !important;
-  transition: all 0.2s;
-}
-
-.leaflet-control-zoom a:last-child {
-  border-bottom: none !important;
-}
-
-.leaflet-control-zoom a:hover {
-  background: rgba(249, 115, 22, 0.15) !important;
-  color: #f97316 !important;
-}
-
-.leaflet-control-recenter {
-  margin-bottom: 12px !important;
-  margin-right: 0 !important;
-  background: var(--bg-modal) !important;
-  border: 1px solid var(--border-hover) !important;
-  border-radius: 10px !important;
-  width: 42px !important;
-  height: 42px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  font-size: 1.3rem !important;
-  color: var(--text-primary) !important;
-  box-shadow: var(--shadow-md) !important;
-  transition: all 0.2s;
-}
-
-.leaflet-control-recenter:hover {
-  background: rgba(249, 115, 22, 0.15) !important;
-  transform: scale(1.05);
-}
-
-/* ═══════════════════════════════════════════
-   🪄 WIZARD AJOUT SOUVENIR
-   ═══════════════════════════════════════════ */
-#modalOverlay {
-  padding: 0;
-  align-items: flex-end;
-}
-@media (min-width: 769px) {
-  #modalOverlay {
-    align-items: center;
-    padding: 20px;
-  }
-}
-
-.wizard-modal {
-  background: var(--bg-modal);
-  border: 1px solid var(--border-color);
-  width: 100%;
-  max-width: 560px;
-  height: 100vh;
-  max-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: wizardSlideUp 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
-  border-radius: 0;
-  box-shadow: var(--shadow-lg);
-}
-@media (min-width: 769px) {
-  .wizard-modal {
-    max-height: 92vh;
-    height: auto;
-    border-radius: 22px;
-    animation: onboardingIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-}
-
-.wizard-header {
-  flex-shrink: 0;
-  padding: calc(16px + env(safe-area-inset-top, 0)) 20px 14px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-modal);
-  position: relative;
-}
-.wizard-back {
-  background: rgba(148, 163, 184, 0.1);
-  border: none;
-  color: var(--text-primary);
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s;
-  padding: 0;
-  line-height: 1;
-}
-.wizard-back:hover {
-  background: rgba(148, 163, 184, 0.2);
-  transform: scale(1.05);
-}
-.wizard-back.hidden {
-  visibility: hidden;
-}
-.wizard-title-wrap {
-  flex: 1;
-  min-width: 0;
-  text-align: center;
-}
-.wizard-step-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 2px;
-}
-.wizard-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.wizard-close {
-  background: rgba(148, 163, 184, 0.1);
-  border: none;
-  color: var(--text-muted);
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  font-size: 1.3rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s;
-  padding: 0;
-  line-height: 1;
-}
-.wizard-close:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-}
-
-.wizard-progress {
-  flex-shrink: 0;
-  height: 3px;
-  background: rgba(148, 163, 184, 0.15);
-  position: relative;
-  overflow: hidden;
-}
-.wizard-progress-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 33.333%;
-  background: linear-gradient(90deg, #f97316, #fbbf24);
-  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border-radius: 0 3px 3px 0;
-}
-
-.wizard-body {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  position: relative;
-}
-.wizard-step {
-  padding: 24px 20px 32px;
-  display: none;
-  animation: wizardSlideInRight 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
-}
-.wizard-step.active {
-  display: block;
-}
-.wizard-step.back {
-  animation: wizardSlideInLeft 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
-}
-
-.wizard-step-headline {
-  text-align: center;
-  margin-bottom: 24px;
-}
-.wizard-step-icon {
-  font-size: 2.5rem;
-  display: block;
-  margin-bottom: 8px;
-}
-.wizard-step-headline h3 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-}
-.wizard-step-headline p {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-
-.wizard-location-box {
-  background: var(--bg-input);
-  border: 2px solid var(--border-hover);
-  border-radius: 14px;
-  padding: 14px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: all 0.25s;
-}
-.wizard-location-box.gps,
-.wizard-location-box.manual,
-.wizard-location-box.search {
-  border-style: solid;
-}
-.wizard-location-box .coords {
-  font-family: 'SF Mono', Monaco, monospace;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.wizard-location-box.gps .coords { color: #22c55e; }
-.wizard-location-box.search .coords { color: #3b82f6; }
-.wizard-location-box.manual .coords { color: #f97316; }
-
-.wizard-footer {
-  flex-shrink: 0;
-  padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0));
-  border-top: 1px solid var(--border-subtle);
-  background: var(--bg-modal);
-  display: flex;
-  gap: 10px;
-}
-.wizard-footer .btn-next {
-  flex: 1;
-  padding: 15px 20px;
-  background: linear-gradient(135deg, #f97316, #ea580c);
-  color: white;
-  font-size: 0.95rem;
-  font-weight: 700;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.25s;
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.wizard-footer .btn-next:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.5);
-}
-.wizard-footer .btn-next:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.wizard-step .help-text {
-  font-size: 0.72rem;
-  color: var(--text-faint);
-  margin-top: 6px;
-  line-height: 1.4;
-  text-align: center;
-}
-
-/* ═══════════════════════════════════════════
-   📱 FIX HEADER MOBILE + BOUTON AJOUTER COMPACT
-   ═══════════════════════════════════════════ */
-.show-mobile { display: none; }
-.hide-mobile { display: inline; }
-
-@media (max-width: 768px) {
-  header {
-    padding: 0 10px;
-    gap: 6px;
-    overflow: hidden;
-  }
-  
-  .logo {
-    font-size: 1.4rem;
-    gap: 0;
-    flex-shrink: 0;
-    min-width: 0;
-  }
-  
-  .logo span.globe {
-    font-size: 1.5rem;
-  }
-  
-  .logo span:not(.globe) {
-    display: none !important;
-  }
-  
-  .actions {
-    gap: 6px;
-    flex: 1;
-    justify-content: flex-end;
-    min-width: 0;
-    overflow: hidden;
-  }
-  
-  .actions .btn-ghost,
-  .actions .btn-primary {
-    padding: 8px 10px;
-    font-size: 0.78rem;
-    height: 38px;
-    min-width: 38px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  
-  .btn-icon {
-    padding: 8px 10px;
-    font-size: 1rem;
-    min-width: 38px;
-  }
-  
-  .user-avatar {
-    width: 36px;
-    height: 36px;
-  }
-  
-  /* 🎯 Bouton Ajouter compact sur mobile */
-  .actions .btn-primary {
-    padding: 8px 14px;
-    font-size: 0.95rem;
-    font-weight: 800;
-  }
-  .actions .btn-primary .hide-mobile { display: none !important; }
-  .actions .btn-primary .show-mobile { display: inline !important; }
-
-  /* 🎯 Boutons flottants remontés tout en haut au-dessus de TOUT */
-  .floating-buttons {
-    bottom: 200px;
-    right: 12px;
-    gap: 10px;
-  }
-  
-  .btn-float {
-    width: 50px;
-    height: 50px;
-    font-size: 1.3rem;
-  }
-
-  /* Filtres en bas à gauche */
-  .map-filter {
-    left: 12px;
-    right: 80px;
-    bottom: 16px;
-    padding: 5px;
-    max-width: none;
-  }
-  .filter-btn {
-    padding: 7px 8px;
-    font-size: 0.68rem;
-    flex-shrink: 0;
-  }
-  .filter-btn .count {
-    min-width: 14px;
-    padding: 1px 4px;
-    font-size: 0.6rem;
-  }
-
-  /* 🎯 Cacher le bandeau "Clique sur la carte" sur mobile */
-  .hint {
-    display: none !important;
-  }
-}
-
-/* Très petits écrans : on cache les libellés texte des filtres */
-@media (max-width: 420px) {
-  .actions .btn-ghost,
-  .actions .btn-primary {
-    padding: 8px 8px;
-    font-size: 0.72rem;
-  }
-  .btn-icon {
-    padding: 8px 8px;
-  }
-  
-  .actions .btn-primary {
-    padding: 8px 12px;
-    font-size: 1rem;
-  }
-  
-  .filter-btn {
-    padding: 7px 6px;
-    font-size: 0.85rem;
-  }
-  .filter-btn .label-text {
-    display: none;
-  }
-  .filter-btn .count {
-    font-size: 0.6rem;
-    padding: 1px 5px;
-  }
+@media (max-width:420px){
+  .actions .btn-ghost,.actions .btn-primary{padding:8px 8px;font-size:0.72rem}
+  .btn-icon{padding:8px 8px}
+  .actions .btn-primary{padding:8px 12px;font-size:1rem}
+  .filter-btn{padding:7px 6px;font-size:0.85rem}
+  .filter-btn .label-text{display:none}
+  .filter-btn .count{font-size:0.6rem;padding:1px 5px}
 }
 </style>
 </head><body>
@@ -1513,14 +1148,12 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
-/* 📱 PWA */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js').catch(() => {});
   });
 }
 
-/* ☁️ CLOUDINARY */
 const CLOUDINARY_CLOUD_NAME = 'cifcliyv';
 const CLOUDINARY_UPLOAD_PRESET = 'worldnotes';
 function cloudinaryThumb(url, w = 400) {
@@ -1538,11 +1171,9 @@ async function uploadToCloudinary(file) {
   return data.secure_url;
 }
 
-/* 🌍 LANDING */
 function goToLogin() { document.getElementById('landingScreen').classList.add('hidden'); document.getElementById('loginScreen').classList.add('visible'); }
 function goToLanding() { document.getElementById('loginScreen').classList.remove('visible'); document.getElementById('landingScreen').classList.remove('hidden'); }
 
-/* 📄 CONTENU LÉGAL */
 const LEGAL_CONTENT = {
   terms: { title: '📄 Conditions d\'utilisation', content: `<h3>1. Acceptation</h3><p>En créant un compte, tu acceptes ces conditions.</p><h3>2. Service</h3><p>World Notes permet d'épingler des souvenirs sur une carte.</p><h3>3. Compte</h3><p>Connexion via Google obligatoire.</p><h3>4. Contenu</h3><p>Interdit de publier du contenu illégal.</p><h3>5. Amis</h3><p>Tes amis voient tes souvenirs.</p><h3>6. Responsabilité</h3><p>Projet personnel, perte de données possible.</p><h3>7. Suppression</h3><p>Effacement sous 30 jours.</p>` },
   privacy: { title: '🔒 Confidentialité', content: `<h3>1. Données</h3><p>Nom, email, photo, contenu.</p><h3>2. Utilisation</h3><p>Affichage de tes souvenirs uniquement.</p><h3>3. Stockage</h3><p>Firebase + Cloudinary.</p><h3>4. RGPD</h3><p>Tu peux exporter/supprimer.</p>` },
@@ -1555,7 +1186,6 @@ document.getElementById('noteDetailModal')?.addEventListener('click', (e) => {
   if (e.target.id === 'noteDetailModal') closeNoteDetail();
 });
 
-/* ÉTAT GLOBAL */
 const SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 const SATELLITE_ATTRIBUTION = '© Esri, Maxar, Earthstar Geographics';
 let uiTheme = localStorage.getItem('worldnotes_theme') || 'dark';
@@ -1583,7 +1213,6 @@ let pendingGroupEmoji = '🏖️';
 let unsubscribeGroups = null;
 let currentWizardStep = 1;
 
-/* 🔐 AUTH */
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
@@ -1662,9 +1291,6 @@ function showLogin() {
   if (btn) { btn.disabled = false; btn.innerHTML = `<svg viewBox="0 0 48 48" style="width:22px;height:22px;"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34.2 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34.2 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C39.2 37.1 44 31 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>Se connecter avec Google`; }
 }
 
-/* ═══════════════════════════════════════════
-   🎉 ONBOARDING (première connexion)
-   ═══════════════════════════════════════════ */
 let onboardingPhotoUrl = null;
 let onboardingUsernameOk = false;
 let onboardingCheckTimeout = null;
@@ -1674,14 +1300,11 @@ function showOnboarding(profile) {
   currentOnboardingProfile = profile;
   onboardingPhotoUrl = null;
   onboardingUsernameOk = false;
-
   document.getElementById('landingScreen').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('visible');
   document.getElementById('app').style.display = 'none';
-
   const avatar = document.getElementById('onboardingAvatar');
   avatar.src = (profile && profile.photoURL) || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
-
   document.getElementById('onboardingUsername').value = '';
   document.getElementById('onboardingBio').value = '';
   document.getElementById('onboardingLocation').value = '';
@@ -1689,99 +1312,45 @@ function showOnboarding(profile) {
   document.getElementById('onboardingUsernameFeedback').textContent = '';
   document.getElementById('onboardingUsernameFeedback').className = 'onboarding-feedback';
   document.getElementById('onboardingSubmitBtn').disabled = true;
-
   document.getElementById('onboardingScreen').classList.add('visible');
   setTimeout(() => document.getElementById('onboardingUsername').focus(), 300);
 }
-
 function hideOnboarding() {
   document.getElementById('onboardingScreen').classList.remove('visible');
   onboardingPhotoUrl = null;
   onboardingUsernameOk = false;
   currentOnboardingProfile = null;
 }
-
-function signOutFromOnboarding() {
-  if (!confirm('Se déconnecter ?')) return;
-  hideOnboarding();
-  auth.signOut().catch(() => {});
-}
-
+function signOutFromOnboarding() { if (!confirm('Se déconnecter ?')) return; hideOnboarding(); auth.signOut().catch(() => {}); }
 document.getElementById('onboardingPhotoInput')?.addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  e.target.value = '';
+  const file = e.target.files[0]; e.target.value = '';
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    showToast('⚠️ Photo trop lourde (max 5 Mo)', 'error');
-    return;
-  }
-  try {
-    showToast('⏳ Envoi de la photo...', 'info');
-    const url = await uploadToCloudinary(file);
-    onboardingPhotoUrl = url;
-    document.getElementById('onboardingAvatar').src = url;
-    showToast('✅ Photo prête !', 'success');
-  } catch (err) {
-    showToast('❌ Erreur photo : ' + err.message, 'error');
-  }
+  if (file.size > 5 * 1024 * 1024) { showToast('⚠️ Photo trop lourde (max 5 Mo)', 'error'); return; }
+  try { showToast('⏳ Envoi de la photo...', 'info'); const url = await uploadToCloudinary(file); onboardingPhotoUrl = url; document.getElementById('onboardingAvatar').src = url; showToast('✅ Photo prête !', 'success'); }
+  catch (err) { showToast('❌ Erreur photo : ' + err.message, 'error'); }
 });
-
-document.getElementById('onboardingBio')?.addEventListener('input', (e) => {
-  document.getElementById('onboardingBioCounter').textContent = e.target.value.length;
-});
-
+document.getElementById('onboardingBio')?.addEventListener('input', (e) => { document.getElementById('onboardingBioCounter').textContent = e.target.value.length; });
 const onboardingUsernameInput = document.getElementById('onboardingUsername');
 onboardingUsernameInput?.addEventListener('input', (e) => {
   let val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
   if (val !== e.target.value) e.target.value = val;
-
   clearTimeout(onboardingCheckTimeout);
   const feedback = document.getElementById('onboardingUsernameFeedback');
   const submitBtn = document.getElementById('onboardingSubmitBtn');
-
   onboardingUsernameOk = false;
   submitBtn.disabled = true;
-
-  if (val.length === 0) {
-    feedback.textContent = '';
-    feedback.className = 'onboarding-feedback';
-    return;
-  }
-  if (val.length < 3) {
-    feedback.textContent = '⚠️ Au moins 3 caractères';
-    feedback.className = 'onboarding-feedback error';
-    return;
-  }
-  if (val.length > 20) {
-    feedback.textContent = '⚠️ Maximum 20 caractères';
-    feedback.className = 'onboarding-feedback error';
-    return;
-  }
-
+  if (val.length === 0) { feedback.textContent = ''; feedback.className = 'onboarding-feedback'; return; }
+  if (val.length < 3) { feedback.textContent = '⚠️ Au moins 3 caractères'; feedback.className = 'onboarding-feedback error'; return; }
+  if (val.length > 20) { feedback.textContent = '⚠️ Maximum 20 caractères'; feedback.className = 'onboarding-feedback error'; return; }
   feedback.textContent = '🔍 Vérification...';
   feedback.className = 'onboarding-feedback checking';
-
   onboardingCheckTimeout = setTimeout(async () => {
     try {
       const snap = await db.collection('users').where('username', '==', val).limit(1).get({ source: 'server' });
       const isTaken = !snap.empty && snap.docs[0].id !== currentUser.uid;
-      if (isTaken) {
-        feedback.textContent = '❌ Ce pseudo est déjà pris';
-        feedback.className = 'onboarding-feedback taken';
-        onboardingUsernameOk = false;
-        submitBtn.disabled = true;
-      } else {
-        feedback.textContent = '✅ Pseudo disponible !';
-        feedback.className = 'onboarding-feedback ok';
-        onboardingUsernameOk = true;
-        submitBtn.disabled = false;
-      }
-    } catch (err) {
-      feedback.textContent = '⚠️ Impossible de vérifier, réessaie';
-      feedback.className = 'onboarding-feedback error';
-      onboardingUsernameOk = false;
-      submitBtn.disabled = true;
-    }
+      if (isTaken) { feedback.textContent = '❌ Ce pseudo est déjà pris'; feedback.className = 'onboarding-feedback taken'; onboardingUsernameOk = false; submitBtn.disabled = true; }
+      else { feedback.textContent = '✅ Pseudo disponible !'; feedback.className = 'onboarding-feedback ok'; onboardingUsernameOk = true; submitBtn.disabled = false; }
+    } catch (err) { feedback.textContent = '⚠️ Impossible de vérifier, réessaie'; feedback.className = 'onboarding-feedback error'; onboardingUsernameOk = false; submitBtn.disabled = true; }
   }, 400);
 });
 
@@ -1789,16 +1358,10 @@ async function submitOnboarding() {
   const username = document.getElementById('onboardingUsername').value.trim().toLowerCase();
   const bio = document.getElementById('onboardingBio').value.trim();
   const location = document.getElementById('onboardingLocation').value.trim();
-
-  if (!onboardingUsernameOk || username.length < 3) {
-    showToast('⚠️ Choisis un pseudo valide', 'error');
-    return;
-  }
-
+  if (!onboardingUsernameOk || username.length < 3) { showToast('⚠️ Choisis un pseudo valide', 'error'); return; }
   const btn = document.getElementById('onboardingSubmitBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="cloud-loader"></span>Création...';
-
   try {
     const snap = await db.collection('users').where('username', '==', username).limit(1).get({ source: 'server' });
     if (!snap.empty && snap.docs[0].id !== currentUser.uid) {
@@ -1809,20 +1372,11 @@ async function submitOnboarding() {
       btn.innerHTML = '🚀 Commencer l\'aventure';
       return;
     }
-
-    const updates = {
-      username,
-      bio,
-      location,
-      onboardedAt: Date.now()
-    };
+    const updates = { username, bio, location, onboardedAt: Date.now() };
     if (onboardingPhotoUrl) updates.photoURL = onboardingPhotoUrl;
-
     await db.collection('users').doc(currentUser.uid).update(updates);
-
     showToast('🎉 Bienvenue sur World Notes !', 'success');
     hideOnboarding();
-
     showApp();
     loadProfile();
     loadIncomingRequests();
@@ -1858,21 +1412,12 @@ function showSyncIndicator(text, synced) {
   if (synced) setTimeout(() => el.classList.remove('show'), 1500);
 }
 
-/* 👤 PROFIL */
 async function ensureUserProfile() {
   try {
     const userRef = db.collection('users').doc(currentUser.uid);
     const doc = await userRef.get({ source: 'server' });
     if (!doc.exists) {
-      const baseProfile = {
-        displayName: currentUser.displayName || 'Utilisateur',
-        photoURL: currentUser.photoURL || '',
-        username: '',
-        bio: '',
-        location: '',
-        friends: [],
-        createdAt: Date.now()
-      };
+      const baseProfile = { displayName: currentUser.displayName || 'Utilisateur', photoURL: currentUser.photoURL || '', username: '', bio: '', location: '', friends: [], createdAt: Date.now() };
       await userRef.set(baseProfile);
       return baseProfile;
     } else {
@@ -1882,16 +1427,11 @@ async function ensureUserProfile() {
       if (!data.friends) updates.friends = [];
       if (data.bio === undefined) updates.bio = '';
       if (data.location === undefined) updates.location = '';
-      if (data.email !== undefined) {
-        try { await userRef.update({ email: firebase.firestore.FieldValue.delete() }); } catch(e) {}
-      }
+      if (data.email !== undefined) { try { await userRef.update({ email: firebase.firestore.FieldValue.delete() }); } catch(e) {} }
       await userRef.update(updates);
       return { ...data, ...updates };
     }
-  } catch (err) {
-    console.warn('ensureUserProfile:', err);
-    return null;
-  }
+  } catch (err) { console.warn('ensureUserProfile:', err); return null; }
 }
 function loadProfile() {
   if (unsubscribeProfile) unsubscribeProfile();
@@ -1969,7 +1509,6 @@ function showViewProfile(profile, isMe = false) {
 }
 function closeViewProfile() { document.getElementById('viewProfileModalOverlay').classList.remove('open'); }
 
-/* 👥 AMIS */
 function loadIncomingRequests() {
   if (unsubscribeIncoming) unsubscribeIncoming();
   unsubscribeIncoming = db.collection('friendRequests').where('to', '==', currentUser.uid).where('status', '==', 'pending').onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
@@ -1995,12 +1534,9 @@ function loadFriends() {
     const changed = JSON.stringify(newFriends) !== JSON.stringify(myFriends);
     myFriends = newFriends;
     await loadFriendsProfiles();
-    if (changed) {
-      if (allGroups !== undefined) loadAllNotes();
-    }
+    if (changed) { if (allGroups !== undefined) loadAllNotes(); }
   });
 }
-
 async function loadFriendsProfiles() {
   friendsProfiles = {};
   if (myFriends.length === 0) { renderFriendsContent(); return; }
@@ -2056,21 +1592,13 @@ async function sendFriendRequest() {
     const existingSent = await db.collection('friendRequests').where('from', '==', currentUser.uid).where('to', '==', targetUid).where('status', '==', 'pending').get({ source: 'server' });
     if (!existingSent.empty) { showToast('ℹ️ Demande déjà envoyée à @' + username, 'info'); input.disabled = false; return; }
     const existingReceived = await db.collection('friendRequests').where('from', '==', targetUid).where('to', '==', currentUser.uid).where('status', '==', 'pending').get({ source: 'server' });
-    if (!existingReceived.empty) {
-      showToast('ℹ️ @' + username + ' t\'a déjà envoyé une demande. Va dans l\'onglet "Demandes" pour l\'accepter.', 'info');
-      input.disabled = false; input.value = ''; return;
-    }
+    if (!existingReceived.empty) { showToast('ℹ️ @' + username + ' t\'a déjà envoyé une demande. Va dans l\'onglet "Demandes" pour l\'accepter.', 'info'); input.disabled = false; input.value = ''; return; }
     const requestId = `${currentUser.uid}_${targetUid}`;
-    await db.collection('friendRequests').doc(requestId).set({
-      from: currentUser.uid, to: targetUid,
-      fromUsername: myProfile.username || '', toUsername: username,
-      fromPhotoURL: myProfile.photoURL || '', status: 'pending', createdAt: Date.now()
-    });
+    await db.collection('friendRequests').doc(requestId).set({ from: currentUser.uid, to: targetUid, fromUsername: myProfile.username || '', toUsername: username, fromPhotoURL: myProfile.photoURL || '', status: 'pending', createdAt: Date.now() });
     input.value = ''; showToast(`📨 Demande envoyée à @${username} !`, 'success');
   } catch (err) { console.error('Erreur sendFriendRequest:', err); showToast('❌ Erreur: ' + err.message, 'error'); }
   finally { input.disabled = false; }
 }
-
 async function acceptFriendRequest(requestId) {
   try {
     const reqDoc = await db.collection('friendRequests').doc(requestId).get();
@@ -2100,7 +1628,6 @@ async function declineFriendRequest(requestId) {
   try { await db.collection('friendRequests').doc(requestId).update({ status: 'declined' }); incomingRequests = incomingRequests.filter(r => r.id !== requestId); updateFriendBadge(); renderFriendsContent(); showToast('Demande refusée', 'info'); }
   catch (err) { console.error('Erreur declineFriendRequest:', err); showToast('❌ Erreur', 'error'); }
 }
-
 async function removeFriend(friendUid) {
   const friend = friendsProfiles[friendUid];
   const name = friend ? (friend.username ? '@' + friend.username : friend.displayName) : 'cet ami';
@@ -2180,11 +1707,9 @@ function loadAllNotes() {
   noteUnsubs.forEach(u => { try { u(); } catch(e){} });
   noteUnsubs = [];
   showSyncIndicator('Chargement des souvenirs...', false);
-
   let _mine = [];
   let _friends = {};
   let _groups = {};
-
   function mergeAndRender() {
     myNotes = _mine;
     friendNotes = Object.values(_friends).flat();
@@ -2204,54 +1729,34 @@ function loadAllNotes() {
     updateFilters();
     showSyncIndicator('Synchronisé', true);
   }
-
-  const u1 = db.collection('notes')
-    .where('userId', '==', currentUser.uid)
-    .orderBy('createdAt', 'desc')
-    .limit(500)
-    .onSnapshot(snap => {
-      _mine = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      mergeAndRender();
-    }, err => console.error('❌ notes/mine:', err.code, err.message));
+  const u1 = db.collection('notes').where('userId', '==', currentUser.uid).orderBy('createdAt', 'desc').limit(500).onSnapshot(snap => {
+    _mine = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    mergeAndRender();
+  }, err => console.error('❌ notes/mine:', err.code, err.message));
   noteUnsubs.push(u1);
-
   if (myFriends.length > 0) {
     for (let i = 0; i < myFriends.length; i += 10) {
       const chunk = myFriends.slice(i, i + 10);
-      const u = db.collection('notes')
-        .where('userId', 'in', chunk)
-        .where('visibility', '==', 'all')
-        .orderBy('createdAt', 'desc')
-        .limit(300)
-        .onSnapshot(snap => {
-          chunk.forEach(uid => { delete _friends[uid]; });
-          snap.docs.forEach(d => {
-            const note = { id: d.id, ...d.data() };
-            if (!_friends[note.userId]) _friends[note.userId] = [];
-            _friends[note.userId].push(note);
-          });
-          mergeAndRender();
-        }, err => console.error('❌ notes/friends:', err.code, err.message));
+      const u = db.collection('notes').where('userId', 'in', chunk).where('visibility', '==', 'all').orderBy('createdAt', 'desc').limit(300).onSnapshot(snap => {
+        chunk.forEach(uid => { delete _friends[uid]; });
+        snap.docs.forEach(d => {
+          const note = { id: d.id, ...d.data() };
+          if (!_friends[note.userId]) _friends[note.userId] = [];
+          _friends[note.userId].push(note);
+        });
+        mergeAndRender();
+      }, err => console.error('❌ notes/friends:', err.code, err.message));
       noteUnsubs.push(u);
     }
   }
-
   allGroups.forEach(group => {
-    const u = db.collection('notes')
-      .where('visibility', '==', group.id)
-      .orderBy('createdAt', 'desc')
-      .limit(300)
-      .onSnapshot(snap => {
-        _groups[group.id] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        mergeAndRender();
-      }, err => console.error('❌ notes/group', group.id, ':', err.code, err.message));
+    const u = db.collection('notes').where('visibility', '==', group.id).orderBy('createdAt', 'desc').limit(300).onSnapshot(snap => {
+      _groups[group.id] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      mergeAndRender();
+    }, err => console.error('❌ notes/group', group.id, ':', err.code, err.message));
     noteUnsubs.push(u);
   });
-
-  unsubscribeNotes = () => {
-    noteUnsubs.forEach(u => { try { u(); } catch(e){} });
-    noteUnsubs = [];
-  };
+  unsubscribeNotes = () => { noteUnsubs.forEach(u => { try { u(); } catch(e){} }); noteUnsubs = []; };
 }
 function loadAllReactions() {
   if (unsubscribeReactions) unsubscribeReactions();
@@ -2288,7 +1793,6 @@ function loadAllComments() {
   });
 }
 
-/* 🗺️ CARTE */
 function initMap() {
   map = L.map('map', { center: [20, 0], zoom: 3, minZoom: 3, maxZoom: 19, maxBounds: [[-85, -180], [85, 180]], maxBoundsViscosity: 1.0, worldCopyJump: true, zoomControl: false });
   L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -2302,10 +1806,7 @@ function initMap() {
     const now = Date.now();
     if (now - lastMapClickTime < 400) { lastMapClickTime = now; return; }
     lastMapClickTime = now;
-    if (map._popup && (Date.now() - (window._popupOpenedAt || 0)) > 500) {
-      map.closePopup();
-      return;
-    }
+    if (map._popup && (Date.now() - (window._popupOpenedAt || 0)) > 500) { map.closePopup(); return; }
     pendingLatLng = { lat: e.latlng.lat, lng: e.latlng.lng };
     pendingSource = 'manual';
     openAddModal();
@@ -2326,7 +1827,6 @@ function recenterToMyLocation(btn) {
   }, (error) => { btn.innerHTML = '🎯'; let msg = '❌ Impossible de te localiser.'; if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.'; showToast(msg, 'error'); }, { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 });
 }
 
-/* 📍 MARQUEURS */
 function createMarkerIcon(note) {
   const icon = note && note.icon ? note.icon : '📍';
   const hasCustom = icon !== '📍';
@@ -2342,60 +1842,32 @@ function createMarkerIcon(note) {
 }
 function createUserLocationIcon() { return L.divIcon({ className: '', html: '<div class="user-location-marker"></div>', iconSize: [20, 20], iconAnchor: [10, 10] }); }
 function createTempMarkerIcon() { return L.divIcon({ className: '', html: '<div class="temp-marker"></div>', iconSize: [26, 26], iconAnchor: [13, 13] }); }
-
 function addMarkerToMap(note) {
   const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) });
   if (!isMobile()) {
-    marker.bindPopup(buildPopupContent(note), { 
-      maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, 
-      minWidth: 240, 
-      autoPanPadding: [50, 50],
-      autoPan: false,
-      keepInView: false,
-      closeOnClick: false
-    });
+    marker.bindPopup(buildPopupContent(note), { maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, minWidth: 240, autoPanPadding: [50, 50], autoPan: false, keepInView: false, closeOnClick: false });
   }
-  marker.on('click', (e) => { 
+  marker.on('click', (e) => {
     L.DomEvent.stopPropagation(e);
-    if (isMobile()) {
-      if (e.originalEvent && e.originalEvent.preventDefault) e.originalEvent.preventDefault();
-      openNoteDetail(note.id);
-      return;
-    }
+    if (isMobile()) { if (e.originalEvent && e.originalEvent.preventDefault) e.originalEvent.preventDefault(); openNoteDetail(note.id); return; }
     openPopupNoteId = note.id;
     window._popupOpenedAt = Date.now();
   });
   marker.on('mousedown', (e) => { L.DomEvent.stopPropagation(e); });
   marker.on('touchstart', (e) => { L.DomEvent.stopPropagation(e); });
-  marker.on('popupopen', () => {
-    window._popupOpenedAt = Date.now();
-    openPopupNoteId = note.id;
-  });
-  marker.on('popupclose', () => {
-    if (openPopupNoteId === note.id) openPopupNoteId = null;
-  });
+  marker.on('popupopen', () => { window._popupOpenedAt = Date.now(); openPopupNoteId = note.id; });
+  marker.on('popupclose', () => { if (openPopupNoteId === note.id) openPopupNoteId = null; });
   markers[note.id] = marker;
   markersCluster.addLayer(marker);
   return marker;
 }
-
 function renderTagsHtml(tags) { if (!tags || tags.length === 0) return ''; return `<div class="note-tags">${tags.map(t => `<span class="tag-chip">#${escapeHtml(t)}</span>`).join('')}</div>`; }
-
 function renderReactionsHtml(noteId) {
   const reactions = allReactions[noteId] || [];
   const counts = {};
-  reactions.forEach(r => {
-    if (!counts[r.emoji]) counts[r.emoji] = { count: 0, userReacted: false };
-    counts[r.emoji].count++;
-    if (r.userId === currentUser.uid) counts[r.emoji].userReacted = true;
-  });
-  return `<div class="reactions-bar">${REACTION_EMOJIS.map(emoji => {
-    const data = counts[emoji] || { count: 0, userReacted: false };
-    const reactedClass = data.userReacted === true ? ' reacted' : '';
-    return `<button class="reaction-btn${reactedClass}" data-emoji="${emoji}" onclick="event.stopPropagation(); event.preventDefault(); toggleReaction('${noteId}', '${emoji}', event);" ontouchstart="event.stopPropagation();"><span class="emoji">${emoji}</span>${data.count > 0 ? `<span>${data.count}</span>` : ''}</button>`;
-  }).join('')}</div>`;
+  reactions.forEach(r => { if (!counts[r.emoji]) counts[r.emoji] = { count: 0, userReacted: false }; counts[r.emoji].count++; if (r.userId === currentUser.uid) counts[r.emoji].userReacted = true; });
+  return `<div class="reactions-bar">${REACTION_EMOJIS.map(emoji => { const data = counts[emoji] || { count: 0, userReacted: false }; const reactedClass = data.userReacted === true ? ' reacted' : ''; return `<button class="reaction-btn${reactedClass}" data-emoji="${emoji}" onclick="event.stopPropagation(); event.preventDefault(); toggleReaction('${noteId}', '${emoji}', event);" ontouchstart="event.stopPropagation();"><span class="emoji">${emoji}</span>${data.count > 0 ? `<span>${data.count}</span>` : ''}</button>`; }).join('')}</div>`;
 }
-
 function renderCommentsHtml(noteId) {
   const comments = allComments[noteId] || [];
   const note = notesByIdCache[noteId];
@@ -2415,9 +1887,7 @@ function renderCommentsHtml(noteId) {
   }
   return `<div class="comments-section"><div class="comments-header">💬 Commentaires (${comments.length})</div><div class="comments-list">${commentsListHtml}</div><div class="comment-input-wrapper"><input type="text" id="commentInput_${noteId}" placeholder="Écrire un commentaire..." maxlength="300" onkeydown="if(event.key==='Enter'){event.preventDefault();addComment('${noteId}');}" /><button class="comment-send" onclick="addComment('${noteId}')" title="Envoyer">➤</button></div></div>`;
 }
-
 function isMobile() { return window.innerWidth <= 768; }
-
 function openNoteDetail(noteId) {
   const note = notesByIdCache[noteId]; if (!note) return;
   const isMine = note.userId === currentUser.uid;
@@ -2425,9 +1895,7 @@ function openNoteDetail(noteId) {
   const icon = note.icon || '📍';
   const date = new Date(note.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
   let photoHtml = '';
-  if (note.photo) {
-    photoHtml = `<img src="${cloudinaryThumb(note.photo, 800)}" alt="Photo" style="width:100%;max-height:240px;object-fit:cover;border-radius:12px;margin-bottom:16px;cursor:pointer" onclick="openLightbox('${note.id}', event)" />`;
-  }
+  if (note.photo) photoHtml = `<img src="${cloudinaryThumb(note.photo, 800)}" alt="Photo" style="width:100%;max-height:240px;object-fit:cover;border-radius:12px;margin-bottom:16px;cursor:pointer" onclick="openLightbox('${note.id}', event)" />`;
   let authorHtml = '';
   if (!isMine) {
     const authorProfile = friendsProfiles[note.userId];
@@ -2438,34 +1906,15 @@ function openNoteDetail(noteId) {
   const favStar = isMine ? `<span class="popup-fav" onclick="toggleFavoriteFromPopup('${note.id}', event); setTimeout(() => openNoteDetail('${note.id}'), 100);" style="font-size:1.5rem">${isFav ? '⭐' : '🤍'}</span>` : (isFav ? '<span class="popup-fav" style="cursor:default;font-size:1.5rem">⭐</span>' : '');
   let actionBtns = '';
   if (isMine) {
-    actionBtns = `
-      <button class="share-action-btn" onclick="closeNoteDetail(); shareNote('${note.id}', event)" style="flex:1;justify-content:center"><span class="icon">🔗</span> Partager</button>
-      <button class="share-action-btn" onclick="closeNoteDetail(); setTimeout(() => editNoteFromPopup('${note.id}', event), 200)" style="flex:1;justify-content:center"><span class="icon">✏️</span> Modifier</button>
-      <button class="share-action-btn" onclick="deleteNoteFromPopup('${note.id}', event); closeNoteDetail();" style="flex:1;justify-content:center;color:#ef4444"><span class="icon">🗑️</span> Suppr.</button>
-    `;
+    actionBtns = `<button class="share-action-btn" onclick="closeNoteDetail(); shareNote('${note.id}', event)" style="flex:1;justify-content:center"><span class="icon">🔗</span> Partager</button><button class="share-action-btn" onclick="closeNoteDetail(); setTimeout(() => editNoteFromPopup('${note.id}', event), 200)" style="flex:1;justify-content:center"><span class="icon">✏️</span> Modifier</button><button class="share-action-btn" onclick="deleteNoteFromPopup('${note.id}', event); closeNoteDetail();" style="flex:1;justify-content:center;color:#ef4444"><span class="icon">🗑️</span> Suppr.</button>`;
   } else {
     actionBtns = `<button class="share-action-btn" onclick="closeNoteDetail(); shareNote('${note.id}', event)" style="flex:1;justify-content:center"><span class="icon">🔗</span> Partager</button>`;
   }
-  const html = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:12px">
-      <h2 style="font-size:1.15rem;display:flex;align-items:center;gap:10px;flex:1;min-width:0"><span style="font-size:1.3rem">${icon}</span><span>${escapeHtml(note.place)}</span></h2>
-      <button onclick="closeNoteDetail()" style="background:none;border:none;color:var(--text-muted);font-size:1.8rem;cursor:pointer;padding:0;line-height:1;flex-shrink:0">×</button>
-    </div>
-    ${photoHtml}
-    <div style="font-size:0.95rem;color:var(--text-secondary);line-height:1.5;margin-bottom:12px">${escapeHtml(note.text)}</div>
-    ${renderTagsHtml(note.tags)}
-    ${renderReactionsHtml(note.id)}
-    ${authorHtml}
-    <div class="popup-footer" style="margin-top:12px"><span class="popup-meta">📅 ${date}</span>${favStar}</div>
-    <div class="comments-section" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${renderCommentsHtml(note.id)}</div>
-    <div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${actionBtns}</div>
-  `;
+  const html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:12px"><h2 style="font-size:1.15rem;display:flex;align-items:center;gap:10px;flex:1;min-width:0"><span style="font-size:1.3rem">${icon}</span><span>${escapeHtml(note.place)}</span></h2><button onclick="closeNoteDetail()" style="background:none;border:none;color:var(--text-muted);font-size:1.8rem;cursor:pointer;padding:0;line-height:1;flex-shrink:0">×</button></div>${photoHtml}<div style="font-size:0.95rem;color:var(--text-secondary);line-height:1.5;margin-bottom:12px">${escapeHtml(note.text)}</div>${renderTagsHtml(note.tags)}${renderReactionsHtml(note.id)}${authorHtml}<div class="popup-footer" style="margin-top:12px"><span class="popup-meta">📅 ${date}</span>${favStar}</div><div class="comments-section" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${renderCommentsHtml(note.id)}</div><div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-subtle)">${actionBtns}</div>`;
   document.getElementById('noteDetailContent').innerHTML = html;
   document.getElementById('noteDetailModal').classList.add('open');
 }
-function closeNoteDetail() {
-  document.getElementById('noteDetailModal').classList.remove('open');
-}
+function closeNoteDetail() { document.getElementById('noteDetailModal').classList.remove('open'); }
 function buildPopupContent(note) {
   const date = new Date(note.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
   const icon = note.icon || '📍';
@@ -2492,14 +1941,12 @@ function renderAllMarkers() {
   else if (mapFilter === 'mine') notesToShow = myNotes;
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
-
   notesToShow = notesToShow.filter(n => {
     if (n.userId === currentUser.uid) return true;
     if ((!n.visibility || n.visibility === 'all') && myFriends.includes(n.userId)) return true;
     if (n.visibility && n.visibility !== 'all' && allGroups.some(g => g.id === n.visibility)) return true;
     return false;
   });
-
   if (activeGroupId) {
     const group = allGroups.find(g => g.id === activeGroupId);
     if (group) {
@@ -2517,11 +1964,8 @@ function renderAllMarkers() {
   }
   const openPopupId = openPopupNoteId;
   const idsToShow = new Set(notesToShow.map(n => n.id));
-  Object.keys(markers).forEach(id => { 
-    if (!idsToShow.has(id) && id !== openPopupId) { 
-      markersCluster.removeLayer(markers[id]); 
-      delete markers[id]; 
-    } 
+  Object.keys(markers).forEach(id => {
+    if (!idsToShow.has(id) && id !== openPopupId) { markersCluster.removeLayer(markers[id]); delete markers[id]; }
   });
   notesToShow.forEach(note => { if (!markers[note.id]) addMarkerToMap(note); });
   refreshOpenPopup(); renderSidebar(); updateNotesCountInfo();
@@ -2537,38 +1981,22 @@ function refreshOpenPopup() {
   const commentsEl = popupEl.querySelector('.comments-section');
   let savedFocus = null, savedValue = '', savedSelection = null;
   const activeEl = document.activeElement;
-  if (activeEl && activeEl.id && activeEl.id.startsWith('commentInput_')) {
-    savedFocus = activeEl.id;
-    savedValue = activeEl.value;
-    try { savedSelection = [activeEl.selectionStart, activeEl.selectionEnd]; } catch(e) {}
-  }
+  if (activeEl && activeEl.id && activeEl.id.startsWith('commentInput_')) { savedFocus = activeEl.id; savedValue = activeEl.value; try { savedSelection = [activeEl.selectionStart, activeEl.selectionEnd]; } catch(e) {} }
   if (reactionsEl) {
     const newReactionsHtml = renderReactionsHtml(noteId);
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = newReactionsHtml;
+    const tempDiv = document.createElement('div'); tempDiv.innerHTML = newReactionsHtml;
     const newReactionsEl = tempDiv.firstElementChild;
     if (newReactionsEl) { reactionsEl.replaceWith(newReactionsEl); }
   }
   if (commentsEl) {
     const newCommentsHtml = renderCommentsHtml(noteId);
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = newCommentsHtml;
+    const tempDiv = document.createElement('div'); tempDiv.innerHTML = newCommentsHtml;
     const newCommentsEl = tempDiv.firstElementChild;
-    if (newCommentsEl) {
-      const scrollTop = commentsEl.scrollTop;
-      commentsEl.replaceWith(newCommentsEl);
-      newCommentsEl.scrollTop = scrollTop;
-    }
+    if (newCommentsEl) { const scrollTop = commentsEl.scrollTop; commentsEl.replaceWith(newCommentsEl); newCommentsEl.scrollTop = scrollTop; }
   }
   if (savedFocus) {
     const newEl = document.getElementById(savedFocus);
-    if (newEl) {
-      newEl.value = savedValue;
-      newEl.focus();
-      if (savedSelection) {
-        try { newEl.setSelectionRange(savedSelection[0], savedSelection[1]); } catch(e) {}
-      }
-    }
+    if (newEl) { newEl.value = savedValue; newEl.focus(); if (savedSelection) { try { newEl.setSelectionRange(savedSelection[0], savedSelection[1]); } catch(e) {} } }
   }
 }
 function renderSidebar() {
@@ -2578,7 +2006,6 @@ function renderSidebar() {
   else if (mapFilter === 'mine') notesToShow = myNotes;
   else if (mapFilter === 'friends') notesToShow = friendNotes;
   else if (mapFilter === 'favorites') notesToShow = favoriteNotes;
-
   notesToShow = notesToShow.filter(n => {
     if (n.userId === currentUser.uid) return true;
     if ((!n.visibility || n.visibility === 'all') && myFriends.includes(n.userId)) return true;
@@ -2616,112 +2043,53 @@ function focusNote(id) {
     if (window.innerWidth <= 768) toggleSidebar();
     setTimeout(() => openNoteDetail(id), 500);
   } else {
-    const marker = markers[id]; 
-    if (marker) {
-      setTimeout(() => {
-        openPopupNoteId = id;
-        marker.openPopup();
-      }, 700);
-    }
+    const marker = markers[id];
+    if (marker) { setTimeout(() => { openPopupNoteId = id; marker.openPopup(); }, 700); }
   }
 }
-
 async function deleteNote(id, event) { event.stopPropagation(); if (!confirm('Supprimer ce souvenir ?')) return; try { await db.collection('notes').doc(id).delete(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
 async function deleteNoteFromPopup(id, event) { if (event) event.stopPropagation(); if (!confirm('Supprimer ce souvenir ? Action définitive.')) return; try { await db.collection('notes').doc(id).delete(); map.closePopup(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
-
 const pendingReactions = new Set();
-
 async function toggleReaction(noteId, emoji, event) {
   if (event) event.stopPropagation();
   if (!currentUser) return;
-
   const key = `${noteId}_${emoji}`;
   if (pendingReactions.has(key)) return;
   pendingReactions.add(key);
-
   const reactions = allReactions[noteId] || [];
   const existing = reactions.find(r => r.userId === currentUser.uid && r.emoji === emoji);
-
   if (!allReactions[noteId]) allReactions[noteId] = [];
-
-  if (existing) {
-    allReactions[noteId] = allReactions[noteId].filter(r => r.id !== existing.id);
-  } else {
-    const reactionId = `${noteId}_${currentUser.uid}_${emoji}`;
-    allReactions[noteId].push({
-      id: reactionId,
-      noteId,
-      userId: currentUser.uid,
-      emoji,
-      createdAt: Date.now()
-    });
-  }
-
+  if (existing) { allReactions[noteId] = allReactions[noteId].filter(r => r.id !== existing.id); }
+  else { const reactionId = `${noteId}_${currentUser.uid}_${emoji}`; allReactions[noteId].push({ id: reactionId, noteId, userId: currentUser.uid, emoji, createdAt: Date.now() }); }
   updateReactionsUI(noteId, emoji);
-
   try {
-    if (existing) {
-      await db.collection('reactions').doc(existing.id).delete();
-    } else {
-      const reactionId = `${noteId}_${currentUser.uid}_${emoji}`;
-      await db.collection('reactions').doc(reactionId).set({
-        noteId,
-        userId: currentUser.uid,
-        emoji,
-        createdAt: Date.now()
-      });
-    }
+    if (existing) { await db.collection('reactions').doc(existing.id).delete(); }
+    else { const reactionId = `${noteId}_${currentUser.uid}_${emoji}`; await db.collection('reactions').doc(reactionId).set({ noteId, userId: currentUser.uid, emoji, createdAt: Date.now() }); }
   } catch (err) {
     console.error('Erreur toggleReaction:', err);
     showToast('❌ Erreur', 'error');
-    if (existing) {
-      allReactions[noteId].push(existing);
-    } else {
-      allReactions[noteId] = allReactions[noteId].filter(
-        r => !(r.userId === currentUser.uid && r.emoji === emoji)
-      );
-    }
+    if (existing) { allReactions[noteId].push(existing); }
+    else { allReactions[noteId] = allReactions[noteId].filter(r => !(r.userId === currentUser.uid && r.emoji === emoji)); }
     updateReactionsUI(noteId);
-  } finally {
-    setTimeout(() => pendingReactions.delete(key), 500);
-  }
+  } finally { setTimeout(() => pendingReactions.delete(key), 500); }
 }
-
 function updateReactionsUI(noteId, clickedEmoji) {
   const newHtml = renderReactionsHtml(noteId);
-
   const replaceBar = (root) => {
     if (!root) return;
     const oldBar = root.querySelector('.reactions-bar');
     if (oldBar) {
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = newHtml;
+      const tempDiv = document.createElement('div'); tempDiv.innerHTML = newHtml;
       const newBar = tempDiv.firstElementChild;
-      if (newBar) {
-        if (clickedEmoji) {
-          const btn = newBar.querySelector(`.reaction-btn[data-emoji="${clickedEmoji}"]`);
-          if (btn) btn.classList.add('pop');
-        }
-        oldBar.replaceWith(newBar);
-      }
+      if (newBar) { if (clickedEmoji) { const btn = newBar.querySelector(`.reaction-btn[data-emoji="${clickedEmoji}"]`); if (btn) btn.classList.add('pop'); } oldBar.replaceWith(newBar); }
     }
   };
-
-  if (map && map._popup && openPopupNoteId === noteId) {
-    replaceBar(map._popup.getElement());
-  }
-
+  if (map && map._popup && openPopupNoteId === noteId) { replaceBar(map._popup.getElement()); }
   const detailModal = document.getElementById('noteDetailModal');
-  if (detailModal && detailModal.classList.contains('open')) {
-    replaceBar(detailModal);
-  }
-
+  if (detailModal && detailModal.classList.contains('open')) { replaceBar(detailModal); }
   const randomModal = document.getElementById('randomNoteModal');
-  if (randomModal && randomModal.classList.contains('open') && currentRandomNoteId === noteId) {
-    replaceBar(randomModal);
-  }
+  if (randomModal && randomModal.classList.contains('open') && currentRandomNoteId === noteId) { replaceBar(randomModal); }
 }
-
 async function addComment(noteId) {
   const input = document.getElementById(`commentInput_${noteId}`); if (!input) return;
   const text = input.value.trim();
@@ -2790,32 +2158,20 @@ async function toggleFavoriteFromPopup(id, event) {
   const newVal = !note.favorite;
   try { await db.collection('notes').doc(id).update({ favorite: newVal }); showToast(newVal ? '⭐ Ajouté aux favoris !' : 'Retiré des favoris', newVal ? 'success' : 'info'); } catch (err) { showToast('❌ Erreur', 'error'); }
 }
-
-/* 📁 GROUPES */
 function loadGroups() {
   if (unsubscribeGroups) unsubscribeGroups();
-  unsubscribeGroups = db.collection('groups')
-    .where('members', 'array-contains', currentUser.uid)
-    .onSnapshot(
-      (snapshot) => {
-        const newGroups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        newGroups.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        const oldIds = allGroups.map(g => g.id).sort().join(',');
-        const newIds = newGroups.map(g => g.id).sort().join(',');
-        const groupIdsChanged = oldIds !== newIds;
-        allGroups = newGroups;
-        renderGroupsList();
-        updateFilters();
-        if (groupIdsChanged) {
-          loadAllNotes();
-        } else {
-          renderAllMarkers();
-        }
-      },
-      (error) => {
-        console.error('Erreur loadGroups:', error);
-      }
-    );
+  unsubscribeGroups = db.collection('groups').where('members', 'array-contains', currentUser.uid).onSnapshot(
+    (snapshot) => {
+      const newGroups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      newGroups.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      const oldIds = allGroups.map(g => g.id).sort().join(',');
+      const newIds = newGroups.map(g => g.id).sort().join(',');
+      const groupIdsChanged = oldIds !== newIds;
+      allGroups = newGroups;
+      renderGroupsList();
+      updateFilters();
+      if (groupIdsChanged) { loadAllNotes(); } else { renderAllMarkers(); }
+    }, (error) => { console.error('Erreur loadGroups:', error); });
 }
 async function loadGroupMembersProfiles(group) {
   if (!group || !group.members) return;
@@ -2833,25 +2189,11 @@ async function loadGroupMembersProfiles(group) {
 function renderGroupsList() {
   const list = document.getElementById('groupsList');
   if (!list) return;
-  if (allGroups.length === 0) {
-    list.innerHTML = `<div class="empty-state">📁 Aucun groupe pour l'instant.<br>Crée ton premier groupe !</div>`;
-    return;
-  }
+  if (allGroups.length === 0) { list.innerHTML = `<div class="empty-state">📁 Aucun groupe pour l'instant.<br>Crée ton premier groupe !</div>`; return; }
   list.innerHTML = allGroups.map(g => {
     const memberCount = (g.members || []).length;
     const isOwner = g.ownerId === currentUser.uid;
-    return `
-      <div class="group-card" onclick="openGroupDetail('${g.id}')">
-        <div class="group-emoji">${g.emoji || '📁'}</div>
-        <div class="group-info">
-          <div class="group-name">${escapeHtml(g.name || 'Sans nom')}</div>
-          <div class="group-meta">${memberCount} membre${memberCount > 1 ? 's' : ''}${isOwner ? ' • Créateur' : ''}</div>
-        </div>
-        <div class="group-actions" onclick="event.stopPropagation()">
-          <button class="group-btn danger" onclick="confirmDeleteGroup('${g.id}')" title="Supprimer">🗑️</button>
-        </div>
-      </div>
-    `;
+    return `<div class="group-card" onclick="openGroupDetail('${g.id}')"><div class="group-emoji">${g.emoji || '📁'}</div><div class="group-info"><div class="group-name">${escapeHtml(g.name || 'Sans nom')}</div><div class="group-meta">${memberCount} membre${memberCount > 1 ? 's' : ''}${isOwner ? ' • Créateur' : ''}</div></div><div class="group-actions" onclick="event.stopPropagation()"><button class="group-btn danger" onclick="confirmDeleteGroup('${g.id}')" title="Supprimer">🗑️</button></div></div>`;
   }).join('');
 }
 function openGroupsModal() { document.getElementById('groupsModalOverlay').classList.add('open'); renderGroupsList(); }
@@ -2863,9 +2205,7 @@ function openCreateGroup() {
   document.getElementById('groupModalSubtitle').textContent = 'Donne-lui un nom et un emoji.';
   document.getElementById('groupName').value = '';
   document.getElementById('saveGroupBtn').innerHTML = '💾 Créer le groupe';
-  document.querySelectorAll('#groupEmojiPicker .emoji-choice-group').forEach(el => {
-    el.classList.toggle('active', el.dataset.emoji === '🏖️');
-  });
+  document.querySelectorAll('#groupEmojiPicker .emoji-choice-group').forEach(el => { el.classList.toggle('active', el.dataset.emoji === '🏖️'); });
   document.getElementById('groupsModalOverlay').classList.remove('open');
   document.getElementById('editGroupModalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('groupName').focus(), 200);
@@ -2895,13 +2235,8 @@ async function saveGroup() {
       showToast('✅ Groupe créé !', 'success');
     }
     closeEditGroupModal();
-  } catch (err) {
-    console.error('Erreur saveGroup:', err);
-    showToast('❌ Erreur : ' + err.message, 'error');
-  } finally {
-    saveBtn.disabled = false;
-    saveBtn.innerHTML = currentEditingGroupId ? '💾 Mettre à jour' : '💾 Créer le groupe';
-  }
+  } catch (err) { console.error('Erreur saveGroup:', err); showToast('❌ Erreur : ' + err.message, 'error'); }
+  finally { saveBtn.disabled = false; saveBtn.innerHTML = currentEditingGroupId ? '💾 Mettre à jour' : '💾 Créer le groupe'; }
 }
 async function openGroupDetail(groupId) {
   const group = allGroups.find(g => g.id === groupId);
@@ -2934,34 +2269,11 @@ function renderGroupMembers(group) {
     let avatar = myProfile?.photoURL || currentUser.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
     if (!isMe) {
       profile = allProfiles[uid];
-      if (!profile) {
-        name = 'Chargement...';
-        if (group) {
-          loadGroupMembersProfiles(group).then(() => {
-            setTimeout(() => renderGroupMembers(group), 200);
-          });
-        }
-      } else {
-        name = profile.displayName || 'Utilisateur';
-        username = profile.username ? '@' + profile.username : '';
-        avatar = cloudinaryThumb(profile.photoURL, 100) || 'https://www.gravatar.com/avatar/?d=mp';
-      }
-    } else {
-      name = (myProfile?.displayName || 'Toi') + ' (toi)';
-      username = myProfile?.username ? '@' + myProfile.username : '';
-    }
+      if (!profile) { name = 'Chargement...'; if (group) { loadGroupMembersProfiles(group).then(() => { setTimeout(() => renderGroupMembers(group), 200); }); } }
+      else { name = profile.displayName || 'Utilisateur'; username = profile.username ? '@' + profile.username : ''; avatar = cloudinaryThumb(profile.photoURL, 100) || 'https://www.gravatar.com/avatar/?d=mp'; }
+    } else { name = (myProfile?.displayName || 'Toi') + ' (toi)'; username = myProfile?.username ? '@' + myProfile.username : ''; }
     const canRemove = !isMe && !isOwner && group.ownerId === currentUser.uid;
-    return `
-      <div class="group-member-row">
-        <img src="${avatar}" alt="${escapeAttr(name)}" loading="lazy" />
-        <div class="group-member-info">
-          <div class="group-member-name">${escapeHtml(name)}</div>
-          ${username ? `<div class="group-member-username">${escapeHtml(username)}</div>` : ''}
-        </div>
-        ${isOwner ? '<span class="group-owner-badge">Créateur</span>' : ''}
-        ${canRemove ? `<button class="group-member-action" onclick="removeMemberFromGroup('${group.id}', '${uid}')" title="Retirer">×</button>` : ''}
-      </div>
-    `;
+    return `<div class="group-member-row"><img src="${avatar}" alt="${escapeAttr(name)}" loading="lazy" /><div class="group-member-info"><div class="group-member-name">${escapeHtml(name)}</div>${username ? `<div class="group-member-username">${escapeHtml(username)}</div>` : ''}</div>${isOwner ? '<span class="group-owner-badge">Créateur</span>' : ''}${canRemove ? `<button class="group-member-action" onclick="removeMemberFromGroup('${group.id}', '${uid}')" title="Retirer">×</button>` : ''}</div>`;
   }).join('');
 }
 function closeGroupDetail() {
@@ -2997,12 +2309,8 @@ async function addFriendToGroup() {
         document.getElementById('detailGroupMeta').textContent = `${memberCount} membre${memberCount > 1 ? 's' : ''}`;
       }
     }, 500);
-  } catch (err) {
-    console.error('Erreur addFriendToGroup:', err);
-    showToast('❌ Erreur : ' + err.message, 'error');
-  } finally {
-    input.disabled = false;
-  }
+  } catch (err) { console.error('Erreur addFriendToGroup:', err); showToast('❌ Erreur : ' + err.message, 'error'); }
+  finally { input.disabled = false; }
 }
 async function removeMemberFromGroup(groupId, memberUid) {
   const group = allGroups.find(g => g.id === groupId);
@@ -3021,10 +2329,7 @@ async function removeMemberFromGroup(groupId, memberUid) {
         document.getElementById('detailGroupMeta').textContent = `${memberCount} membre${memberCount > 1 ? 's' : ''}`;
       }
     }, 500);
-  } catch (err) {
-    console.error('Erreur removeMemberFromGroup:', err);
-    showToast('❌ Erreur : ' + err.message, 'error');
-  }
+  } catch (err) { console.error('Erreur removeMemberFromGroup:', err); showToast('❌ Erreur : ' + err.message, 'error'); }
 }
 async function leaveGroup(groupId) {
   if (!confirm('Quitter ce groupe ?')) return;
@@ -3036,10 +2341,7 @@ async function leaveGroup(groupId) {
     if (activeGroupId === groupId) { clearGroupFilter(); }
     showToast('🚪 Tu as quitté le groupe', 'info');
     closeGroupDetail();
-  } catch (err) {
-    console.error('Erreur leaveGroup:', err);
-    showToast('❌ Erreur : ' + err.message, 'error');
-  }
+  } catch (err) { console.error('Erreur leaveGroup:', err); showToast('❌ Erreur : ' + err.message, 'error'); }
 }
 async function confirmDeleteGroup(groupId) {
   const group = allGroups.find(g => g.id === groupId);
@@ -3052,10 +2354,7 @@ async function confirmDeleteGroup(groupId) {
     showToast('🗑️ Groupe supprimé', 'info');
     document.getElementById('groupDetailModalOverlay').classList.remove('open');
     document.getElementById('groupsModalOverlay').classList.add('open');
-  } catch (err) {
-    console.error('Erreur deleteGroup:', err);
-    showToast('❌ Erreur : ' + err.message, 'error');
-  }
+  } catch (err) { console.error('Erreur deleteGroup:', err); showToast('❌ Erreur : ' + err.message, 'error'); }
 }
 function applyGroupFilterFromDetail() {
   if (!currentViewingGroupId) return;
@@ -3065,10 +2364,7 @@ function applyGroupFilterFromDetail() {
   showToast(`${group.emoji || '📁'} Filtre "${group.name}" activé`, 'success');
   const badge = document.getElementById('groupFilterBadge');
   const badgeText = document.getElementById('groupFilterText');
-  if (badge && badgeText) {
-    badgeText.textContent = `${group.emoji || '📁'} ${group.name}`;
-    badge.classList.add('show');
-  }
+  if (badge && badgeText) { badgeText.textContent = `${group.emoji || '📁'} ${group.name}`; badge.classList.add('show'); }
   document.getElementById('groupDetailModalOverlay').classList.remove('open');
   document.getElementById('groupsModalOverlay').classList.remove('open');
   currentViewingGroupId = null;
@@ -3082,10 +2378,7 @@ function applyGroupFilter(groupId) {
   activeGroupId = groupId;
   const badge = document.getElementById('groupFilterBadge');
   const badgeText = document.getElementById('groupFilterText');
-  if (badge && badgeText) {
-    badgeText.textContent = `${group.emoji || '📁'} ${group.name}`;
-    badge.classList.add('show');
-  }
+  if (badge && badgeText) { badgeText.textContent = `${group.emoji || '📁'} ${group.name}`; badge.classList.add('show'); }
   renderAllMarkers();
   updateFilters();
 }
@@ -3118,57 +2411,128 @@ async function deleteMyAccount() {
   if (input.value.trim().toUpperCase() !== 'SUPPRIMER') return;
   const btn = document.getElementById('confirmDeleteBtn');
   btn.disabled = true; btn.innerHTML = '<span class="cloud-loader"></span>Suppression...';
+
+  // 🔑 ÉTAPE CRUCIALE : couper TOUS les listeners temps réel AVANT de commencer
+  console.log('🛑 Arrêt des listeners Firestore...');
+  cleanupListeners();
+  await new Promise(resolve => setTimeout(resolve, 400));
+
   const uid = currentUser.uid;
-  const totalSteps = 8; let step = 0;
+  const totalSteps = 7; let step = 0;
   const updateProgress = (label) => { step++; btn.innerHTML = `<span class="cloud-loader"></span>${label} (${step}/${totalSteps})`; };
+
   try {
+    // ═══ 1. Retirer mon UID des listes friends de mes amis ═══
     updateProgress('Retrait des amitiés');
+    console.log('📘 Étape 1: retrait des amitiés (' + myFriends.length + ')');
     for (const friendUid of myFriends) {
-      try { const friendRef = db.collection('users').doc(friendUid); const friendDoc = await friendRef.get(); if (friendDoc.exists) { const friendFriends = (friendDoc.data().friends || []).filter(id => id !== uid); await friendRef.update({ friends: friendFriends }); } } catch (err) {}
+      try {
+        const friendRef = db.collection('users').doc(friendUid);
+        const friendDoc = await friendRef.get();
+        if (friendDoc.exists) {
+          const friendFriends = (friendDoc.data().friends || []).filter(id => id !== uid);
+          await friendRef.update({ friends: friendFriends });
+          console.log('  ✅ retiré de', friendUid);
+        }
+      } catch (err) { console.warn('  ⚠️ skip ami', friendUid, err.message); }
     }
-    updateProgress('Suppression des souvenirs');
-    for (const note of myNotes) { try { await db.collection('notes').doc(note.id).delete(); } catch (err) {} }
-    updateProgress('Suppression des réactions');
-    const reactionsSnap = await db.collection('reactions').where('userId', '==', uid).get();
-    const batch1 = db.batch(); reactionsSnap.forEach(doc => batch1.delete(doc.ref)); if (!reactionsSnap.empty) await batch1.commit();
-    updateProgress('Suppression des commentaires');
-    const commentsSnap = await db.collection('comments').where('userId', '==', uid).get();
-    const batch2 = db.batch(); commentsSnap.forEach(doc => batch2.delete(doc.ref)); if (!commentsSnap.empty) await batch2.commit();
-    updateProgress('Suppression des demandes');
-    const sentReq = await db.collection('friendRequests').where('from', '==', uid).get();
-    const recvReq = await db.collection('friendRequests').where('to', '==', uid).get();
-    const batch3 = db.batch(); sentReq.forEach(doc => batch3.delete(doc.ref)); recvReq.forEach(doc => batch3.delete(doc.ref));
-    if (!sentReq.empty || !recvReq.empty) await batch3.commit();
-    updateProgress('Nettoyage des interactions');
+
+    // ═══ 2. Réactions & commentaires sur MES notes ═══
+    updateProgress('Nettoyage interactions');
+    console.log('📘 Étape 2: nettoyage des interactions');
     const myNoteIds = myNotes.map(n => n.id);
     for (let i = 0; i < myNoteIds.length; i += 10) {
       const chunk = myNoteIds.slice(i, i + 10);
-      const reactionsOnMyNotes = await db.collection('reactions').where('noteId', 'in', chunk).get();
-      const batch4 = db.batch(); reactionsOnMyNotes.forEach(doc => batch4.delete(doc.ref)); if (!reactionsOnMyNotes.empty) await batch4.commit();
-      const commentsOnMyNotes = await db.collection('comments').where('noteId', 'in', chunk).get();
-      const batch5 = db.batch(); commentsOnMyNotes.forEach(doc => batch5.delete(doc.ref)); if (!commentsOnMyNotes.empty) await batch5.commit();
+      try {
+        const reactionsOnMyNotes = await db.collection('reactions').where('noteId', 'in', chunk).get();
+        const batch = db.batch();
+        reactionsOnMyNotes.forEach(doc => batch.delete(doc.ref));
+        if (!reactionsOnMyNotes.empty) await batch.commit();
+        console.log('  ✅ réactions sur mes notes:', reactionsOnMyNotes.size);
+      } catch (err) { console.warn('  ⚠️ skip reactions:', err.message); }
+
+      try {
+        const commentsOnMyNotes = await db.collection('comments').where('noteId', 'in', chunk).get();
+        const batch = db.batch();
+        commentsOnMyNotes.forEach(doc => batch.delete(doc.ref));
+        if (!commentsOnMyNotes.empty) await batch.commit();
+        console.log('  ✅ commentaires sur mes notes:', commentsOnMyNotes.size);
+      } catch (err) { console.warn('  ⚠️ skip comments:', err.message); }
     }
-    updateProgress('Suppression du profil');
-    await db.collection('users').doc(uid).delete();
-    updateProgress('Suppression du compte');
-    await currentUser.delete();
+
+    // ═══ 3. Mes propres réactions ═══
+    updateProgress('Mes réactions');
+    console.log('📘 Étape 3: mes réactions');
+    try {
+      const reactionsSnap = await db.collection('reactions').where('userId', '==', uid).get();
+      const batch = db.batch();
+      reactionsSnap.forEach(doc => batch.delete(doc.ref));
+      if (!reactionsSnap.empty) await batch.commit();
+      console.log('  ✅ mes réactions:', reactionsSnap.size);
+    } catch (err) { console.warn('  ⚠️ skip mes reactions:', err.message); }
+
+    // ═══ 4. Mes propres commentaires ═══
+    updateProgress('Mes commentaires');
+    console.log('📘 Étape 4: mes commentaires');
+    try {
+      const commentsSnap = await db.collection('comments').where('userId', '==', uid).get();
+      const batch = db.batch();
+      commentsSnap.forEach(doc => batch.delete(doc.ref));
+      if (!commentsSnap.empty) await batch.commit();
+      console.log('  ✅ mes commentaires:', commentsSnap.size);
+    } catch (err) { console.warn('  ⚠️ skip mes comments:', err.message); }
+
+    // ═══ 5. Demandes d'amis ═══
+    updateProgress('Demandes d\'amis');
+    console.log('📘 Étape 5: demandes d\'amis');
+    try {
+      const sentReq = await db.collection('friendRequests').where('from', '==', uid).get();
+      const recvReq = await db.collection('friendRequests').where('to', '==', uid).get();
+      const batch = db.batch();
+      sentReq.forEach(doc => batch.delete(doc.ref));
+      recvReq.forEach(doc => batch.delete(doc.ref));
+      if (!sentReq.empty || !recvReq.empty) await batch.commit();
+      console.log('  ✅ demandes supprimées:', sentReq.size + recvReq.size);
+    } catch (err) { console.warn('  ⚠️ skip requests:', err.message); }
+
+    // ═══ 6. Mes notes ═══
+    updateProgress('Mes souvenirs');
+    console.log('📘 Étape 6: mes notes (' + myNotes.length + ')');
+    for (const note of myNotes) {
+      try { await db.collection('notes').doc(note.id).delete(); } catch (err) { console.warn('  ⚠️ skip note', note.id); }
+    }
+
+    // ═══ 7. Mon profil ═══
+    updateProgress('Mon profil');
+    console.log('📘 Étape 7: profil user');
+    try { await db.collection('users').doc(uid).delete(); } catch (err) { console.warn('  ⚠️ skip profile:', err.message); }
+
+    // ═══ 8. Compte Firebase Auth ═══
+    console.log('📘 Étape finale: compte auth');
+    try {
+      await currentUser.delete();
+    } catch (err) {
+      if (err.code === 'auth/requires-recent-login') {
+        showToast('⚠️ Reconnecte-toi puis réessaie', 'error');
+        btn.disabled = false; btn.innerHTML = '🗑️ Supprimer définitivement';
+        setTimeout(() => { if (confirm('Ta session est ancienne. Se reconnecter pour supprimer ton compte ?')) signInWithGoogle(); }, 500);
+        return;
+      }
+      throw err;
+    }
+
+    console.log('✅ SUCCÈS TOTAL');
     btn.innerHTML = '✅ Compte supprimé';
     showToast('🗑️ Ton compte a été supprimé', 'success');
     document.getElementById('deleteAccountModal').classList.remove('open');
     setTimeout(() => { window.location.href = '/'; }, 2000);
   } catch (err) {
-    console.error('Erreur suppression compte:', err);
-    if (err.code === 'auth/requires-recent-login') {
-      showToast('⚠️ Reconnecte-toi puis réessaie', 'error');
-      setTimeout(() => { if (confirm('Ta session est ancienne. Se reconnecter pour supprimer ton compte ?')) signInWithGoogle(); }, 500);
-    } else {
-      showToast('❌ Erreur : ' + err.message, 'error');
-      btn.disabled = false; btn.innerHTML = '🗑️ Supprimer définitivement';
-    }
+    console.error('❌ ERREUR à l\'étape ' + step + ' :', err);
+    showToast('❌ Erreur : ' + err.message, 'error');
+    btn.disabled = false; btn.innerHTML = '🗑️ Supprimer définitivement';
   }
 }
 
-/* 💾 BROUILLON */
 const DRAFT_KEY = 'worldnotes_draft';
 let draftSaveTimeout = null;
 function saveDraft() {
@@ -3197,7 +2561,6 @@ function restoreDraft(draft) {
 }
 function clearDraft() { localStorage.removeItem(DRAFT_KEY); document.getElementById('draftBanner').classList.remove('visible'); showToast('🗑️ Brouillon effacé', 'info'); }
 
-/* 🏷️ TAGS */
 function renderTagsInModal() {
   const wrapper = document.getElementById('tagsInputWrapper');
   const input = document.getElementById('tagInputField');
@@ -3217,13 +2580,11 @@ const tagInputField = document.getElementById('tagInputField');
 tagInputField.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(tagInputField.value); tagInputField.value = ''; } else if (e.key === 'Backspace' && tagInputField.value === '' && pendingTags.length > 0) { pendingTags.pop(); renderTagsInModal(); } });
 tagInputField.addEventListener('blur', () => { if (tagInputField.value.trim()) { addTag(tagInputField.value); tagInputField.value = ''; } });
 
-/* 🔍 SIDEBAR SEARCH */
 const sidebarSearchInput = document.getElementById('sidebarSearch');
 const clearSidebarSearchBtn = document.getElementById('clearSidebarSearch');
 sidebarSearchInput.addEventListener('input', () => { sidebarSearchQuery = sidebarSearchInput.value; clearSidebarSearchBtn.classList.toggle('visible', sidebarSearchQuery.length > 0); renderAllMarkers(); });
 function clearSidebarSearch() { sidebarSearchInput.value = ''; sidebarSearchQuery = ''; clearSidebarSearchBtn.classList.remove('visible'); renderAllMarkers(); }
 
-/* 🎲 RANDOM */
 function showRandomNote() {
   const btn = document.querySelector('.btn-float:not(.btn-stats)');
   if (btn) btn.style.animation = 'spin3 0.6s linear infinite';
@@ -3255,7 +2616,6 @@ function closeRandomNoteIfOutside(e) { if (e.target.id === 'randomNoteModal') cl
 function goToRandomNote() { if (!currentRandomNoteId) return; const id = currentRandomNoteId; closeRandomNote(); focusNote(id); }
 function rollAnotherRandom() { closeRandomNote(); setTimeout(showRandomNote, 200); }
 
-/* 📊 STATS */
 function openStatsModal() { document.getElementById('statsModal').classList.add('open'); switchStatsTab(currentStatsTab); }
 function closeStatsModal() { document.getElementById('statsModal').classList.remove('open'); }
 function closeStatsIfOutside(e) { if (e.target.id === 'statsModal') closeStatsModal(); }
@@ -3295,7 +2655,6 @@ function renderStatsContent(tab) {
   else if (tab === 'tags') { const sortedTags = Object.entries(stats.tagCounts).sort((a, b) => b[1] - a[1]); if (sortedTags.length === 0) { body.innerHTML = `<div class="stats-empty">Aucun tag utilisé pour l'instant.<br>Ajoute des tags à tes souvenirs pour les voir ici !</div>`; return; } const maxCount = sortedTags[0][1]; body.innerHTML = `<div class="stats-section-title">🏷️ Tes tags les plus utilisés</div><div class="top-tags">${sortedTags.map(([tag, count]) => `<div class="top-tag-row"><div class="top-tag-name">#${escapeHtml(tag)}</div><div class="top-tag-bar"><div class="top-tag-fill" style="width: ${(count / maxCount) * 100}%"></div></div><div class="top-tag-count">${count}</div></div>`).join('')}</div>`; }
 }
 
-/* ✏️ ÉDITION */
 function editNoteFromPopup(id, event) {
   if (event) event.stopPropagation();
   const note = notesByIdCache[id]; if (!note || note.userId !== currentUser.uid) return;
@@ -3339,10 +2698,7 @@ function updateFilters() {
   let notesForCounts = allNotes;
   if (activeGroupId) {
     const group = allGroups.find(g => g.id === activeGroupId);
-    if (group) {
-      const memberSet = new Set(group.members || []);
-      notesForCounts = allNotes.filter(n => memberSet.has(n.userId));
-    }
+    if (group) { const memberSet = new Set(group.members || []); notesForCounts = allNotes.filter(n => memberSet.has(n.userId)); }
   }
   document.getElementById('countAll').textContent = notesForCounts.length;
   document.getElementById('countMine').textContent = notesForCounts.filter(n => n.userId === currentUser.uid).length;
@@ -3363,7 +2719,6 @@ function hideAddress() { const el = document.getElementById('addressDisplay'); e
 function openLightbox(noteId, event) { if (event) event.stopPropagation(); const note = notesByIdCache[noteId]; if (!note || !note.photo) return; document.getElementById('lightboxImg').src = note.photo; document.getElementById('lightbox').classList.add('open'); }
 function closeLightbox(event) { if (event) event.stopPropagation(); document.getElementById('lightbox').classList.remove('open'); }
 
-/* 📷 PHOTO */
 const photoInput = document.getElementById('photoInput');
 const photoUploadZone = document.getElementById('photoUploadZone');
 const photoPreviewWrapper = document.getElementById('photoPreviewWrapper');
@@ -3386,7 +2741,6 @@ function chooseTheme(theme) { uiTheme = theme; updateThemeChoices(); }
 function applySettings() { localStorage.setItem('worldnotes_theme', uiTheme); document.documentElement.setAttribute('data-theme', uiTheme); toggleSettings(); showToast('✅ Réglages appliqués', 'success'); }
 function updateNotesCountInfo() { const info = document.getElementById('notesCountInfo'); if (!info) return; const n = myNotes.length; const favs = favoriteNotes.length; let txt = n === 0 ? 'Aucun souvenir' : `${n} souvenir${n > 1 ? 's' : ''}`; if (favs > 0) txt += ` • ${favs} ⭐`; info.textContent = txt; }
 
-/* 📤 EXPORT/IMPORT */
 function exportNotes() {
   if (myNotes.length === 0) { showToast('⚠️ Aucun souvenir à exporter', 'error'); return; }
   const exportData = { app: 'World Notes', version: 14, exportedAt: new Date().toISOString(), notesCount: myNotes.length, notes: myNotes.map(n => { const { userId, ...rest } = n; return rest; }) };
@@ -3419,69 +2773,37 @@ document.getElementById('importFileInput').addEventListener('change', async (e) 
   e.target.value = '';
 });
 
-/* ➕ AJOUT */
 function chooseIcon(el) { document.querySelectorAll('.icon-choice').forEach(c => c.classList.remove('active')); el.classList.add('active'); pendingIcon = el.dataset.icon; }
 function updateVisibilityOptions() {
   const container = document.getElementById('visibilityGroupContainer');
   const select = document.getElementById('noteVisibility');
   if (!container || !select) return;
-  if (allGroups.length === 0) {
-    container.style.display = 'none';
-    pendingVisibility = 'all';
-    return;
-  }
+  if (allGroups.length === 0) { container.style.display = 'none'; pendingVisibility = 'all'; return; }
   container.style.display = 'block';
   select.innerHTML = '<option value="all">🌍 Tout le monde (mes amis)</option>';
-  allGroups.forEach(g => {
-    const opt = document.createElement('option');
-    opt.value = g.id;
-    opt.textContent = `${g.emoji || '📁'} ${g.name} (groupe)`;
-    select.appendChild(opt);
-  });
+  allGroups.forEach(g => { const opt = document.createElement('option'); opt.value = g.id; opt.textContent = `${g.emoji || '📁'} ${g.name} (groupe)`; select.appendChild(opt); });
   select.value = pendingVisibility;
 }
 
-/* ═══════════════════════════════════════════
-   🪄 WIZARD LOGIC
-   ═══════════════════════════════════════════ */
 function goToStep(step, isEdit = false) {
   if (step < 1 || step > 3) return;
   const previousStep = currentWizardStep;
   currentWizardStep = step;
-
   const steps = document.querySelectorAll('.wizard-step');
   steps.forEach(s => { s.classList.remove('active', 'back'); });
   const activeStep = document.querySelector(`.wizard-step[data-step="${step}"]`);
-  if (activeStep) {
-    activeStep.classList.add('active');
-    if (step < previousStep) activeStep.classList.add('back');
-  }
-
-  const stepInfo = {
-    1: { label: 'Étape 1 sur 3', title: '📍 Où ?' },
-    2: { label: 'Étape 2 sur 3', title: '📝 Quoi ?' },
-    3: { label: 'Étape 3 sur 3', title: '🎨 Détails' }
-  };
+  if (activeStep) { activeStep.classList.add('active'); if (step < previousStep) activeStep.classList.add('back'); }
+  const stepInfo = { 1: { label: 'Étape 1 sur 3', title: '📍 Où ?' }, 2: { label: 'Étape 2 sur 3', title: '📝 Quoi ?' }, 3: { label: 'Étape 3 sur 3', title: '🎨 Détails' } };
   document.getElementById('wizardStepLabel').textContent = stepInfo[step].label;
   document.getElementById('wizardTitle').textContent = stepInfo[step].title;
   document.getElementById('wizardProgressBar').style.width = (step / 3 * 100) + '%';
-
   const backBtn = document.getElementById('wizardBackBtn');
-  if (step === 1) backBtn.classList.add('hidden');
-  else backBtn.classList.remove('hidden');
-
+  if (step === 1) backBtn.classList.add('hidden'); else backBtn.classList.remove('hidden');
   const nextBtn = document.getElementById('wizardNextBtn');
-  if (step === 3) {
-    nextBtn.innerHTML = isEdit ? '💾 Mettre à jour' : '✓ Terminer';
-    nextBtn.disabled = false;
-  } else {
-    nextBtn.innerHTML = 'Continuer →';
-    updateWizardNextState();
-  }
-
+  if (step === 3) { nextBtn.innerHTML = isEdit ? '💾 Mettre à jour' : '✓ Terminer'; nextBtn.disabled = false; }
+  else { nextBtn.innerHTML = 'Continuer →'; updateWizardNextState(); }
   document.getElementById('wizardBody').scrollTop = 0;
 }
-
 function updateWizardNextState() {
   const nextBtn = document.getElementById('wizardNextBtn');
   if (!nextBtn) return;
@@ -3492,26 +2814,18 @@ function updateWizardNextState() {
   } else if (currentWizardStep === 2) {
     const hasText = document.getElementById('noteText').value.trim().length > 0;
     nextBtn.disabled = !hasText;
-  } else {
-    nextBtn.disabled = false;
-  }
+  } else { nextBtn.disabled = false; }
 }
-
 function wizardNext() {
   if (currentWizardStep < 3) {
     if (currentWizardStep === 1) {
       if (!pendingLatLng) { showToast('⚠️ Choisis une position', 'error'); return; }
       if (!document.getElementById('placeName').value.trim()) { showToast('⚠️ Donne un nom à ce lieu', 'error'); return; }
     }
-    if (currentWizardStep === 2) {
-      if (!document.getElementById('noteText').value.trim()) { showToast('⚠️ Écris ton anecdote', 'error'); return; }
-    }
+    if (currentWizardStep === 2) { if (!document.getElementById('noteText').value.trim()) { showToast('⚠️ Écris ton anecdote', 'error'); return; } }
     goToStep(currentWizardStep + 1);
-  } else {
-    saveNote();
-  }
+  } else { saveNote(); }
 }
-
 function openAddModal() {
   editingNoteId = null; pendingIsFavorite = false; pendingTags = [];
   updateFavToggle(); renderTagsInModal();
@@ -3539,7 +2853,6 @@ function openAddModal() {
     }
   });
 }
-
 function closeAddModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.getElementById('placeName').value = '';
@@ -3556,7 +2869,6 @@ function closeAddModal() {
   const db1 = document.getElementById('draftBanner'); if (db1) db1.classList.remove('visible');
   currentWizardStep = 1;
 }
-
 function updateLocationBox() {
   const box = document.getElementById('locationBox'); const icon = document.getElementById('locationIcon'); const coords = document.getElementById('coordsText');
   box.classList.remove('gps', 'manual', 'search');
@@ -3588,7 +2900,6 @@ function useMyLocation() {
   }, (error) => { btn.disabled = false; btn.innerHTML = '🎯 GPS'; let msg = '❌ Impossible de te localiser.'; if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.'; showToast(msg, 'error'); }, { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 });
 }
 
-/* 🔎 RECHERCHE */
 const searchInput = document.getElementById('searchInput');
 const autocompleteList = document.getElementById('autocompleteList');
 const searchSpinner = document.getElementById('searchSpinner');
@@ -3650,7 +2961,6 @@ function closeAutocomplete() { autocompleteList.classList.remove('open'); active
 function clearSearch() { searchInput.value = ''; searchClear.classList.remove('visible'); closeAutocomplete(); searchInput.focus(); }
 function clearSearchButton() { searchClear.classList.remove('visible'); closeAutocomplete(); }
 
-/* 💾 SAVE NOTE */
 async function saveNote() {
   const place = document.getElementById('placeName').value.trim();
   const text = document.getElementById('noteText').value.trim();
@@ -3688,20 +2998,11 @@ async function saveNote() {
   } catch (err) { showToast('❌ Erreur: ' + err.message, 'error'); saveBtn.disabled = false; saveBtn.innerHTML = originalHTML; }
 }
 
-/* 🍞 TOAST */
 let toastTimer;
 function showToast(msg, type = '') { const toast = document.getElementById('toast'); toast.textContent = msg; toast.className = 'toast show ' + type; clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 3200); }
 function escapeHtml(str) { if (str === undefined || str === null) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
-function escapeAttr(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
+function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-/* ⌨️ RACCOURCIS */
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (document.getElementById('statsModal').classList.contains('open')) closeStatsModal();
@@ -3726,9 +3027,7 @@ document.addEventListener('keydown', (e) => {
 updateThemeChoices();
 setTimeout(() => { const hint = document.getElementById('hint'); if (hint) hint.style.opacity = '0'; }, 10000);
 showIOSBannerIfNeeded();
-document.getElementById('noteVisibility')?.addEventListener('change', (e) => {
-  pendingVisibility = e.target.value;
-});
+document.getElementById('noteVisibility')?.addEventListener('change', (e) => { pendingVisibility = e.target.value; });
 document.getElementById('placeName')?.addEventListener('input', updateWizardNextState);
 document.getElementById('noteText')?.addEventListener('input', updateWizardNextState);
 </script>
