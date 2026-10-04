@@ -1535,7 +1535,12 @@ function createUserLocationIcon() { return L.divIcon({ className: '', html: '<di
 function createTempMarkerIcon() { return L.divIcon({ className: '', html: '<div class="temp-marker"></div>', iconSize: [26, 26], iconAnchor: [13, 13] }); }
 function addMarkerToMap(note) {
   const marker = L.marker([note.lat, note.lng], { icon: createMarkerIcon(note) }).bindPopup(buildPopupContent(note), { maxWidth: Math.min(document.documentElement.clientWidth, screen.width) - 40, minWidth: 240, autoPanPadding: [10, 10] });
-  marker.on('click', (e) => { L.DomEvent.stopPropagation(e); });
+  marker.on('click', (e) => { 
+  L.DomEvent.stopPropagation(e); 
+  // 🆕 Set AVANT que popupopen ne se déclenche (fix iOS timing)
+  openPopupNoteId = note.id;
+  window._popupOpenedAt = Date.now();
+});
   marker.on('mousedown', (e) => { L.DomEvent.stopPropagation(e); });
   marker.on('touchstart', (e) => { L.DomEvent.stopPropagation(e); });
   // 🆕 On track nous-mêmes quel marqueur a sa popup ouverte (fix iOS)
