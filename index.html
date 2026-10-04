@@ -590,6 +590,27 @@ textarea{resize:vertical;min-height:90px}
   .filter-btn .label-text{display:none}
   .filter-btn .count{font-size:0.6rem;padding:1px 5px}
 }
+/* 📱 Fix : clavier mobile qui cache les inputs */
+.wizard-body {
+  scroll-padding-bottom: 320px; /* Laisse de la place au clavier */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Quand un input est focus, on lui met un peu d'air */
+.wizard-body input:focus,
+.wizard-body textarea:focus {
+  scroll-margin-bottom: 320px;
+}
+
+/* Sur iOS, le wizard footer peut être poussé par le clavier */
+@media (max-width: 768px) {
+  .wizard-modal {
+    height: 100dvh; /* dvh = dynamic viewport height, s'adapte au clavier */
+  }
+  .wizard-body {
+    min-height: 0;
+  }
+}
 </style>
 </head><body>
 
@@ -3030,6 +3051,49 @@ showIOSBannerIfNeeded();
 document.getElementById('noteVisibility')?.addEventListener('change', (e) => { pendingVisibility = e.target.value; });
 document.getElementById('placeName')?.addEventListener('input', updateWizardNextState);
 document.getElementById('noteText')?.addEventListener('input', updateWizardNextState);
+/* ═══════════════════════════════════════════
+   📱 FIX CLAVIER MOBILE (iOS/Android)
+   ═══════════════════════════════════════════ */
+function scrollInputIntoView(inputEl) {
+  if (!inputEl) return;
+  // On attend que le clavier soit bien ouvert
+  setTimeout(() => {
+    try {
+      inputEl.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    } catch (e) {
+      // Fallback pour vieux navigateurs
+      inputEl.scrollIntoView(false);
+    }
+  }, 350);
+}
+
+// Écoute les focus sur TOUS les inputs/textarea de l'app
+document.addEventListener('focusin', (e) => {
+  const el = e.target;
+  if (!el) return;
+  const tag = el.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') {
+    // Seulement pour les champs dans la modale wizard ou les autres modales
+    if (el.closest('#modalOverlay') || el.closest('.modal') || el.closest('#wizardBody')) {
+      scrollInputIntoView(el);
+    }
+  }
+});
+
+// Ajuste la hauteur de la modale quand le clavier s'ouvre/ferme
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    const modal = document.querySelector('.wizard-modal');
+    if (modal && document.getElementById('modalOverlay')?.classList.contains('open')) {
+      // La hauteur réelle de l'écran visible (sans le clavier)
+      const visibleHeight = window.visualViewport.height;
+      modal.style.maxHeight = visibleHeight + 'px';
+    }
+  });
+}
 </script>
 
 </body>
