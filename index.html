@@ -679,11 +679,24 @@ body.panel-open #map {
     margin-left: 4px !important;
   }
   
-  /* Boutons flottants PLUS HAUT pour ne pas cacher le zoom */
+  /* Boutons flottants ENCORE PLUS HAUT pour ne pas cacher le recenter 🎯 */
   .floating-buttons {
-    bottom: calc(220px + env(safe-area-inset-bottom, 0)) !important;
+    bottom: calc(300px + env(safe-area-inset-bottom, 0)) !important;
     right: 12px !important;
     gap: 10px !important;
+    z-index: 400 !important;
+  }
+  
+  /* Les contrôles Leaflet (recenter 🎯 + zoom) sont AU-DESSUS */
+  .leaflet-bottom.leaflet-right {
+    bottom: 12px !important;
+    right: 12px !important;
+    z-index: 700 !important;
+  }
+  
+  /* Cacher l'attribution Leaflet */
+  .leaflet-control-attribution {
+    display: none !important;
   }
   
   /* Zoom Leaflet : position OK, mais laisse de l'espace */
@@ -722,10 +735,16 @@ body.panel-open #map {
   
   /* Les boutons flottants remontent bien au-dessus */
   .floating-buttons {
-    bottom: 200px !important;
+    bottom: 300px !important;
     right: 12px !important;
     gap: 10px !important;
-    z-index: 600 !important;
+    z-index: 400 !important;
+  }
+  
+  .leaflet-bottom.leaflet-right {
+    bottom: 12px !important;
+    right: 12px !important;
+    z-index: 700 !important;
   }
   
   /* Attribution masquée sur mobile pour ne gêner personne */
