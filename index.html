@@ -48,6 +48,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 @keyframes randomIn{from{opacity:0;transform:scale(0.9) rotate(-2deg)}to{opacity:1;transform:scale(1) rotate(0)}}
 @keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}
 @keyframes slideUpBanner{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDownBanner{from{opacity:0;transform:translateY(-40px)}to{opacity:1;transform:translateY(0)}}
 @keyframes onboardingIn{from{opacity:0;transform:translateY(30px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes reactionPulse{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 @keyframes wizardSlideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
@@ -153,6 +154,15 @@ button{font-family:inherit;font-size:0.9rem;font-weight:600;padding:10px 18px;bo
 .sync-indicator.show{transform:translateX(-50%) translateY(0)}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:#f97316}
 .sync-indicator.synced .sync-dot{background:#22c55e;box-shadow:0 0 6px #22c55e}
+/* ===== BANDEAU ORANGE POSITION DÉSACTIVÉE ===== */
+#locationDisabledBanner{position:fixed;top:calc(72px + env(safe-area-inset-top,0));left:50%;transform:translateX(-50%) translateY(-100px);background:linear-gradient(135deg,#f97316,#ea580c);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:14px;padding:10px 14px;font-size:0.85rem;font-weight:600;box-shadow:0 8px 24px rgba(249,115,22,0.5);z-index:1001;display:flex;align-items:center;gap:10px;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);max-width:calc(100vw - 24px);pointer-events:none;opacity:0}
+#locationDisabledBanner.show{transform:translateX(-50%) translateY(0);pointer-events:auto;opacity:1}
+#locationDisabledBanner .loc-banner-icon{font-size:1.1rem;flex-shrink:0}
+#locationDisabledBanner .loc-banner-text{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#locationDisabledBanner .loc-banner-btn{background:white;color:#ea580c;border:none;padding:6px 12px;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s;flex-shrink:0;font-family:inherit}
+#locationDisabledBanner .loc-banner-btn:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+#locationDisabledBanner .loc-banner-close{background:rgba(255,255,255,0.2);border:none;color:white;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;flex-shrink:0;transition:all 0.2s}
+#locationDisabledBanner .loc-banner-close:hover{background:rgba(255,255,255,0.35)}
 .map-filter{position:fixed;bottom:24px;left:24px;background:var(--bg-modal);border:1px solid var(--border-color);border-radius:12px;padding:6px;display:flex;gap:4px;box-shadow:var(--shadow-lg);z-index:500;flex-wrap:wrap;max-width:calc(100vw - 48px)}
 .filter-btn{background:transparent;border:none;color:var(--text-muted);font-size:0.78rem;font-weight:600;padding:8px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:5px}
 .filter-btn.active{background:linear-gradient(135deg,#f97316,#ea580c);color:white}
@@ -567,6 +577,8 @@ textarea{resize:vertical;min-height:90px}
   .filter-btn .count{min-width:14px;padding:1px 4px;font-size:0.6rem}
   .hint{display:none !important}
   .user-dropdown{width:calc(100vw - 32px);right:16px}
+  #locationDisabledBanner{font-size:0.78rem;padding:8px 12px;gap:8px}
+  #locationDisabledBanner .loc-banner-btn{padding:5px 10px;font-size:0.72rem}
 }
 @media (max-width:420px){
   .actions .btn-ghost,.actions .btn-primary{padding:8px 8px;font-size:0.72rem}
@@ -575,6 +587,7 @@ textarea{resize:vertical;min-height:90px}
   .filter-btn{padding:7px 6px;font-size:0.85rem}
   .filter-btn .label-text{display:none}
   .filter-btn .count{font-size:0.6rem;padding:1px 5px}
+  #locationDisabledBanner .loc-banner-text{font-size:0.72rem}
 }
 @media (max-width: 768px) {
   #modalOverlay {position: fixed;inset: 0;overflow: hidden;}
@@ -739,6 +752,14 @@ body.panel-open #map {
   </header>
 
   <div class="sync-indicator" id="syncIndicator"><span class="sync-dot"></span><span id="syncText">Synchronisation...</span></div>
+
+  <!-- 🟠 BANDEAU POSITION DÉSACTIVÉE -->
+  <div id="locationDisabledBanner">
+    <span class="loc-banner-icon">📍</span>
+    <span class="loc-banner-text">Ta position n'est plus partagée</span>
+    <button class="loc-banner-btn" onclick="reactivateLocationFromBanner()">Réactiver</button>
+    <button class="loc-banner-close" onclick="dismissLocationBanner()" title="Fermer">×</button>
+  </div>
 
   <div class="map-filter" id="mapFilter">
     <button class="filter-btn active" data-filter="all" onclick="setMapFilter('all')">👥 <span class="label-text">Tous</span> <span class="count" id="countAll">0</span></button>
@@ -1239,6 +1260,7 @@ let currentWizardStep = 1;
 
 /* ========== FLAG ANTI-DOUBLON POUR LA LOCALISATION ========== */
 let _locationConsentChecked = false;
+let _locationBannerDismissed = false;
 
 let liveLocationEnabled = false;
 let liveLocationInterval = null;
@@ -1251,7 +1273,7 @@ const LIVE_STALE_THRESHOLD = 5 * 60 * 1000;
 const LIVE_MAX_AGE = 10 * 60 * 1000;
 
 /* =========================================================
-   🔒 LOCK SCROLL — Bloque la carte quand un panneau est ouvert
+   🔒 LOCK SCROLL
    ========================================================= */
 function updateMapScrollLock() {
   if (!map) return;
@@ -1325,6 +1347,7 @@ function cleanupListeners() {
   liveLocationsData = {};
   liveLocationEnabled = false;
   _locationConsentChecked = false;
+  _locationBannerDismissed = false;
 }
 
 auth.onAuthStateChanged(async (user) => {
@@ -1487,7 +1510,6 @@ function showApp() {
   setTimeout(() => {
     updateLiveFriendsBtn();
     checkLocationConsent();
-    // ✅ Sync le bouton Réglages dès l'ouverture
     updateSettingsLiveBtn();
   }, 800);
 }
@@ -3052,54 +3074,76 @@ function escapeHtml(str) { if (str === undefined || str === null) return ''; con
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
 /* =========================================================
-   📡 LIVE LOCATION (version corrigée mobile)
-   Objectif : ne plus redemander la permission à chaque ouverture
+   📡 LIVE LOCATION — Version avec bandeau orange
    ========================================================= */
 
-// 🔍 Helper : récupère l'état de la permission SANS déclencher de popup
+// 🔍 Helper : état de la permission SANS popup
 async function getGeoPermissionState() {
   if (!navigator.permissions || !navigator.permissions.query) return 'unknown';
   try {
     const perm = await navigator.permissions.query({ name: 'geolocation' });
-    return perm.state; // 'granted' | 'denied' | 'prompt'
-  } catch(e) {
-    return 'unknown';
-  }
+    return perm.state;
+  } catch(e) { return 'unknown'; }
 }
 
-// ✅ Vérifie au démarrage : si l'utilisateur avait activé ET que le navigateur
-// a toujours la permission, on relance silencieusement SANS popup.
+// ✅ Au démarrage : vérifie si l'utilisateur avait activé
+// → granted : relance silencieuse
+// → prompt : affiche le bandeau orange
+// → denied : rien
 function checkLocationConsent() {
   if (!currentUser || _locationConsentChecked) return;
   _locationConsentChecked = true;
   const consent = localStorage.getItem('worldnotes_location_consent');
-  if (consent !== 'granted') return; // l'utilisateur n'a jamais activé → rien à faire
+  if (consent !== 'granted') return;  // jamais activé → rien
 
-  // On vérifie la permission navigateur
   getGeoPermissionState().then((state) => {
     if (state === 'granted') {
-      // Permission toujours accordée → relance silencieuse
+      // ✅ Permission toujours accordée → relance silencieuse
       enableLiveLocation(true);
     } else if (state === 'denied') {
-      // Refusée au niveau navigateur → on marque comme refusé, pas de popup
+      // ❌ Refusée au niveau navigateur → on marque denied, pas de bandeau
       localStorage.setItem('worldnotes_location_consent', 'denied');
       liveLocationEnabled = false;
       updateSettingsLiveBtn();
     } else {
-      // 'prompt' ou 'unknown' → on attend que l'utilisateur clique manuellement
-      // On ne relance PAS automatiquement pour éviter le popup gênant
+      // ⏳ 'prompt' : on affiche le bandeau orange
+      // (l'utilisateur avait activé mais le navigateur redemande)
       liveLocationEnabled = false;
       updateSettingsLiveBtn();
+      if (!_locationBannerDismissed) {
+        setTimeout(() => showLocationBanner(), 1500);
+      }
     }
   });
+}
+
+// 🟠 Affiche le bandeau orange
+function showLocationBanner() {
+  const banner = document.getElementById('locationDisabledBanner');
+  if (banner) banner.classList.add('show');
+}
+// Cache le bandeau orange
+function hideLocationBanner() {
+  const banner = document.getElementById('locationDisabledBanner');
+  if (banner) banner.classList.remove('show');
+}
+// L'utilisateur clique sur "Réactiver"
+function reactivateLocationFromBanner() {
+  hideLocationBanner();
+  // Lance l'activation normale (déclenchera le popup navigateur)
+  enableLiveLocation(false);
+}
+// L'utilisateur clique sur "×" → on cache, et on ne remontre pas de la session
+function dismissLocationBanner() {
+  _locationBannerDismissed = true;
+  hideLocationBanner();
 }
 
 async function enableLiveLocation(silent = false) {
   if (!currentUser) return;
   if (!navigator.geolocation) { if (!silent) showToast('❌ Géolocalisation non supportée', 'error'); return; }
 
-  // Si c'est un appel silencieux (auto-relance) ET que la permission
-  // n'est pas accordée, on évite de déclencher un popup navigateur.
+  // Si silencieux ET permission pas granted → on évite de déclencher un popup
   if (silent) {
     const state = await getGeoPermissionState();
     if (state !== 'granted' && state !== 'unknown') {
@@ -3110,6 +3154,7 @@ async function enableLiveLocation(silent = false) {
   }
 
   liveLocationEnabled = true;
+  localStorage.setItem('worldnotes_location_consent', 'granted');
   updateLiveFriendsBtn();
   await sendLiveLocation();
   if (liveLocationInterval) clearInterval(liveLocationInterval);
@@ -3117,6 +3162,7 @@ async function enableLiveLocation(silent = false) {
   subscribeToFriendsLiveLocations();
   if (!silent) showToast('📡 Position partagée avec tes amis !', 'success');
   updateSettingsLiveBtn();
+  hideLocationBanner();
 }
 
 async function disableLiveLocation() {
@@ -3153,16 +3199,11 @@ async function sendLiveLocation() {
     },
     (error) => {
       console.warn('Erreur GPS:', error.message);
-      // On ne désactive QUE si l'utilisateur a explicitement refusé
       if (error.code === error.PERMISSION_DENIED) {
         localStorage.setItem('worldnotes_location_consent', 'denied');
         disableLiveLocation();
       }
-      // Pour TIMEOUT / POSITION_UNAVAILABLE, on ne désactive pas :
-      // on réessaiera au prochain interval
     },
-    // maximumAge: 60000 → accepte une position vieille de 60s pour éviter
-    // de redemander au GPS à chaque interval
     { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
   );
 }
@@ -3251,7 +3292,6 @@ function centerOnLiveUser(uid) {
 }
 function toggleLiveFromSettings() {
   if (liveLocationEnabled) {
-    // Désactivation silencieuse, aucun confirm, aucun message
     localStorage.setItem('worldnotes_location_consent', 'denied');
     disableLiveLocation();
     updateSettingsLiveBtn();
