@@ -29,20 +29,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<!-- 🔔 OneSignal -->
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "ccc01e88-da49-4add-a28f-137aff8dbd38",
-      allowLocalhostAsSecureOrigin: true,
-      serviceWorkerParam: { scope: "/" },
-      serviceWorkerPath: "/OneSignalSDKWorker.js"
-    });
-    console.log('🔔 OneSignal initialisé');
-  });
-</script>
+
 <style>
 :root[data-theme="dark"]{--bg-primary:#0f172a;--bg-secondary:#1e293b;--bg-tertiary:#0b1220;--bg-card:rgba(30,41,59,0.7);--bg-card-hover:rgba(51,65,85,0.8);--bg-overlay:rgba(15,23,42,0.85);--bg-modal:#1e293b;--bg-input:#0f172a;--bg-header:rgba(15,23,42,0.85);--text-primary:#e2e8f0;--text-secondary:#cbd5e1;--text-muted:#94a3b8;--text-faint:#64748b;--border-color:rgba(148,163,184,0.2);--border-subtle:rgba(148,163,184,0.15);--border-hover:rgba(148,163,184,0.3);--shadow-sm:0 2px 8px rgba(0,0,0,0.3);--shadow-md:0 4px 12px rgba(0,0,0,0.4);--shadow-lg:0 20px 60px rgba(0,0,0,0.6);--favorite:#fbbf24}
 :root[data-theme="light"]{--bg-primary:#f1f5f9;--bg-secondary:#ffffff;--bg-tertiary:#e2e8f0;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(241,245,249,0.95);--bg-overlay:rgba(255,255,255,0.9);--bg-modal:#ffffff;--bg-input:#f8fafc;--bg-header:rgba(255,255,255,0.9);--text-primary:#0f172a;--text-secondary:#1e293b;--text-muted:#475569;--text-faint:#64748b;--border-color:rgba(15,23,42,0.15);--border-subtle:rgba(15,23,42,0.08);--border-hover:rgba(15,23,42,0.25);--shadow-sm:0 2px 8px rgba(15,23,42,0.08);--shadow-md:0 4px 12px rgba(15,23,42,0.1);--shadow-lg:0 20px 60px rgba(15,23,42,0.15);--favorite:#d97706}
@@ -794,13 +781,6 @@ body.panel-open #map {
     </div>
     <div class="settings-actions"><button class="btn-primary" onclick="applySettings()">✓ Appliquer</button></div>
     <div class="backup-section">
-      <h4>🔔 Notifications</h4>
-      <p class="description">Reçois une notif quand un ami commente, réagit ou t'ajoute.</p>
-      <button id="settingsNotifBtn" class="btn-full edit-profile" onclick="toggleNotifications()" style="margin-bottom: 0;">
-        🔔 Activer les notifications
-      </button>
-    </div>
-    <div class="backup-section">
       <h4>📡 Localisation</h4>
       <p class="description">Partage ta position avec tes amis (rafraîchissement 1 min).</p>
       <button id="settingsLiveBtn" class="btn-full edit-profile" onclick="toggleLiveFromSettings()" style="margin-bottom: 0;">
@@ -1233,75 +1213,6 @@ async function uploadToCloudinary(file) {
   const data = await res.json();
   return data.secure_url;
 }
-/* =========================================================
-   🔔 ONESIGNAL — Notifications
-   ========================================================= */
-async function initOneSignalUser() {
-  if (!currentUser) return;
-  try {
-    await new Promise(resolve => {
-      if (window.OneSignal) return resolve();
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      window.OneSignalDeferred.push(resolve);
-    });
-    await window.OneSignal.Notifications.requestPermission();
-    await window.OneSignal.login(currentUser.uid);
-    console.log('🔔 OneSignal user =', currentUser.uid);
-    if (myProfile?.username) {
-      try { await window.OneSignal.User.addTag("username", myProfile.username); } catch(e) {}
-    }
-    updateSettingsNotifBtn();
-  } catch (err) {
-    console.error('🔔 OneSignal init:', err);
-  }
-}
-
-async function sendPushNotification(targetUid, title, body, url = null) {
-  if (!targetUid) return;
-  try {
-    const res = await fetch('/api/send-notification', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ targetUid, title, body, url })
-    });
-    const data = await res.json();
-    console.log('🔔 Notif envoyée:', data);
-  } catch (err) {
-    console.error('🔔 Envoi notif échoué:', err);
-  }
-}
-
-async function toggleNotifications() {
-  try {
-    if (!window.OneSignal) { showToast('⚠️ OneSignal pas chargé', 'error'); return; }
-    const permission = await window.OneSignal.Notifications.permission;
-    if (permission) {
-      await window.OneSignal.User.PushSubscription.optOut();
-      showToast('🔕 Notifications désactivées', 'info');
-    } else {
-      await window.OneSignal.Notifications.requestPermission();
-      await window.OneSignal.User.PushSubscription.optIn();
-      showToast('🔔 Notifications activées !', 'success');
-    }
-    updateSettingsNotifBtn();
-  } catch (err) {
-    console.error('Notif toggle:', err);
-    showToast('❌ Erreur', 'error');
-  }
-}
-
-function updateSettingsNotifBtn() {
-  const btn = document.getElementById('settingsNotifBtn');
-  if (!btn || !window.OneSignal) return;
-  const enabled = window.OneSignal.User?.PushSubscription?.optedIn;
-  if (enabled) {
-    btn.innerHTML = '🔕 Désactiver les notifications';
-    btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-  } else {
-    btn.innerHTML = '🔔 Activer les notifications';
-    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-  }
-}
 
 function goToLogin() { document.getElementById('landingScreen').classList.add('hidden'); document.getElementById('loginScreen').classList.add('visible'); }
 function goToLanding() { document.getElementById('loginScreen').classList.remove('visible'); document.getElementById('landingScreen').classList.remove('hidden'); }
@@ -1435,9 +1346,6 @@ function cleanupListeners() {
   _locationBannerDismissed = false;
   _autoCenteredOnLoad = false;
   _urlParamsHandled = false;
-  if (window.OneSignal) {
-    try { window.OneSignal.logout(); } catch(e) {}
-  }
 }
 
 auth.onAuthStateChanged(async (user) => {
@@ -1605,7 +1513,6 @@ function showApp() {
     checkLocationConsent();
     updateSettingsLiveBtn();
     autoCenterOnUserLocation();
-    initOneSignalUser();
   }, 800);
 }
 
@@ -1825,10 +1732,7 @@ async function sendFriendRequest() {
     if (!existingReceived.empty) { showToast('ℹ️ @' + username + ' t\'a déjà envoyé une demande. Va dans l\'onglet "Demandes" pour l\'accepter.', 'info'); input.disabled = false; input.value = ''; return; }
     const requestId = `${currentUser.uid}_${targetUid}`;
     await db.collection('friendRequests').doc(requestId).set({ from: currentUser.uid, to: targetUid, fromUsername: myProfile.username || '', toUsername: username, fromPhotoURL: myProfile.photoURL || '', status: 'pending', createdAt: Date.now() });
-    input.value = '';
-    const myName = myProfile?.username ? '@' + myProfile.username : 'Quelqu\'un';
-    sendPushNotification(targetUid, `👥 Nouvelle demande d'ami`, `${myName} veut être ton ami`, window.location.origin);
-    showToast(`📨 Demande envoyée à @${username} !`, 'success');
+    input.value = ''; showToast(`📨 Demande envoyée à @${username} !`, 'success');
   } catch (err) { console.error('Erreur sendFriendRequest:', err); showToast('❌ Erreur: ' + err.message, 'error'); }
   finally { input.disabled = false; }
 }
@@ -1850,8 +1754,6 @@ async function acceptFriendRequest(requestId) {
     batch.update(myRef, { friends: myFriendsList });
     batch.update(theirRef, { friends: theirFriendsList });
     await batch.commit();
-    const myName = myProfile?.username ? '@' + myProfile.username : 'Ton ami';
-    sendPushNotification(req.from, `✅ Demande acceptée`, `${myName} a accepté ta demande`, window.location.origin);
     incomingRequests = incomingRequests.filter(r => r.id !== requestId);
     updateFriendBadge(); renderFriendsContent();
     setTimeout(refreshFriendsData, 500);
@@ -2298,15 +2200,7 @@ async function toggleReaction(noteId, emoji, event) {
   updateReactionsUI(noteId, emoji);
   try {
     if (existing) { await db.collection('reactions').doc(existing.id).delete(); }
-    else {
-      const reactionId = `${noteId}_${currentUser.uid}_${emoji}`;
-      await db.collection('reactions').doc(reactionId).set({ noteId, userId: currentUser.uid, emoji, createdAt: Date.now() });
-      const note = notesByIdCache[noteId];
-      if (note && note.userId !== currentUser.uid) {
-        const myName = myProfile?.username ? '@' + myProfile.username : 'Un ami';
-        sendPushNotification(note.userId, `${emoji} ${myName} a réagi`, `À ton souvenir "${note.place}"`, window.location.origin + window.location.pathname + '?note=' + noteId);
-      }
-    }
+    else { const reactionId = `${noteId}_${currentUser.uid}_${emoji}`; await db.collection('reactions').doc(reactionId).set({ noteId, userId: currentUser.uid, emoji, createdAt: Date.now() }); }
   } catch (err) {
     console.error('Erreur toggleReaction:', err);
     showToast('❌ Erreur', 'error');
@@ -2339,15 +2233,7 @@ async function addComment(noteId) {
   if (!text) return;
   if (text.length > 300) { showToast('⚠️ Commentaire trop long (max 300)', 'error'); return; }
   input.disabled = true;
-  try {
-    await db.collection('comments').add({ noteId, userId: currentUser.uid, text, createdAt: Date.now() });
-    input.value = '';
-    const note = notesByIdCache[noteId];
-    if (note && note.userId !== currentUser.uid) {
-      const myName = myProfile?.username ? '@' + myProfile.username : 'Un ami';
-      sendPushNotification(note.userId, `💬 ${myName} a commenté`, text.substring(0, 100), window.location.origin + window.location.pathname + '?note=' + noteId);
-    }
-  }
+  try { await db.collection('comments').add({ noteId, userId: currentUser.uid, text, createdAt: Date.now() }); input.value = ''; }
   catch (err) { showToast('❌ Erreur', 'error'); input.disabled = false; }
 }
 async function deleteComment(commentId, noteId, event) {
