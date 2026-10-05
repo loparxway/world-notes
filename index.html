@@ -1556,6 +1556,11 @@ function showApp() {
   setTimeout(() => {
     updateLiveFriendsBtn();
     checkLocationConsent();
+setTimeout(() => {
+  const banner = document.getElementById('locationConsent');
+  if (banner) banner.remove();
+  console.log('🧹 Bannière consentement supprimée après 2s');
+}, 2000);
   }, 800);
 }
 function showSyncIndicator(text, synced) {
