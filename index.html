@@ -732,19 +732,10 @@ header {
   border: 2px solid rgba(249, 115, 22, 0.7) !important;
 }
 
-/* 6. Le bouton "Notes" : on cache le texte, garde l'icône */
-.btn-toggle-notes {
-  font-size: 0 !important;
-}
-.btn-toggle-notes::before {
-  content: "📖" !important;
-  font-size: 1rem !important;
-}
-
 /* 7. Boutons flottants : bien séparés du zoom */
 .floating-buttons {
   position: fixed !important;
-  bottom: 220px !important;
+  bottom: 260px !important;
   right: 14px !important;
   display: flex !important;
   flex-direction: column !important;
@@ -760,7 +751,7 @@ header {
 
 /* 8. Contrôles Leaflet (recenter + zoom) : bien visibles */
 .leaflet-bottom.leaflet-right {
-  bottom: 90px !important;
+  bottom: 14px !important;
   right: 14px !important;
   z-index: 700 !important;
 }
@@ -918,7 +909,7 @@ header {
   <header>
     <div class="logo"><span class="globe">🌍</span><span>WORLD NOTES</span></div>
     <div class="actions">
-      <button class="btn-ghost btn-toggle-notes" onclick="toggleSidebar()">📖 Notes</button>
+      <button class="btn-ghost btn-toggle-notes" onclick="toggleSidebar()" title="Mes souvenirs">📖</button>
       <button class="btn-ghost btn-icon" onclick="openFriendsModal()" title="Amis">👥<span class="badge" id="friendBadge" style="display: none;">0</span></button>
       <button class="btn-ghost btn-icon" onclick="openGroupsModal()" title="Groupes">📁</button>
       <button class="btn-ghost btn-icon" onclick="toggleSettings()" title="Réglages">⚙️</button>
