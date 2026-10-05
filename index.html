@@ -598,18 +598,7 @@ textarea{resize:vertical;min-height:90px}
 .live-user-meta{font-size:0.72rem;color:var(--text-muted);margin-top:2px}
 .live-user-meta.stale{color:#f59e0b}
 .live-empty{text-align:center;padding:24px 12px;color:var(--text-faint);font-size:0.82rem;line-height:1.5}
-/* ===== FIX BANNIÈRE CONSENTEMENT LOCALISATION ===== */
-.location-consent{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);right:auto;width:calc(100% - 40px);max-width:480px;background:var(--bg-modal);border:2px solid #22c55e;border-radius:14px;padding:16px;z-index:99999;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;animation:slideUpBanner .5s cubic-bezier(.34,1.56,.64,1)}
-.location-consent.show{display:block}
-.location-consent h4{font-size:0.95rem;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.location-consent p{font-size:0.82rem;color:var(--text-secondary);line-height:1.5;margin-bottom:12px}
-.location-consent .consent-actions{display:flex;gap:8px;justify-content:flex-end}
-.location-consent .consent-actions button{padding:10px 16px;font-size:0.85rem;border-radius:10px;font-weight:600;cursor:pointer;transition:all 0.2s}
-.location-consent .btn-allow{background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;box-shadow:0 4px 12px rgba(34,197,94,0.35)}
-.location-consent .btn-allow:hover{transform:translateY(-2px)}
-.location-consent .btn-deny{background:transparent;color:var(--text-muted);border:1px solid var(--border-hover)}
-
-/* ===== FIX SCROLL : bloque la carte quand un panneau est ouvert ===== */
+/* ===== SCROLL FIX ===== */
 .settings-panel, .user-dropdown, .live-panel, .modal, .wizard-modal, .sidebar, .legal-modal-content, .stats-modal-content, .random-note-content, .share-menu-content {
   overscroll-behavior: contain !important;
   touch-action: pan-y !important;
@@ -1149,15 +1138,6 @@ body.panel-open #map {
     </div>
   </div>
 
-  <div class="location-consent" id="locationConsent">
-    <h4>📍 Partage de position</h4>
-    <p>World Notes peut partager ta position avec tes amis pour qu'ils te voient en direct sur la carte. Rafraîchissement toutes les minutes.</p>
-    <div class="consent-actions">
-      <button class="btn-deny" onclick="denyLocationConsent()">Non merci</button>
-      <button class="btn-allow" onclick="allowLocationConsent()">✓ Autoriser</button>
-    </div>
-  </div>
-
   <div class="toast" id="toast"></div>
 </div>
 
@@ -1257,7 +1237,7 @@ let pendingGroupEmoji = '🏖️';
 let unsubscribeGroups = null;
 let currentWizardStep = 1;
 
-/* ========== FLAG ANTI-DOUBLON POUR LA BANNIÈRE LOCATION ========== */
+/* ========== FLAG ANTI-DOUBLON POUR LA LOCALISATION ========== */
 let _locationConsentChecked = false;
 
 let liveLocationEnabled = false;
@@ -3070,32 +3050,17 @@ function escapeHtml(str) { if (str === undefined || str === null) return ''; con
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
 /* =========================================================
-   📡 LIVE LOCATION
+   📡 LIVE LOCATION (sans bannière, gestion depuis les Réglages)
    ========================================================= */
 function checkLocationConsent() {
   if (!currentUser || _locationConsentChecked) return;
   _locationConsentChecked = true;
   const consent = localStorage.getItem('worldnotes_location_consent');
-  if (consent === 'granted') { enableLiveLocation(true); }
-  else if (consent === 'denied') { /* rien */ }
-  else {
-    setTimeout(() => {
-      const banner = document.getElementById('locationConsent');
-      if (banner && !banner.classList.contains('show')) banner.classList.add('show');
-    }, 3000);
+  // Si l'utilisateur avait déjà accepté, on réactive silencieusement.
+  // Sinon (denied OU rien) → on ne fait RIEN, aucune bannière, aucun message.
+  if (consent === 'granted') {
+    enableLiveLocation(true);
   }
-}
-function allowLocationConsent() {
-  localStorage.setItem('worldnotes_location_consent', 'granted');
-  const banner = document.getElementById('locationConsent');
-  if (banner) banner.classList.remove('show');
-  enableLiveLocation(false);
-}
-function denyLocationConsent() {
-  localStorage.setItem('worldnotes_location_consent', 'denied');
-  const banner = document.getElementById('locationConsent');
-  if (banner) banner.classList.remove('show');
-  showToast('📍 Partage de position désactivé. Tu peux l\'activer dans les réglages.', 'info');
 }
 async function enableLiveLocation(silent = false) {
   if (!currentUser) return;
@@ -3131,7 +3096,7 @@ async function sendLiveLocation() {
         await db.collection('liveLocations').doc(currentUser.uid).set({ lat, lng, accuracy: accuracy || 0, timestamp: Date.now(), displayName: myProfile?.displayName || currentUser.displayName || 'Utilisateur', username: myProfile?.username || '', photoURL: myProfile?.photoURL || currentUser.photoURL || '' });
       } catch (err) { console.warn('Erreur envoi liveLoc:', err); }
     },
-    (error) => { console.warn('Erreur GPS:', error.message); if (error.code === error.PERMISSION_DENIED) { showToast('🚫 Autorisation GPS refusée', 'error'); localStorage.setItem('worldnotes_location_consent', 'denied'); disableLiveLocation(); } },
+    (error) => { console.warn('Erreur GPS:', error.message); if (error.code === error.PERMISSION_DENIED) { localStorage.setItem('worldnotes_location_consent', 'denied'); disableLiveLocation(); } },
     { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 }
   );
 }
@@ -3217,8 +3182,15 @@ function centerOnLiveUser(uid) {
   if (isMobile()) closeLivePanel();
 }
 function toggleLiveFromSettings() {
-  if (liveLocationEnabled) { if (confirm('Désactiver le partage de ta position ?')) { localStorage.setItem('worldnotes_location_consent', 'denied'); disableLiveLocation(); updateSettingsLiveBtn(); } }
-  else { localStorage.setItem('worldnotes_location_consent', 'granted'); enableLiveLocation().then(updateSettingsLiveBtn); }
+  if (liveLocationEnabled) {
+    // Désactivation silencieuse, aucun confirm, aucun message
+    localStorage.setItem('worldnotes_location_consent', 'denied');
+    disableLiveLocation();
+    updateSettingsLiveBtn();
+  } else {
+    localStorage.setItem('worldnotes_location_consent', 'granted');
+    enableLiveLocation().then(updateSettingsLiveBtn);
+  }
 }
 function updateSettingsLiveBtn() {
   const btn = document.getElementById('settingsLiveBtn'); if (!btn) return;
