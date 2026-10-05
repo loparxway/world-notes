@@ -1487,6 +1487,8 @@ function showApp() {
   setTimeout(() => {
     updateLiveFriendsBtn();
     checkLocationConsent();
+    // ✅ Sync le bouton Réglages dès l'ouverture
+    updateSettingsLiveBtn();
   }, 800);
 }
 function showSyncIndicator(text, synced) {
@@ -1912,7 +1914,7 @@ function recenterToMyLocation(btn) {
     map.flyTo([lat, lng], 15, { duration: 1.8 });
     showToast(`🎯 Recentré sur toi (±${Math.round(accuracy)}m)`, 'success');
     btn.innerHTML = '🎯';
-  }, (error) => { btn.innerHTML = '🎯'; let msg = '❌ Impossible de te localiser.'; if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.'; showToast(msg, 'error'); }, { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 });
+  }, (error) => { btn.innerHTML = '🎯'; let msg = '❌ Impossible de te localiser.'; if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.'; showToast(msg, 'error'); }, { enableHighAccuracy: true, timeout: 30000, maximumAge: 60000 });
 }
 
 function createMarkerIcon(note) {
@@ -2944,7 +2946,7 @@ function useMyLocation() {
     if (address) { showAddress(address); const placeInput = document.getElementById('placeName'); if (!placeInput.value.trim()) placeInput.value = address; updateWizardNextState(); }
     btn.disabled = false; btn.innerHTML = '✅';
     setTimeout(() => { btn.innerHTML = '🎯 GPS'; }, 2000);
-  }, (error) => { btn.disabled = false; btn.innerHTML = '🎯 GPS'; let msg = '❌ Impossible de te localiser.'; if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.'; showToast(msg, 'error'); }, { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 });
+  }, (error) => { btn.disabled = false; btn.innerHTML = '🎯 GPS'; let msg = '❌ Impossible de te localiser.'; if (error.code === error.PERMISSION_DENIED) msg = '🚫 Autorisation refusée.'; showToast(msg, 'error'); }, { enableHighAccuracy: true, timeout: 30000, maximumAge: 60000 });
 }
 
 const searchInput = document.getElementById('searchInput');
@@ -3050,21 +3052,63 @@ function escapeHtml(str) { if (str === undefined || str === null) return ''; con
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
 /* =========================================================
-   📡 LIVE LOCATION (sans bannière, gestion depuis les Réglages)
+   📡 LIVE LOCATION (version corrigée mobile)
+   Objectif : ne plus redemander la permission à chaque ouverture
    ========================================================= */
+
+// 🔍 Helper : récupère l'état de la permission SANS déclencher de popup
+async function getGeoPermissionState() {
+  if (!navigator.permissions || !navigator.permissions.query) return 'unknown';
+  try {
+    const perm = await navigator.permissions.query({ name: 'geolocation' });
+    return perm.state; // 'granted' | 'denied' | 'prompt'
+  } catch(e) {
+    return 'unknown';
+  }
+}
+
+// ✅ Vérifie au démarrage : si l'utilisateur avait activé ET que le navigateur
+// a toujours la permission, on relance silencieusement SANS popup.
 function checkLocationConsent() {
   if (!currentUser || _locationConsentChecked) return;
   _locationConsentChecked = true;
   const consent = localStorage.getItem('worldnotes_location_consent');
-  // Si l'utilisateur avait déjà accepté, on réactive silencieusement.
-  // Sinon (denied OU rien) → on ne fait RIEN, aucune bannière, aucun message.
-  if (consent === 'granted') {
-    enableLiveLocation(true);
-  }
+  if (consent !== 'granted') return; // l'utilisateur n'a jamais activé → rien à faire
+
+  // On vérifie la permission navigateur
+  getGeoPermissionState().then((state) => {
+    if (state === 'granted') {
+      // Permission toujours accordée → relance silencieuse
+      enableLiveLocation(true);
+    } else if (state === 'denied') {
+      // Refusée au niveau navigateur → on marque comme refusé, pas de popup
+      localStorage.setItem('worldnotes_location_consent', 'denied');
+      liveLocationEnabled = false;
+      updateSettingsLiveBtn();
+    } else {
+      // 'prompt' ou 'unknown' → on attend que l'utilisateur clique manuellement
+      // On ne relance PAS automatiquement pour éviter le popup gênant
+      liveLocationEnabled = false;
+      updateSettingsLiveBtn();
+    }
+  });
 }
+
 async function enableLiveLocation(silent = false) {
   if (!currentUser) return;
   if (!navigator.geolocation) { if (!silent) showToast('❌ Géolocalisation non supportée', 'error'); return; }
+
+  // Si c'est un appel silencieux (auto-relance) ET que la permission
+  // n'est pas accordée, on évite de déclencher un popup navigateur.
+  if (silent) {
+    const state = await getGeoPermissionState();
+    if (state !== 'granted' && state !== 'unknown') {
+      liveLocationEnabled = false;
+      updateSettingsLiveBtn();
+      return;
+    }
+  }
+
   liveLocationEnabled = true;
   updateLiveFriendsBtn();
   await sendLiveLocation();
@@ -3072,7 +3116,9 @@ async function enableLiveLocation(silent = false) {
   liveLocationInterval = setInterval(sendLiveLocation, LIVE_UPDATE_INTERVAL);
   subscribeToFriendsLiveLocations();
   if (!silent) showToast('📡 Position partagée avec tes amis !', 'success');
+  updateSettingsLiveBtn();
 }
+
 async function disableLiveLocation() {
   liveLocationEnabled = false;
   updateLiveFriendsBtn();
@@ -3084,22 +3130,43 @@ async function disableLiveLocation() {
   liveLocationsData = {};
   closeLivePanel();
   updateLiveFriendsBtn();
+  updateSettingsLiveBtn();
 }
+
 function updateLiveFriendsBtn() { return; }
+
 async function sendLiveLocation() {
   if (!liveLocationEnabled || !currentUser) return;
   if (!navigator.geolocation) return;
+
   navigator.geolocation.getCurrentPosition(
     async (position) => {
       const { latitude: lat, longitude: lng, accuracy } = position.coords;
       try {
-        await db.collection('liveLocations').doc(currentUser.uid).set({ lat, lng, accuracy: accuracy || 0, timestamp: Date.now(), displayName: myProfile?.displayName || currentUser.displayName || 'Utilisateur', username: myProfile?.username || '', photoURL: myProfile?.photoURL || currentUser.photoURL || '' });
+        await db.collection('liveLocations').doc(currentUser.uid).set({
+          lat, lng, accuracy: accuracy || 0, timestamp: Date.now(),
+          displayName: myProfile?.displayName || currentUser.displayName || 'Utilisateur',
+          username: myProfile?.username || '',
+          photoURL: myProfile?.photoURL || currentUser.photoURL || ''
+        });
       } catch (err) { console.warn('Erreur envoi liveLoc:', err); }
     },
-    (error) => { console.warn('Erreur GPS:', error.message); if (error.code === error.PERMISSION_DENIED) { localStorage.setItem('worldnotes_location_consent', 'denied'); disableLiveLocation(); } },
-    { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 }
+    (error) => {
+      console.warn('Erreur GPS:', error.message);
+      // On ne désactive QUE si l'utilisateur a explicitement refusé
+      if (error.code === error.PERMISSION_DENIED) {
+        localStorage.setItem('worldnotes_location_consent', 'denied');
+        disableLiveLocation();
+      }
+      // Pour TIMEOUT / POSITION_UNAVAILABLE, on ne désactive pas :
+      // on réessaiera au prochain interval
+    },
+    // maximumAge: 60000 → accepte une position vieille de 60s pour éviter
+    // de redemander au GPS à chaque interval
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
   );
 }
+
 function subscribeToFriendsLiveLocations() {
   if (unsubscribeLiveLocations) unsubscribeLiveLocations();
   const uidsToWatch = [...myFriends];
@@ -3119,6 +3186,7 @@ function subscribeToFriendsLiveLocations() {
     unsubs.push(unsub);
   });
 }
+
 function renderLiveMarkers() {
   if (!map) return;
   const now = Date.now();
