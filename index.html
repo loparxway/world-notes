@@ -162,31 +162,24 @@ button{font-family:inherit;font-size:0.9rem;font-weight:600;padding:10px 18px;bo
   min-height:40px;
 }
 .user-avatar:hover{transform:scale(1.08);border-color:#f97316}
-/* ===== MENU PROFIL EN PANNEAU LATÉRAL ===== */
-.user-dropdown {
-  position: fixed !important;
-  top: calc(76px + env(safe-area-inset-top, 0)) !important;
-  right: 20px !important;
-  width: 300px;
-  max-height: calc(100vh - 96px);
-  overflow-y: auto;
-  background: var(--bg-modal);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: var(--shadow-lg);
-  display: none;
-  z-index: 1500 !important;
-  pointer-events: auto !important;
+.user-dropdown{
+  position:absolute;
+  top:52px;
+  right:0;
+  background:var(--bg-modal);
+  border:1px solid var(--border-color);
+  border-radius:12px;
+  padding:8px;
+  min-width:240px;
+  box-shadow:var(--shadow-lg);
+  display:none;
+  z-index:1300;
 }
-.user-dropdown.open {
-  display: block !important;
-  animation: fadeIn 0.2s ease;
-}
-.user-info{padding:10px 0;border-bottom:1px solid var(--border-subtle);margin-bottom:12px}
-.user-name{font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:2px}
-.user-username{font-size:0.78rem;color:#f97316;font-weight:600;margin-top:6px;cursor:pointer;display:flex;align-items:center;gap:4px;padding:6px 8px;background:rgba(249,115,22,0.08);border-radius:8px}
-.dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:8px;cursor:pointer;font-size:0.9rem;color:var(--text-secondary);transition:all 0.2s;border:none;background:none;width:100%;text-align:left;font-weight:500}
+.user-dropdown.open{display:block}
+.user-info{padding:10px 12px;border-bottom:1px solid var(--border-subtle);margin-bottom:6px}
+.user-name{font-weight:700;font-size:0.9rem;color:var(--text-primary);margin-bottom:2px}
+.user-username{font-size:0.75rem;color:#f97316;font-weight:600;margin-top:4px;cursor:pointer;display:flex;align-items:center;gap:4px}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:0.85rem;color:var(--text-secondary);transition:all 0.2s;border:none;background:none;width:100%;text-align:left;font-weight:500}
 .dropdown-item:hover{background:rgba(249,115,22,0.15);color:#f97316}
 .dropdown-item.danger:hover{background:rgba(239,68,68,0.15);color:#ef4444}
 #map{position:absolute;top:calc(64px + env(safe-area-inset-top,0));left:0;right:0;bottom:0;z-index:1;background:var(--bg-tertiary);transition:right 0.35s}
@@ -608,7 +601,6 @@ textarea{resize:vertical;min-height:90px}
   .filter-btn{padding:7px 8px;font-size:0.68rem;flex-shrink:0}
   .filter-btn .count{min-width:14px;padding:1px 4px;font-size:0.6rem}
   .hint{display:none !important}
-  .user-dropdown{width:calc(100vw - 32px);right:16px !important}
 }
 @media (max-width:420px){
   .actions .btn-ghost,.actions .btn-primary{padding:8px 8px;font-size:0.72rem}
@@ -624,7 +616,6 @@ textarea{resize:vertical;min-height:90px}
   .wizard-body {flex: 1;overflow-y: auto;-webkit-overflow-scrolling: touch;padding-bottom: 60vh;}
   .wizard-body input,.wizard-body textarea {scroll-margin-bottom: 60vh;}
 }
-/* ===== LIVE LOCATION ===== */
 .live-marker{width:40px;height:40px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 4px rgba(34,197,94,0.35),0 4px 12px rgba(0,0,0,0.5);background-size:cover;background-position:center;position:relative;cursor:pointer;animation:liveMarkerPulse 2.5s ease-in-out infinite}
 .live-marker::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#22c55e;border:2px solid white;border-radius:50%;animation:liveDotPulse 1.5s ease-in-out infinite}
 @keyframes liveMarkerPulse{0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,0.35),0 4px 12px rgba(0,0,0,0.5)}50%{box-shadow:0 0 0 14px rgba(34,197,94,0.1),0 4px 12px rgba(0,0,0,0.5)}}
@@ -650,6 +641,93 @@ textarea{resize:vertical;min-height:90px}
 .location-consent .btn-allow{background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;box-shadow:0 4px 12px rgba(34,197,94,0.35)}
 .location-consent .btn-allow:hover{transform:translateY(-2px)}
 .location-consent .btn-deny{background:transparent;color:var(--text-muted);border:1px solid var(--border-hover)}
+
+/* ===== MENU PROFIL — CSS UNIQUE ET DÉFINITIF ===== */
+.user-menu {
+  position: relative !important;
+}
+.user-dropdown {
+  position: fixed !important;
+  top: calc(72px + env(safe-area-inset-top, 0)) !important;
+  right: 16px !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: 280px !important;
+  max-width: calc(100vw - 32px) !important;
+  max-height: calc(100vh - 100px) !important;
+  overflow-y: auto !important;
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(148, 163, 184, 0.3) !important;
+  border-radius: 14px !important;
+  padding: 18px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7) !important;
+  z-index: 999999 !important;
+  display: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+.user-dropdown.open {
+  display: block !important;
+}
+.user-dropdown h3 {
+  font-size: 1rem !important;
+  margin-bottom: 16px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  color: #e2e8f0 !important;
+}
+.user-dropdown .user-info {
+  padding: 10px 0 !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15) !important;
+  margin-bottom: 12px !important;
+}
+.user-dropdown .user-name {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  color: #e2e8f0 !important;
+  margin-bottom: 2px !important;
+}
+.user-dropdown .user-username {
+  font-size: 0.78rem !important;
+  color: #f97316 !important;
+  font-weight: 600 !important;
+  margin-top: 6px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 6px 8px !important;
+  background: rgba(249, 115, 22, 0.08) !important;
+  border-radius: 8px !important;
+}
+.user-dropdown .dropdown-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 11px 12px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: 0.9rem !important;
+  color: #cbd5e1 !important;
+  transition: all 0.2s !important;
+  border: none !important;
+  background: none !important;
+  width: 100% !important;
+  text-align: left !important;
+  font-weight: 500 !important;
+}
+.user-dropdown .dropdown-item:hover {
+  background: rgba(249, 115, 22, 0.15) !important;
+  color: #f97316 !important;
+}
+.user-dropdown .dropdown-item.danger:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+}
 </style>
 </head><body>
 
@@ -774,7 +852,7 @@ textarea{resize:vertical;min-height:90px}
         <span class="show-mobile">➕</span>
       </button>
       <div class="user-menu">
-        <img class="user-avatar" id="userAvatar" alt="Profil" />
+        <img class="user-avatar" id="userAvatar" alt="Profil" onclick="toggleUserMenu(event)" />
         <div class="user-dropdown" id="userDropdown">
           <h3 style="font-size:1rem;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;color:var(--text-primary);">👤 Mon compte<button onclick="toggleUserMenu(event)" style="background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;">×</button></h3>
           <div class="user-info">
@@ -1327,19 +1405,9 @@ function cleanupListeners() {
     unsubscribeComments = unsubscribeGroups = null;
   noteUnsubs = [];
   groupNotes = {};
-
-  /* ===== CLEANUP LIVE LOCATION ===== */
-  if (liveLocationInterval) {
-    clearInterval(liveLocationInterval);
-    liveLocationInterval = null;
-  }
-  if (unsubscribeLiveLocations) {
-    try { unsubscribeLiveLocations(); } catch(e) {}
-    unsubscribeLiveLocations = null;
-  }
-  Object.values(liveMarkers).forEach(m => {
-    try { map && map.removeLayer(m); } catch(e) {}
-  });
+  if (liveLocationInterval) { clearInterval(liveLocationInterval); liveLocationInterval = null; }
+  if (unsubscribeLiveLocations) { try { unsubscribeLiveLocations(); } catch(e) {} unsubscribeLiveLocations = null; }
+  Object.values(liveMarkers).forEach(m => { try { map && map.removeLayer(m); } catch(e) {} });
   liveMarkers = {};
   liveLocationsData = {};
   liveLocationEnabled = false;
@@ -1549,14 +1617,14 @@ function copyUsername() {
   if (!myProfile || !myProfile.username) { showToast('⚠️ Définis d\'abord ton pseudo', 'info'); openEditProfileFromMenu(); return; }
   navigator.clipboard.writeText(myProfile.username).then(() => showToast(`📋 Pseudo @${myProfile.username} copié !`, 'success'));
 }
-function openMyProfile() { document.getElementById('userDropdown').classList.remove('open'); if (!myProfile) { setTimeout(() => { if (myProfile) showViewProfile(myProfile, true); }, 1000); return; } showViewProfile(myProfile, true); }
-function openEditProfileFromMenu() { document.getElementById('userDropdown').classList.remove('open'); openEditProfile(); }
+function openMyProfile() { closeUserDropdown(); if (!myProfile) { setTimeout(() => { if (myProfile) showViewProfile(myProfile, true); }, 1000); return; } showViewProfile(myProfile, true); }
+function openEditProfileFromMenu() { closeUserDropdown(); openEditProfile(); }
 function openEditProfileFromModal() { document.getElementById('friendsModalOverlay').classList.remove('open'); openEditProfile(); }
 function openEditProfile() {
   if (!myProfile) { setTimeout(() => { if (myProfile) openEditProfile(); }, 1000); return; }
   document.getElementById('viewProfileModalOverlay').classList.remove('open');
   document.getElementById('friendsModalOverlay').classList.remove('open');
-  document.getElementById('userDropdown').classList.remove('open');
+  closeUserDropdown();
   document.getElementById('editUsername').value = myProfile.username || '';
   document.getElementById('editBio').value = myProfile.bio || '';
   document.getElementById('editLocation').value = myProfile.location || '';
@@ -1758,7 +1826,7 @@ async function removeFriend(friendUid) {
     showToast('🗑️ Ami retiré', 'info');
   } catch (err) { console.error('Erreur removeFriend:', err); showToast('❌ Erreur: ' + err.message, 'error'); }
 }
-function openFriendsModal() { document.getElementById('friendsModalOverlay').classList.add('open'); renderFriendsContent(); refreshFriendsData(); }
+function openFriendsModal() { closeUserDropdown(); document.getElementById('friendsModalOverlay').classList.add('open'); renderFriendsContent(); refreshFriendsData(); }
 function closeFriendsModal() { document.getElementById('friendsModalOverlay').classList.remove('open'); }
 function switchFriendsTab(tab) { document.querySelectorAll('.friends-tab').forEach(t => { t.classList.toggle('active', t.dataset.tab === tab); }); renderFriendsContent(tab); }
 function updateFriendBadge() {
@@ -2300,7 +2368,7 @@ function renderGroupsList() {
     return `<div class="group-card" onclick="openGroupDetail('${g.id}')"><div class="group-emoji">${g.emoji || '📁'}</div><div class="group-info"><div class="group-name">${escapeHtml(g.name || 'Sans nom')}</div><div class="group-meta">${memberCount} membre${memberCount > 1 ? 's' : ''}${isOwner ? ' • Créateur' : ''}</div></div><div class="group-actions" onclick="event.stopPropagation()"><button class="group-btn danger" onclick="confirmDeleteGroup('${g.id}')" title="Supprimer">🗑️</button></div></div>`;
   }).join('');
 }
-function openGroupsModal() { document.getElementById('groupsModalOverlay').classList.add('open'); renderGroupsList(); }
+function openGroupsModal() { closeUserDropdown(); document.getElementById('groupsModalOverlay').classList.add('open'); renderGroupsList(); }
 function closeGroupsModal() { document.getElementById('groupsModalOverlay').classList.remove('open'); }
 function openCreateGroup() {
   currentEditingGroupId = null;
@@ -2664,7 +2732,7 @@ function closeRandomNoteIfOutside(e) { if (e.target.id === 'randomNoteModal') cl
 function goToRandomNote() { if (!currentRandomNoteId) return; const id = currentRandomNoteId; closeRandomNote(); focusNote(id); }
 function rollAnotherRandom() { closeRandomNote(); setTimeout(showRandomNote, 200); }
 
-function openStatsModal() { document.getElementById('statsModal').classList.add('open'); switchStatsTab(currentStatsTab); }
+function openStatsModal() { closeUserDropdown(); document.getElementById('statsModal').classList.add('open'); switchStatsTab(currentStatsTab); }
 function closeStatsModal() { document.getElementById('statsModal').classList.remove('open'); }
 function closeStatsIfOutside(e) { if (e.target.id === 'statsModal') closeStatsModal(); }
 function switchStatsTab(tab) { currentStatsTab = tab; document.querySelectorAll('.stats-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab)); renderStatsContent(tab); }
@@ -2777,46 +2845,42 @@ async function handlePhotoFile(file) {
 }
 function removePhoto(event) { if (event) event.stopPropagation(); pendingPhoto = null; photoPreview.src = ''; photoPreviewWrapper.classList.remove('visible'); photoUploadZone.style.display = ''; photoInput.value = ''; }
 
-/* ===== MENU PROFIL (mode panneau) ===== */
+/* ===== MENU PROFIL — FONCTION UNIQUE ===== */
 function toggleUserMenu(event) {
-  if (event && event.stopPropagation) event.stopPropagation();
+  if (event) {
+    event.stopPropagation();
+    if (event.preventDefault) event.preventDefault();
+  }
   const dropdown = document.getElementById('userDropdown');
   if (!dropdown) return;
-  const willOpen = !dropdown.classList.contains('open');
-  dropdown.classList.toggle('open');
-  if (willOpen) {
+  const isOpen = dropdown.classList.contains('open');
+  if (isOpen) {
+    dropdown.classList.remove('open');
+  } else {
+    dropdown.classList.add('open');
+    // Fermer le panneau réglages s'il est ouvert
     const settings = document.getElementById('settingsPanel');
     if (settings && settings.classList.contains('open')) settings.classList.remove('open');
+    // Fermer le panneau live s'il est ouvert
+    if (livePanelOpen) closeLivePanel();
   }
 }
 
-// Délégation sur document
-document.addEventListener('click', (e) => {
-  const avatar = e.target.closest('#userAvatar');
-  if (avatar) {
-    e.stopPropagation();
-    toggleUserMenu(e);
-    return;
-  }
+function closeUserDropdown() {
   const dropdown = document.getElementById('userDropdown');
-  if (dropdown && dropdown.classList.contains('open') && !dropdown.contains(e.target)) {
-    dropdown.classList.remove('open');
-  }
-  if (livePanelOpen && !e.target.closest('#livePanel') && !e.target.closest('[onclick*="toggleLivePanel"]')) {
-    closeLivePanel();
-  }
-}, true);
+  if (dropdown) dropdown.classList.remove('open');
+}
 
-// Fallback iOS anciens
-document.addEventListener('touchend', (e) => {
-  const avatar = e.target.closest('#userAvatar');
-  if (avatar) {
-    e.stopPropagation();
-    toggleUserMenu(e);
-  }
-}, true);
+// Fermer le menu si clic ailleurs
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('userDropdown');
+  if (!dropdown || !dropdown.classList.contains('open')) return;
+  // Ne pas fermer si clic dans le menu ou sur l'avatar
+  if (e.target.closest('#userDropdown') || e.target.closest('#userAvatar')) return;
+  dropdown.classList.remove('open');
+});
 
-function toggleSettings() { const panel = document.getElementById('settingsPanel'); const isOpening = !panel.classList.contains('open'); panel.classList.toggle('open'); if (isOpening) { const dd = document.getElementById('userDropdown'); if (dd && dd.classList.contains('open')) dd.classList.remove('open'); updateThemeChoices(); updateNotesCountInfo(); updateSettingsLiveBtn(); } }
+function toggleSettings() { const panel = document.getElementById('settingsPanel'); const isOpening = !panel.classList.contains('open'); panel.classList.toggle('open'); if (isOpening) { closeUserDropdown(); updateThemeChoices(); updateNotesCountInfo(); updateSettingsLiveBtn(); } }
 function updateThemeChoices() { document.querySelectorAll('.theme-choice').forEach(el => { el.classList.toggle('active', el.dataset.theme === uiTheme); }); }
 function chooseTheme(theme) { uiTheme = theme; updateThemeChoices(); }
 function applySettings() { localStorage.setItem('worldnotes_theme', uiTheme); document.documentElement.setAttribute('data-theme', uiTheme); toggleSettings(); showToast('✅ Réglages appliqués', 'success'); }
@@ -3087,16 +3151,9 @@ function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').repla
 function checkLocationConsent() {
   if (!currentUser) return;
   const consent = localStorage.getItem('worldnotes_location_consent');
-  if (consent === 'granted') {
-    enableLiveLocation(true);
-  } else if (consent === 'denied') {
-    /* rien */
-  } else {
-    setTimeout(() => {
-      const banner = document.getElementById('locationConsent');
-      if (banner) banner.classList.add('show');
-    }, 3000);
-  }
+  if (consent === 'granted') { enableLiveLocation(true); }
+  else if (consent === 'denied') { /* rien */ }
+  else { setTimeout(() => { const banner = document.getElementById('locationConsent'); if (banner) banner.classList.add('show'); }, 3000); }
 }
 function allowLocationConsent() {
   localStorage.setItem('worldnotes_location_consent', 'granted');
@@ -3110,10 +3167,7 @@ function denyLocationConsent() {
 }
 async function enableLiveLocation(silent = false) {
   if (!currentUser) return;
-  if (!navigator.geolocation) {
-    if (!silent) showToast('❌ Géolocalisation non supportée', 'error');
-    return;
-  }
+  if (!navigator.geolocation) { if (!silent) showToast('❌ Géolocalisation non supportée', 'error'); return; }
   liveLocationEnabled = true;
   updateLiveFriendsBtn();
   await sendLiveLocation();
@@ -3125,10 +3179,7 @@ async function enableLiveLocation(silent = false) {
 async function disableLiveLocation() {
   liveLocationEnabled = false;
   updateLiveFriendsBtn();
-  if (liveLocationInterval) {
-    clearInterval(liveLocationInterval);
-    liveLocationInterval = null;
-  }
+  if (liveLocationInterval) { clearInterval(liveLocationInterval); liveLocationInterval = null; }
   try { await db.collection('liveLocations').doc(currentUser.uid).delete(); } catch (err) { console.warn('Suppression liveLoc:', err); }
   if (unsubscribeLiveLocations) { unsubscribeLiveLocations(); unsubscribeLiveLocations = null; }
   Object.values(liveMarkers).forEach(m => { try { map && map.removeLayer(m); } catch(e) {} });
@@ -3145,53 +3196,30 @@ async function sendLiveLocation() {
     async (position) => {
       const { latitude: lat, longitude: lng, accuracy } = position.coords;
       try {
-        await db.collection('liveLocations').doc(currentUser.uid).set({
-          lat, lng,
-          accuracy: accuracy || 0,
-          timestamp: Date.now(),
-          displayName: myProfile?.displayName || currentUser.displayName || 'Utilisateur',
-          username: myProfile?.username || '',
-          photoURL: myProfile?.photoURL || currentUser.photoURL || ''
-        });
+        await db.collection('liveLocations').doc(currentUser.uid).set({ lat, lng, accuracy: accuracy || 0, timestamp: Date.now(), displayName: myProfile?.displayName || currentUser.displayName || 'Utilisateur', username: myProfile?.username || '', photoURL: myProfile?.photoURL || currentUser.photoURL || '' });
         console.log('📡 Position envoyée:', lat.toFixed(5), lng.toFixed(5));
       } catch (err) { console.warn('Erreur envoi liveLoc:', err); }
     },
-    (error) => {
-      console.warn('Erreur GPS:', error.message);
-      if (error.code === error.PERMISSION_DENIED) {
-        showToast('🚫 Autorisation GPS refusée', 'error');
-        localStorage.setItem('worldnotes_location_consent', 'denied');
-        disableLiveLocation();
-      }
-    },
+    (error) => { console.warn('Erreur GPS:', error.message); if (error.code === error.PERMISSION_DENIED) { showToast('🚫 Autorisation GPS refusée', 'error'); localStorage.setItem('worldnotes_location_consent', 'denied'); disableLiveLocation(); } },
     { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 }
   );
 }
 function subscribeToFriendsLiveLocations() {
   if (unsubscribeLiveLocations) unsubscribeLiveLocations();
   const uidsToWatch = [...myFriends];
-  if (uidsToWatch.length === 0) {
-    liveLocationsData = {};
-    renderLiveMarkers();
-    return;
-  }
+  if (uidsToWatch.length === 0) { liveLocationsData = {}; renderLiveMarkers(); return; }
   const chunks = [];
   for (let i = 0; i < uidsToWatch.length; i += 10) chunks.push(uidsToWatch.slice(i, i + 10));
   const unsubs = [];
-  unsubscribeLiveLocations = () => {
-    unsubs.forEach(u => { try { u(); } catch(e) {} });
-    unsubs.length = 0;
-  };
+  unsubscribeLiveLocations = () => { unsubs.forEach(u => { try { u(); } catch(e) {} }); unsubs.length = 0; };
   chunks.forEach(chunk => {
-    const unsub = db.collection('liveLocations')
-      .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
-      .onSnapshot((snapshot) => {
-        chunk.forEach(uid => { delete liveLocationsData[uid]; });
-        snapshot.docs.forEach(doc => { liveLocationsData[doc.id] = { uid: doc.id, ...doc.data() }; });
-        renderLiveMarkers();
-        if (livePanelOpen) renderLivePanel();
-        updateLiveFriendsBtn();
-      }, (err) => { console.warn('Erreur subscribeFriendsLive:', err); });
+    const unsub = db.collection('liveLocations').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).onSnapshot((snapshot) => {
+      chunk.forEach(uid => { delete liveLocationsData[uid]; });
+      snapshot.docs.forEach(doc => { liveLocationsData[doc.id] = { uid: doc.id, ...doc.data() }; });
+      renderLiveMarkers();
+      if (livePanelOpen) renderLivePanel();
+      updateLiveFriendsBtn();
+    }, (err) => { console.warn('Erreur subscribeFriendsLive:', err); });
     unsubs.push(unsub);
   });
 }
@@ -3199,55 +3227,19 @@ function renderLiveMarkers() {
   if (!map) return;
   const now = Date.now();
   Object.keys(liveMarkers).forEach(uid => {
-    if (!liveLocationsData[uid]) {
-      try { map.removeLayer(liveMarkers[uid]); } catch(e) {}
-      delete liveMarkers[uid];
-    }
+    if (!liveLocationsData[uid]) { try { map.removeLayer(liveMarkers[uid]); } catch(e) {} delete liveMarkers[uid]; }
   });
   Object.values(liveLocationsData).forEach(loc => {
     const age = now - (loc.timestamp || 0);
-    if (age > LIVE_MAX_AGE) {
-      if (liveMarkers[loc.uid]) { try { map.removeLayer(liveMarkers[loc.uid]); } catch(e) {} delete liveMarkers[loc.uid]; }
-      return;
-    }
+    if (age > LIVE_MAX_AGE) { if (liveMarkers[loc.uid]) { try { map.removeLayer(liveMarkers[loc.uid]); } catch(e) {} delete liveMarkers[loc.uid]; } return; }
     const avatar = cloudinaryThumb(loc.photoURL, 100) || 'https://www.gravatar.com/avatar/?d=mp';
-    const icon = L.divIcon({
-      className: '',
-      html: `<div class="live-marker" style="background-image:url('${avatar}');"></div>`,
-      iconSize: [40, 40],
-      iconAnchor: [20, 20],
-      popupAnchor: [0, -20]
-    });
+    const icon = L.divIcon({ className: '', html: `<div class="live-marker" style="background-image:url('${avatar}');"></div>`, iconSize: [40, 40], iconAnchor: [20, 20], popupAnchor: [0, -20] });
     const ageStr = formatAge(age);
     const name = loc.displayName || 'Utilisateur';
     const username = loc.username ? '@' + loc.username : '';
-    const popupHtml = `
-      <div style="padding: 12px 14px; min-width: 180px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-          <img src="${avatar}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #22c55e;" />
-          <div>
-            <div style="font-weight:700;color:var(--text-primary);font-size:0.9rem;">${escapeHtml(name)}</div>
-            ${username ? `<div style="font-size:0.72rem;color:#22c55e;font-weight:600;">${escapeHtml(username)}</div>` : ''}
-          </div>
-        </div>
-        <div style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
-          <span style="width:8px;height:8px;background:#22c55e;border-radius:50%;display:inline-block;"></span>
-          Mis à jour ${ageStr}
-        </div>
-        ${loc.accuracy ? `<div style="font-size:0.68rem;color:var(--text-faint);margin-top:4px;">Précision : ±${Math.round(loc.accuracy)}m</div>` : ''}
-      </div>
-    `;
-    if (liveMarkers[loc.uid]) {
-      liveMarkers[loc.uid].setLatLng([loc.lat, loc.lng]);
-      liveMarkers[loc.uid].setIcon(icon);
-      liveMarkers[loc.uid].setPopupContent(popupHtml);
-    } else {
-      const marker = L.marker([loc.lat, loc.lng], { icon, zIndexOffset: 2000 })
-        .addTo(map)
-        .bindPopup(popupHtml, { closeOnClick: false, autoPan: false });
-      marker.on('click', (e) => L.DomEvent.stopPropagation(e));
-      liveMarkers[loc.uid] = marker;
-    }
+    const popupHtml = `<div style="padding: 12px 14px; min-width: 180px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><img src="${avatar}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #22c55e;" /><div><div style="font-weight:700;color:var(--text-primary);font-size:0.9rem;">${escapeHtml(name)}</div>${username ? `<div style="font-size:0.72rem;color:#22c55e;font-weight:600;">${escapeHtml(username)}</div>` : ''}</div></div><div style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#22c55e;border-radius:50%;display:inline-block;"></span>Mis à jour ${ageStr}</div>${loc.accuracy ? `<div style="font-size:0.68rem;color:var(--text-faint);margin-top:4px;">Précision : ±${Math.round(loc.accuracy)}m</div>` : ''}</div>`;
+    if (liveMarkers[loc.uid]) { liveMarkers[loc.uid].setLatLng([loc.lat, loc.lng]); liveMarkers[loc.uid].setIcon(icon); liveMarkers[loc.uid].setPopupContent(popupHtml); }
+    else { const marker = L.marker([loc.lat, loc.lng], { icon, zIndexOffset: 2000 }).addTo(map).bindPopup(popupHtml, { closeOnClick: false, autoPan: false }); marker.on('click', (e) => L.DomEvent.stopPropagation(e)); liveMarkers[loc.uid] = marker; }
   });
 }
 function formatAge(ms) {
@@ -3262,33 +3254,19 @@ function toggleLivePanel() {
   livePanelOpen = !livePanelOpen;
   const panel = document.getElementById('livePanel');
   if (!panel) return;
-  if (livePanelOpen) {
-    renderLivePanel();
-    panel.classList.add('open');
-    const dd = document.getElementById('userDropdown');
-    if (dd && dd.classList.contains('open')) dd.classList.remove('open');
-  } else {
-    panel.classList.remove('open');
-  }
+  if (livePanelOpen) { renderLivePanel(); panel.classList.add('open'); closeUserDropdown(); const settings = document.getElementById('settingsPanel'); if (settings && settings.classList.contains('open')) settings.classList.remove('open'); }
+  else { panel.classList.remove('open'); }
 }
-function closeLivePanel() {
-  livePanelOpen = false;
-  const panel = document.getElementById('livePanel');
-  if (panel) panel.classList.remove('open');
-}
+function closeLivePanel() { livePanelOpen = false; const panel = document.getElementById('livePanel'); if (panel) panel.classList.remove('open'); }
 function renderLivePanel() {
   const panel = document.getElementById('livePanel');
   if (!panel) return;
   const now = Date.now();
-  const list = Object.values(liveLocationsData)
-    .filter(loc => now - (loc.timestamp || 0) < LIVE_MAX_AGE)
-    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const list = Object.values(liveLocationsData).filter(loc => now - (loc.timestamp || 0) < LIVE_MAX_AGE).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
   let html = `<h3>📡 Amis en direct<button onclick="toggleLivePanel()">×</button></h3>`;
-  if (!liveLocationEnabled) {
-    html += `<div class="live-empty" style="color:#f59e0b;">⚠️ Ton partage de position est désactivé.<br><br>Tu ne verras pas tes amis tant que tu ne partages pas toi aussi.<br><br><button class="btn-primary" style="margin-top:8px;padding:8px 14px;font-size:0.8rem;" onclick="enableLiveLocation()">📡 Activer le partage</button></div>`;
-  } else if (list.length === 0) {
-    html += `<div class="live-empty">Aucun ami ne partage sa position pour l'instant.<br><br>Reviens plus tard ! 👋</div>`;
-  } else {
+  if (!liveLocationEnabled) { html += `<div class="live-empty" style="color:#f59e0b;">⚠️ Ton partage de position est désactivé.<br><br>Tu ne verras pas tes amis tant que tu ne partages pas toi aussi.<br><br><button class="btn-primary" style="margin-top:8px;padding:8px 14px;font-size:0.8rem;" onclick="enableLiveLocation()">📡 Activer le partage</button></div>`; }
+  else if (list.length === 0) { html += `<div class="live-empty">Aucun ami ne partage sa position pour l'instant.<br><br>Reviens plus tard ! 👋</div>`; }
+  else {
     html += list.map(loc => {
       const avatar = cloudinaryThumb(loc.photoURL, 80) || 'https://www.gravatar.com/avatar/?d=mp';
       const name = loc.displayName || 'Utilisateur';
@@ -3296,49 +3274,25 @@ function renderLivePanel() {
       const age = now - (loc.timestamp || 0);
       const ageStr = formatAge(age);
       const staleClass = age > LIVE_STALE_THRESHOLD ? ' stale' : '';
-      return `
-        <div class="live-user-row" onclick="centerOnLiveUser('${loc.uid}')">
-          <img src="${avatar}" alt="${escapeAttr(name)}" loading="lazy" />
-          <div class="live-user-info">
-            <div class="live-user-name">${escapeHtml(name)}</div>
-            <div class="live-user-meta${staleClass}">${username ? escapeHtml(username) + ' • ' : ''}${ageStr}</div>
-          </div>
-        </div>
-      `;
+      return `<div class="live-user-row" onclick="centerOnLiveUser('${loc.uid}')"><img src="${avatar}" alt="${escapeAttr(name)}" loading="lazy" /><div class="live-user-info"><div class="live-user-name">${escapeHtml(name)}</div><div class="live-user-meta${staleClass}">${username ? escapeHtml(username) + ' • ' : ''}${ageStr}</div></div></div>`;
     }).join('');
   }
   panel.innerHTML = html;
 }
 function centerOnLiveUser(uid) {
-  const loc = liveLocationsData[uid];
-  if (!loc) return;
+  const loc = liveLocationsData[uid]; if (!loc) return;
   map.flyTo([loc.lat, loc.lng], 16, { duration: 1.2 });
-  const marker = liveMarkers[uid];
-  if (marker) setTimeout(() => marker.openPopup(), 800);
+  const marker = liveMarkers[uid]; if (marker) setTimeout(() => marker.openPopup(), 800);
   if (isMobile()) closeLivePanel();
 }
 function toggleLiveFromSettings() {
-  if (liveLocationEnabled) {
-    if (confirm('Désactiver le partage de ta position ?')) {
-      localStorage.setItem('worldnotes_location_consent', 'denied');
-      disableLiveLocation();
-      updateSettingsLiveBtn();
-    }
-  } else {
-    localStorage.setItem('worldnotes_location_consent', 'granted');
-    enableLiveLocation().then(updateSettingsLiveBtn);
-  }
+  if (liveLocationEnabled) { if (confirm('Désactiver le partage de ta position ?')) { localStorage.setItem('worldnotes_location_consent', 'denied'); disableLiveLocation(); updateSettingsLiveBtn(); } }
+  else { localStorage.setItem('worldnotes_location_consent', 'granted'); enableLiveLocation().then(updateSettingsLiveBtn); }
 }
 function updateSettingsLiveBtn() {
-  const btn = document.getElementById('settingsLiveBtn');
-  if (!btn) return;
-  if (liveLocationEnabled) {
-    btn.innerHTML = '🛑 Désactiver le partage';
-    btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-  } else {
-    btn.innerHTML = '📡 Activer le partage';
-    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-  }
+  const btn = document.getElementById('settingsLiveBtn'); if (!btn) return;
+  if (liveLocationEnabled) { btn.innerHTML = '🛑 Désactiver le partage'; btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)'; }
+  else { btn.innerHTML = '📡 Activer le partage'; btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)'; }
 }
 
 document.addEventListener('keydown', (e) => {
@@ -3349,7 +3303,7 @@ document.addEventListener('keydown', (e) => {
     else if (document.getElementById('lightbox').classList.contains('open')) closeLightbox();
     else if (autocompleteList.classList.contains('open')) closeAutocomplete();
     else if (document.getElementById('settingsPanel').classList.contains('open')) toggleSettings();
-    else if (document.getElementById('userDropdown').classList.contains('open')) toggleUserMenu();
+    else if (document.getElementById('userDropdown').classList.contains('open')) closeUserDropdown();
     else if (document.getElementById('editProfileModalOverlay').classList.contains('open')) closeEditProfile();
     else if (document.getElementById('viewProfileModalOverlay').classList.contains('open')) closeViewProfile();
     else if (document.getElementById('friendsModalOverlay').classList.contains('open')) closeFriendsModal();
@@ -3388,16 +3342,11 @@ document.getElementById('noteText')?.addEventListener('input', updateWizardNextS
 })();
 
 setInterval(() => {
-  if (liveLocationEnabled && Object.keys(liveLocationsData).length > 0) {
-    renderLiveMarkers();
-    if (livePanelOpen) renderLivePanel();
-  }
+  if (liveLocationEnabled && Object.keys(liveLocationsData).length > 0) { renderLiveMarkers(); if (livePanelOpen) renderLivePanel(); }
 }, 30000);
 
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && liveLocationEnabled) {
-    sendLiveLocation();
-  }
+  if (document.visibilityState === 'visible' && liveLocationEnabled) { sendLiveLocation(); }
 });
 </script>
 
