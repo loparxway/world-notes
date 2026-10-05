@@ -620,88 +620,149 @@ textarea{resize:vertical;min-height:90px}
 }
 body.panel-open #map {
   pointer-events: none !important;
-}/* =========================================================
+}
+/* =========================================================
    📱 FIX AFFICHAGE PWA iOS (Standalone)
    ========================================================= */
 
-/* 1. Améliorer le header en mode PWA */
+/* 1. Header compact en PWA */
 @media (display-mode: standalone) {
   header {
-    padding: 0 12px;
-    padding-top: env(safe-area-inset-top, 0);
-    height: calc(60px + env(safe-area-inset-top, 0));
+    padding: 0 10px !important;
+    padding-top: env(safe-area-inset-top, 0) !important;
+    height: calc(60px + env(safe-area-inset-top, 0)) !important;
+    gap: 4px !important;
   }
   
-  /* 2. Forcer l'affichage du logo texte "WORLD NOTES" */
-  .logo {
-    gap: 6px;
-  }
+  /* Cache "WORLD NOTES" pour ne garder que le globe */
   .logo span:not(.globe) {
-    display: inline !important;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    font-weight: 800;
+    display: none !important;
+  }
+  .logo span.globe {
+    font-size: 1.5rem !important;
+  }
+  .logo {
+    gap: 0 !important;
+    margin-right: 4px !important;
   }
   
-  /* 3. Ajuster la map */
+  /* Map ajustée */
   #map {
     top: calc(60px + env(safe-area-inset-top, 0)) !important;
   }
   
-  /* 4. Éviter l'attribution Leaflet qui chevauche les filtres */
-  .leaflet-control-attribution {
-    margin-bottom: 90px !important;
-    font-size: 0.65rem !important;
-    background: rgba(15, 23, 42, 0.7) !important;
-    color: #94a3b8 !important;
-    border-radius: 6px 0 0 0 !important;
-    padding: 2px 6px !important;
-  }
-  .leaflet-control-attribution a {
-    color: #f97316 !important;
+  /* Boutons plus petits */
+  .actions .btn-ghost,
+  .actions .btn-primary,
+  .btn-icon {
+    padding: 6px 8px !important;
+    font-size: 0.85rem !important;
+    height: 34px !important;
+    min-width: 34px !important;
   }
   
-  /* 5. Ajuster la position des boutons flottants */
+  .actions .btn-primary {
+    padding: 6px 10px !important;
+    font-size: 1rem !important;
+  }
+  
+  .user-avatar {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+  
+  .user-menu {
+    min-width: 40px !important;
+    min-height: 40px !important;
+    margin-left: 4px !important;
+  }
+  
+  /* Boutons flottants PLUS HAUT pour ne pas cacher le zoom */
   .floating-buttons {
-    bottom: calc(200px + env(safe-area-inset-bottom, 0));
+    bottom: calc(220px + env(safe-area-inset-bottom, 0)) !important;
+    right: 12px !important;
+    gap: 10px !important;
   }
   
-  /* 6. Ajuster le filtre en bas */
-  .map-filter {
-    bottom: calc(16px + env(safe-area-inset-bottom, 0));
+  /* Zoom Leaflet : position OK, mais laisse de l'espace */
+  .leaflet-bottom.leaflet-right {
+    bottom: 12px !important;
+    right: 12px !important;
   }
-}
-
-/* =========================================================
-   🌐 Fix général : attribution Leaflet ne chevauche jamais
-   ========================================================= */
-.leaflet-control-attribution {
-  max-width: 60% !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-/* Sur mobile, remonter l'attribution au-dessus des filtres */
-@media (max-width: 768px) {
+  
+  /* Attribution : cachée sur mobile PWA pour éviter tout chevauchement */
   .leaflet-control-attribution {
-    bottom: auto !important;
-    top: auto !important;
-    margin-bottom: 65px !important;
-    margin-right: 0 !important;
-    font-size: 0.6rem !important;
+    display: none !important;
   }
 }
 
 /* =========================================================
-   📱 Logo plus compact en PWA
+   🎯 FIX GLOBAL : boutons zoom et boutons flottants
    ========================================================= */
-@media (display-mode: standalone) and (max-width: 420px) {
-  .logo span:not(.globe) {
-    font-size: 0.75rem;
+
+/* Sur mobile, les boutons flottants ne doivent PAS couvrir le zoom */
+@media (max-width: 768px) {
+  .leaflet-bottom.leaflet-right {
+    bottom: 12px !important;
+    right: 12px !important;
+    z-index: 400 !important;
   }
+  
+  .leaflet-control-zoom {
+    margin-bottom: 12px !important;
+    margin-right: 0 !important;
+  }
+  
+  .leaflet-control-recenter {
+    margin-bottom: 12px !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Les boutons flottants remontent bien au-dessus */
+  .floating-buttons {
+    bottom: 200px !important;
+    right: 12px !important;
+    gap: 10px !important;
+    z-index: 600 !important;
+  }
+  
+  /* Attribution masquée sur mobile pour ne gêner personne */
+  .leaflet-control-attribution {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   🎯 Empêcher tout chevauchement header
+   ========================================================= */
+@media (max-width: 420px) {
   .logo span.globe {
-    font-size: 1.3rem !important;
+    font-size: 1.4rem !important;
+  }
+  
+  header {
+    padding: 0 8px !important;
+  }
+  
+  .actions {
+    gap: 4px !important;
+  }
+  
+  .actions .btn-ghost,
+  .actions .btn-primary,
+  .btn-icon {
+    padding: 6px 7px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .user-avatar {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
   }
 }
 
