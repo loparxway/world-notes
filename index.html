@@ -1192,7 +1192,6 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // ✅ Fix #15 : versioning cache pour forcer la mise à jour
     navigator.serviceWorker.register('/service-worker.js?v=2').catch(() => {});
   });
 }
@@ -1256,11 +1255,10 @@ let pendingGroupEmoji = '🏖️';
 let unsubscribeGroups = null;
 let currentWizardStep = 1;
 
-/* ========== FLAGS ========== */
 let _locationConsentChecked = false;
 let _locationBannerDismissed = false;
 let _autoCenteredOnLoad = false;
-let _urlParamsHandled = false; // ✅ Fix #2
+let _urlParamsHandled = false;
 
 let liveLocationEnabled = false;
 let liveLocationInterval = null;
@@ -1272,9 +1270,6 @@ const LIVE_UPDATE_INTERVAL = 60 * 1000;
 const LIVE_STALE_THRESHOLD = 5 * 60 * 1000;
 const LIVE_MAX_AGE = 10 * 60 * 1000;
 
-/* =========================================================
-   🔒 LOCK SCROLL
-   ========================================================= */
 function updateMapScrollLock() {
   if (!map) return;
   const anyPanelOpen =
@@ -1349,7 +1344,7 @@ function cleanupListeners() {
   _locationConsentChecked = false;
   _locationBannerDismissed = false;
   _autoCenteredOnLoad = false;
-  _urlParamsHandled = false; // ✅ Fix #2
+  _urlParamsHandled = false;
 }
 
 auth.onAuthStateChanged(async (user) => {
@@ -1376,7 +1371,6 @@ auth.onAuthStateChanged(async (user) => {
   }
 });
 
-// ✅ Fix #2 : un seul traitement par session
 function handleUrlParams() {
   if (_urlParamsHandled) return;
   _urlParamsHandled = true;
@@ -1521,15 +1515,11 @@ function showApp() {
   }, 800);
 }
 
-/* =========================================================
-   🎯 AUTO-CENTRAGE (Fix #4 : accepte 'unknown')
-   ========================================================= */
 async function autoCenterOnUserLocation() {
   if (!map || _autoCenteredOnLoad) return;
   if (!currentUser) return;
 
   const state = await getGeoPermissionState();
-  // ✅ Fix #4 : on tente si 'granted' OU 'unknown'
   if (state !== 'granted' && state !== 'unknown') return;
 
   _autoCenteredOnLoad = true;
@@ -1848,7 +1838,6 @@ async function cancelFriendRequest(requestId) {
   catch (err) { console.error('Erreur cancelFriendRequest:', err); }
 }
 
-// ✅ Fix #7 : un seul cleanup (pas de double unsubscribe)
 function loadAllNotes() {
   if (unsubscribeNotes) { try { unsubscribeNotes(); } catch(e){} }
   noteUnsubs = [];
@@ -2182,8 +2171,6 @@ function renderSidebar() {
     return `<div class="note-card ${isMine ? '' : 'friend-note'} ${isFav ? 'favorite' : ''}">${photoHtml}<div class="note-body"><div onclick="focusNote('${note.id}')"><div class="place"><div class="place-left"><span class="category-icon">${icon}</span>${escapeHtml(note.place)}</div>${favStar}</div><div class="text">${escapeHtml(note.text)}</div></div>${authorHtml}<div class="meta"><span>📅 ${date}</span>${deleteBtn}</div></div></div>`;
   }).join('');
 }
-
-// ✅ Fix #9 : timing corrigé (1400ms au lieu de 500ms)
 function focusNote(id) {
   const note = notesByIdCache[id]; if (!note) return;
   map.flyTo([note.lat, note.lng], 14, { duration: 1.2 });
@@ -2238,8 +2225,6 @@ function updateReactionsUI(noteId, clickedEmoji) {
   const randomModal = document.getElementById('randomNoteModal');
   if (randomModal && randomModal.classList.contains('open') && currentRandomNoteId === noteId) { replaceBar(randomModal); }
 }
-
-// ✅ Fix #14 : vérifie que la note existe encore
 async function addComment(noteId) {
   if (!notesByIdCache[noteId]) { showToast('⚠️ Ce souvenir n\'existe plus', 'error'); return; }
   const input = document.getElementById(`commentInput_${noteId}`); if (!input) return;
@@ -3113,9 +3098,6 @@ function showToast(msg, type = '') { const toast = document.getElementById('toas
 function escapeHtml(str) { if (str === undefined || str === null) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-/* =========================================================
-   📡 LIVE LOCATION
-   ========================================================= */
 async function getGeoPermissionState() {
   if (!navigator.permissions || !navigator.permissions.query) return 'unknown';
   try {
@@ -3147,12 +3129,10 @@ function checkLocationConsent() {
   });
 }
 
-// ✅ Fix #10 : attendre que la map soit initialisée
 function showLocationBanner() {
   if (!map) { setTimeout(showLocationBanner, 500); return; }
   const banner = document.getElementById('locationDisabledBanner');
   if (banner) banner.classList.add('show');
-  // ✅ Fix #5 : reset du flag après 30 min
   setTimeout(() => { _locationBannerDismissed = false; }, 30 * 60 * 1000);
 }
 function hideLocationBanner() {
@@ -3184,7 +3164,6 @@ async function enableLiveLocation(silent = false) {
   liveLocationEnabled = true;
   localStorage.setItem('worldnotes_location_consent', 'granted');
   updateLiveFriendsBtn();
-  // ✅ Fix #11 : on attend le résultat
   const success = await sendLiveLocation();
   if (!success && !silent) {
     showToast('⚠️ Position partagée (GPS en recherche...)', 'info');
@@ -3214,7 +3193,6 @@ async function disableLiveLocation() {
 
 function updateLiveFriendsBtn() { return; }
 
-// ✅ Fix #11 : renvoie true si succès
 async function sendLiveLocation() {
   if (!liveLocationEnabled || !currentUser) return false;
   if (!navigator.geolocation) return false;
@@ -3394,10 +3372,8 @@ setInterval(() => {
   if (liveLocationEnabled && Object.keys(liveLocationsData).length > 0) { renderLiveMarkers(); if (livePanelOpen) renderLivePanel(); }
 }, 30000);
 
-// ✅ Fix #3 : re-check permission au retour sur l'app
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && liveLocationEnabled) { sendLiveLocation(); }
-  // Si l'app revient au premier plan et qu'on n'a pas encore vérifié la position
   if (document.visibilityState === 'visible' && currentUser && !_autoCenteredOnLoad) {
     setTimeout(() => autoCenterOnUserLocation(), 500);
   }
