@@ -3559,6 +3559,58 @@ window.addEventListener('focus', () => {
     setTimeout(() => autoCenterOnUserLocation(), 500);
   }
 });
+/* =========================================================
+   🔄 REFRESH AU RETOUR AU PREMIER PLAN
+   iOS PWA ferme les connexions en arrière-plan
+   → on re-sync tout quand l'app revient
+   ========================================================= */
+let _lastForegroundRefresh = 0;
+let _foregroundRefreshTimer = null;
+
+function refreshAllDataOnForeground() {
+  if (!currentUser) return;
+  const now = Date.now();
+  // Éviter les refresh trop rapprochés (max 1 toutes les 3 sec)
+  if (now - _lastForegroundRefresh < 3000) return;
+  _lastForegroundRefresh = now;
+  
+  clearTimeout(_foregroundRefreshTimer);
+  _foregroundRefreshTimer = setTimeout(() => {
+    try {
+      console.log('🔄 Refresh des données (retour au premier plan)');
+      showSyncIndicator('Synchronisation...', false);
+      
+      // Re-souscrire à tous les listeners
+      loadFriends();
+      loadIncomingRequests();
+      loadOutgoingRequests();
+      loadGroups();
+      
+      // Forcer un refresh immédiat des données depuis le serveur
+      if (typeof refreshFriendsData === 'function') {
+        refreshFriendsData();
+      }
+      
+      setTimeout(() => showSyncIndicator('Synchronisé', true), 1500);
+    } catch (err) {
+      console.warn('Erreur refresh foreground:', err);
+    }
+  }, 500);
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && currentUser) {
+    refreshAllDataOnForeground();
+  }
+});
+
+window.addEventListener('focus', () => {
+  if (currentUser) refreshAllDataOnForeground();
+});
+
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted && currentUser) refreshAllDataOnForeground();
+});
 </script>
 
 </body>
