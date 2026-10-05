@@ -622,176 +622,184 @@ body.panel-open #map {
   pointer-events: none !important;
 }
 /* =========================================================
-   📱 FIX AFFICHAGE PWA iOS (Standalone)
+   📱 PWA iOS — CLEAN HEADER + MAP
    ========================================================= */
 
-/* 1. Header compact en PWA */
+/* 1. Header opaque, propre, sans flou */
+header {
+  background: #0f172a !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12) !important;
+  height: calc(56px + env(safe-area-inset-top, 0)) !important;
+  padding-top: env(safe-area-inset-top, 0) !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 2. Map commence EXACTEMENT sous le header */
+#map {
+  top: calc(56px + env(safe-area-inset-top, 0)) !important;
+}
+
+/* 3. Logo : juste le globe, propre */
+.logo {
+  gap: 0 !important;
+  margin-right: 4px !important;
+  flex-shrink: 0 !important;
+}
+.logo span:not(.globe) {
+  display: none !important;
+}
+.logo span.globe {
+  font-size: 1.5rem !important;
+  animation: none !important;
+}
+
+/* 4. Boutons du header : carrés, propres, bien centrés */
+.actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex: 1 !important;
+  justify-content: flex-end !important;
+  min-width: 0 !important;
+}
+
+.actions .btn-ghost,
+.actions .btn-icon {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(148, 163, 184, 0.12) !important;
+  border: 1px solid rgba(148, 163, 184, 0.15) !important;
+  border-radius: 9px !important;
+  font-size: 1rem !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transition: all 0.15s !important;
+}
+
+.actions .btn-ghost:active,
+.actions .btn-icon:active {
+  background: rgba(249, 115, 22, 0.25) !important;
+  transform: scale(0.95) !important;
+}
+
+.actions .btn-primary {
+  width: 40px !important;
+  height: 36px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+  border: none !important;
+  border-radius: 9px !important;
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4) !important;
+}
+
+/* 5. Avatar utilisateur */
+.user-menu {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  margin-left: 4px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.user-avatar {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  border: 2px solid rgba(249, 115, 22, 0.7) !important;
+}
+
+/* 6. Le bouton "Notes" : on cache le texte, garde l'icône */
+.btn-toggle-notes {
+  font-size: 0 !important;
+}
+.btn-toggle-notes::before {
+  content: "📖" !important;
+  font-size: 1rem !important;
+}
+
+/* 7. Boutons flottants : bien séparés du zoom */
+.floating-buttons {
+  position: fixed !important;
+  bottom: 220px !important;
+  right: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  z-index: 400 !important;
+}
+
+.btn-float {
+  width: 48px !important;
+  height: 48px !important;
+  font-size: 1.3rem !important;
+}
+
+/* 8. Contrôles Leaflet (recenter + zoom) : bien visibles */
+.leaflet-bottom.leaflet-right {
+  bottom: 90px !important;
+  right: 14px !important;
+  z-index: 700 !important;
+}
+
+.leaflet-control-recenter,
+.leaflet-control-zoom {
+  margin-bottom: 8px !important;
+  margin-right: 0 !important;
+}
+
+/* 9. Attribution Leaflet : cachée pour faire propre */
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+/* 10. Filtres en bas */
+.map-filter {
+  bottom: 20px !important;
+  left: 14px !important;
+  right: 80px !important;
+  z-index: 500 !important;
+}
+
 /* =========================================================
-   📱 PWA iOS — Header ultra-simplifié
+   📱 Mobile général (tous modes)
    ========================================================= */
-/* =========================================================
-   📱 PWA iOS — FIX FINAL
-   ========================================================= */
-@media (display-mode: standalone) {
-  /* Header opaque et compact */
+@media (max-width: 768px) {
   header {
-    background: #0f172a !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
     height: calc(56px + env(safe-area-inset-top, 0)) !important;
-    padding: 0 10px !important;
-    padding-top: env(safe-area-inset-top, 0) !important;
   }
-  
   #map {
     top: calc(56px + env(safe-area-inset-top, 0)) !important;
   }
-  
-  /* Cache le texte "WORLD NOTES" */
-  .logo span:not(.globe) {
-    display: none !important;
-  }
-  .logo span.globe {
-    font-size: 1.4rem !important;
-  }
-  .logo {
-    gap: 0 !important;
-    margin-right: 2px !important;
-  }
-  
-  /* Boutons bien centrés et propres */
-  .actions {
-    gap: 5px !important;
-    align-items: center !important;
-  }
-  
-  .actions .btn-ghost,
-  .actions .btn-primary,
-  .btn-icon {
-    padding: 0 !important;
-    font-size: 0.85rem !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: rgba(148, 163, 184, 0.12) !important;
-    border-radius: 8px !important;
-    border: 1px solid rgba(148, 163, 184, 0.15) !important;
-  }
-  
-  .actions .btn-primary {
-    width: 40px !important;
-    background: linear-gradient(135deg, #f97316, #ea580c) !important;
-    border: none !important;
-  }
-  
-  .user-menu {
-    min-width: 38px !important;
-    min-height: 38px !important;
-    margin-left: 3px !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  
-  .user-avatar {
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
-  }
-  
-  /* Boutons flottants */
   .floating-buttons {
-    bottom: calc(300px + env(safe-area-inset-bottom, 0)) !important;
+    bottom: 200px !important;
     right: 12px !important;
   }
-  
   .leaflet-bottom.leaflet-right {
-    bottom: 12px !important;
-    right: 12px !important;
-    z-index: 700 !important;
-  }
-  
-  .leaflet-control-attribution {
-    display: none !important;
-  }
-}
-
-/* =========================================================
-   🎯 FIX GLOBAL : boutons zoom et boutons flottants
-   ========================================================= */
-
-/* Sur mobile, les boutons flottants ne doivent PAS couvrir le zoom */
-@media (max-width: 768px) {
-  .leaflet-bottom.leaflet-right {
-    bottom: 12px !important;
-    right: 12px !important;
-    z-index: 400 !important;
-  }
-  
-  .leaflet-control-zoom {
-    margin-bottom: 12px !important;
-    margin-right: 0 !important;
-  }
-  
-  .leaflet-control-recenter {
-    margin-bottom: 12px !important;
-    margin-right: 0 !important;
-  }
-  
-  /* Les boutons flottants remontent bien au-dessus */
-  .floating-buttons {
-    bottom: 300px !important;
-    right: 12px !important;
-    gap: 10px !important;
-    z-index: 400 !important;
-  }
-  
-  .leaflet-bottom.leaflet-right {
-    bottom: 12px !important;
-    right: 12px !important;
-    z-index: 700 !important;
-  }
-  
-  /* Attribution masquée sur mobile pour ne gêner personne */
-  .leaflet-control-attribution {
-    display: none !important;
-  }
-}
-
-/* =========================================================
-   🎯 Empêcher tout chevauchement header
-   ========================================================= */
-@media (max-width: 420px) {
-  .logo span.globe {
-    font-size: 1.4rem !important;
-  }
-  
-  header {
-    padding: 0 8px !important;
-  }
-  
-  .actions {
-    gap: 4px !important;
-  }
-  
-  .actions .btn-ghost,
-  .actions .btn-primary,
-  .btn-icon {
-    padding: 6px 7px !important;
-    min-width: 32px !important;
-    height: 32px !important;
-  }
-  
-  .user-avatar {
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    min-height: 30px !important;
+    bottom: 80px !important;
   }
 }
 
