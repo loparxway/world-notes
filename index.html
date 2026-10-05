@@ -1113,7 +1113,7 @@ body.panel-open #map {
         <button class="btn-primary" style="background: linear-gradient(135deg, #22c55e, #16a34a);" onclick="addFriendToGroup()">➕</button>
       </div>
       <div class="modal-actions" style="justify-content: space-between;">
-        <button class="btn-ghost" id="deleteOrLeaveGroupBtn" onclick="deleteOrLeaveGroup()">🗑️ Supprimer</button>
+        <button class="btn-ghost" id="deleteOrLeaveGroupBtn">🗑️ Supprimer</button>
         <button class="btn-ghost" onclick="closeGroupDetail()">Fermer</button>
       </div>
     </div>
@@ -1192,7 +1192,8 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    // ✅ Fix #15 : versioning cache pour forcer la mise à jour
+    navigator.serviceWorker.register('/service-worker.js?v=2').catch(() => {});
   });
 }
 
@@ -1255,10 +1256,11 @@ let pendingGroupEmoji = '🏖️';
 let unsubscribeGroups = null;
 let currentWizardStep = 1;
 
-/* ========== FLAGS LOCALISATION ========== */
+/* ========== FLAGS ========== */
 let _locationConsentChecked = false;
 let _locationBannerDismissed = false;
 let _autoCenteredOnLoad = false;
+let _urlParamsHandled = false; // ✅ Fix #2
 
 let liveLocationEnabled = false;
 let liveLocationInterval = null;
@@ -1347,6 +1349,7 @@ function cleanupListeners() {
   _locationConsentChecked = false;
   _locationBannerDismissed = false;
   _autoCenteredOnLoad = false;
+  _urlParamsHandled = false; // ✅ Fix #2
 }
 
 auth.onAuthStateChanged(async (user) => {
@@ -1372,7 +1375,11 @@ auth.onAuthStateChanged(async (user) => {
     hideOnboarding();
   }
 });
+
+// ✅ Fix #2 : un seul traitement par session
 function handleUrlParams() {
+  if (_urlParamsHandled) return;
+  _urlParamsHandled = true;
   const params = new URLSearchParams(window.location.search);
   const noteId = params.get('note');
   if (noteId) {
@@ -1515,15 +1522,15 @@ function showApp() {
 }
 
 /* =========================================================
-   🎯 AUTO-CENTRAGE SUR LA POSITION DE L'UTILISATEUR
+   🎯 AUTO-CENTRAGE (Fix #4 : accepte 'unknown')
    ========================================================= */
 async function autoCenterOnUserLocation() {
   if (!map || _autoCenteredOnLoad) return;
   if (!currentUser) return;
 
-  // Vérifie la permission SANS popup
   const state = await getGeoPermissionState();
-  if (state !== 'granted') return;  // Pas accordée → on ne fait rien
+  // ✅ Fix #4 : on tente si 'granted' OU 'unknown'
+  if (state !== 'granted' && state !== 'unknown') return;
 
   _autoCenteredOnLoad = true;
 
@@ -1841,9 +1848,9 @@ async function cancelFriendRequest(requestId) {
   catch (err) { console.error('Erreur cancelFriendRequest:', err); }
 }
 
+// ✅ Fix #7 : un seul cleanup (pas de double unsubscribe)
 function loadAllNotes() {
-  if (unsubscribeNotes) unsubscribeNotes();
-  noteUnsubs.forEach(u => { try { u(); } catch(e){} });
+  if (unsubscribeNotes) { try { unsubscribeNotes(); } catch(e){} }
   noteUnsubs = [];
   showSyncIndicator('Chargement des souvenirs...', false);
   let _mine = [];
@@ -2175,15 +2182,17 @@ function renderSidebar() {
     return `<div class="note-card ${isMine ? '' : 'friend-note'} ${isFav ? 'favorite' : ''}">${photoHtml}<div class="note-body"><div onclick="focusNote('${note.id}')"><div class="place"><div class="place-left"><span class="category-icon">${icon}</span>${escapeHtml(note.place)}</div>${favStar}</div><div class="text">${escapeHtml(note.text)}</div></div>${authorHtml}<div class="meta"><span>📅 ${date}</span>${deleteBtn}</div></div></div>`;
   }).join('');
 }
+
+// ✅ Fix #9 : timing corrigé (1400ms au lieu de 500ms)
 function focusNote(id) {
   const note = notesByIdCache[id]; if (!note) return;
   map.flyTo([note.lat, note.lng], 14, { duration: 1.2 });
   if (isMobile()) {
     if (window.innerWidth <= 768) toggleSidebar();
-    setTimeout(() => openNoteDetail(id), 500);
+    setTimeout(() => openNoteDetail(id), 1400);
   } else {
     const marker = markers[id];
-    if (marker) { setTimeout(() => { openPopupNoteId = id; marker.openPopup(); }, 700); }
+    if (marker) { setTimeout(() => { openPopupNoteId = id; marker.openPopup(); }, 900); }
   }
 }
 async function deleteNote(id, event) { event.stopPropagation(); if (!confirm('Supprimer ce souvenir ?')) return; try { await db.collection('notes').doc(id).delete(); showToast('🗑️ Souvenir supprimé', 'error'); } catch (err) { showToast('❌ Erreur', 'error'); } }
@@ -2229,7 +2238,10 @@ function updateReactionsUI(noteId, clickedEmoji) {
   const randomModal = document.getElementById('randomNoteModal');
   if (randomModal && randomModal.classList.contains('open') && currentRandomNoteId === noteId) { replaceBar(randomModal); }
 }
+
+// ✅ Fix #14 : vérifie que la note existe encore
 async function addComment(noteId) {
+  if (!notesByIdCache[noteId]) { showToast('⚠️ Ce souvenir n\'existe plus', 'error'); return; }
   const input = document.getElementById(`commentInput_${noteId}`); if (!input) return;
   const text = input.value.trim();
   if (!text) return;
@@ -3135,9 +3147,13 @@ function checkLocationConsent() {
   });
 }
 
+// ✅ Fix #10 : attendre que la map soit initialisée
 function showLocationBanner() {
+  if (!map) { setTimeout(showLocationBanner, 500); return; }
   const banner = document.getElementById('locationDisabledBanner');
   if (banner) banner.classList.add('show');
+  // ✅ Fix #5 : reset du flag après 30 min
+  setTimeout(() => { _locationBannerDismissed = false; }, 30 * 60 * 1000);
 }
 function hideLocationBanner() {
   const banner = document.getElementById('locationDisabledBanner');
@@ -3168,11 +3184,16 @@ async function enableLiveLocation(silent = false) {
   liveLocationEnabled = true;
   localStorage.setItem('worldnotes_location_consent', 'granted');
   updateLiveFriendsBtn();
-  await sendLiveLocation();
+  // ✅ Fix #11 : on attend le résultat
+  const success = await sendLiveLocation();
+  if (!success && !silent) {
+    showToast('⚠️ Position partagée (GPS en recherche...)', 'info');
+  } else if (!silent) {
+    showToast('📡 Position partagée avec tes amis !', 'success');
+  }
   if (liveLocationInterval) clearInterval(liveLocationInterval);
   liveLocationInterval = setInterval(sendLiveLocation, LIVE_UPDATE_INTERVAL);
   subscribeToFriendsLiveLocations();
-  if (!silent) showToast('📡 Position partagée avec tes amis !', 'success');
   updateSettingsLiveBtn();
   hideLocationBanner();
 }
@@ -3193,31 +3214,36 @@ async function disableLiveLocation() {
 
 function updateLiveFriendsBtn() { return; }
 
+// ✅ Fix #11 : renvoie true si succès
 async function sendLiveLocation() {
-  if (!liveLocationEnabled || !currentUser) return;
-  if (!navigator.geolocation) return;
+  if (!liveLocationEnabled || !currentUser) return false;
+  if (!navigator.geolocation) return false;
 
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const { latitude: lat, longitude: lng, accuracy } = position.coords;
-      try {
-        await db.collection('liveLocations').doc(currentUser.uid).set({
-          lat, lng, accuracy: accuracy || 0, timestamp: Date.now(),
-          displayName: myProfile?.displayName || currentUser.displayName || 'Utilisateur',
-          username: myProfile?.username || '',
-          photoURL: myProfile?.photoURL || currentUser.photoURL || ''
-        });
-      } catch (err) { console.warn('Erreur envoi liveLoc:', err); }
-    },
-    (error) => {
-      console.warn('Erreur GPS:', error.message);
-      if (error.code === error.PERMISSION_DENIED) {
-        localStorage.setItem('worldnotes_location_consent', 'denied');
-        disableLiveLocation();
-      }
-    },
-    { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
-  );
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude: lat, longitude: lng, accuracy } = position.coords;
+        try {
+          await db.collection('liveLocations').doc(currentUser.uid).set({
+            lat, lng, accuracy: accuracy || 0, timestamp: Date.now(),
+            displayName: myProfile?.displayName || currentUser.displayName || 'Utilisateur',
+            username: myProfile?.username || '',
+            photoURL: myProfile?.photoURL || currentUser.photoURL || ''
+          });
+          resolve(true);
+        } catch (err) { console.warn('Erreur envoi liveLoc:', err); resolve(false); }
+      },
+      (error) => {
+        console.warn('Erreur GPS:', error.message);
+        if (error.code === error.PERMISSION_DENIED) {
+          localStorage.setItem('worldnotes_location_consent', 'denied');
+          disableLiveLocation();
+        }
+        resolve(false);
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
+    );
+  });
 }
 
 function subscribeToFriendsLiveLocations() {
@@ -3368,8 +3394,18 @@ setInterval(() => {
   if (liveLocationEnabled && Object.keys(liveLocationsData).length > 0) { renderLiveMarkers(); if (livePanelOpen) renderLivePanel(); }
 }, 30000);
 
+// ✅ Fix #3 : re-check permission au retour sur l'app
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && liveLocationEnabled) { sendLiveLocation(); }
+  // Si l'app revient au premier plan et qu'on n'a pas encore vérifié la position
+  if (document.visibilityState === 'visible' && currentUser && !_autoCenteredOnLoad) {
+    setTimeout(() => autoCenterOnUserLocation(), 500);
+  }
+});
+window.addEventListener('focus', () => {
+  if (currentUser && !_autoCenteredOnLoad) {
+    setTimeout(() => autoCenterOnUserLocation(), 500);
+  }
 });
 </script>
 
