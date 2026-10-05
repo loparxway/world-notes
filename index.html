@@ -3134,12 +3134,14 @@ function checkLocationConsent() {
 }
 function allowLocationConsent() {
   localStorage.setItem('worldnotes_location_consent', 'granted');
-  document.getElementById('locationConsent').classList.remove('show');
+  const banner = document.getElementById('locationConsent');
+  if (banner) banner.remove(); // ← SUPPRIME du DOM au lieu de juste cacher
   enableLiveLocation(false);
 }
 function denyLocationConsent() {
   localStorage.setItem('worldnotes_location_consent', 'denied');
-  document.getElementById('locationConsent').classList.remove('show');
+  const banner = document.getElementById('locationConsent');
+  if (banner) banner.remove(); // ← SUPPRIME du DOM
   showToast('📍 Partage de position désactivé. Tu peux l\'activer dans les réglages.', 'info');
 }
 async function enableLiveLocation(silent = false) {
