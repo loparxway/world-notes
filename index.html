@@ -134,52 +134,10 @@ button{font-family:inherit;font-size:0.9rem;font-weight:600;padding:10px 18px;bo
 .btn-ghost:hover{background:rgba(148,163,184,0.25);transform:translateY(-2px)}
 .btn-icon{padding:10px 14px;font-size:1.1rem;position:relative}
 .badge{position:absolute;top:4px;right:4px;background:#ef4444;color:white;font-size:0.65rem;font-weight:700;padding:2px 5px;border-radius:10px;min-width:16px;text-align:center;line-height:1.2;box-shadow:0 2px 6px rgba(239,68,68,0.5)}
-.user-menu{
-  position:relative;
-  z-index:1200;
-  pointer-events:auto;
-  margin-left:12px;
-  padding:4px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-width:48px;
-  min-height:48px;
-  flex-shrink:0;
-}
-.user-avatar{
-  width:40px;height:40px;border-radius:50%;
-  border:2px solid rgba(249,115,22,0.6);
-  cursor:pointer;
-  object-fit:cover;
-  transition:all 0.25s;
-  pointer-events:auto;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-  user-select:none;
-  display:block;
-  min-width:40px;
-  min-height:40px;
-}
+.user-menu{position:relative;z-index:1200;pointer-events:auto;margin-left:12px;padding:4px;display:flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;flex-shrink:0}
+.user-avatar{width:40px;height:40px;border-radius:50%;border:2px solid rgba(249,115,22,0.6);cursor:pointer;object-fit:cover;transition:all 0.25s;pointer-events:auto;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;display:block;min-width:40px;min-height:40px}
 .user-avatar:hover{transform:scale(1.08);border-color:#f97316}
-.user-dropdown{
-  position:fixed;
-  top:calc(76px + env(safe-area-inset-top, 0));
-  right:16px;
-  width:280px;
-  max-width:calc(100vw - 32px);
-  max-height:calc(100vh - 100px);
-  overflow-y:auto;
-  background:#1e293b;
-  color:#e2e8f0;
-  border:1px solid rgba(148,163,184,0.3);
-  border-radius:14px;
-  padding:18px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.8);
-  z-index:999999;
-  display:none;
-  overscroll-behavior:contain;
-}
+.user-dropdown{position:fixed;top:calc(76px + env(safe-area-inset-top, 0));right:16px;width:280px;max-width:calc(100vw - 32px);max-height:calc(100vh - 100px);overflow-y:auto;background:#1e293b;color:#e2e8f0;border:1px solid rgba(148,163,184,0.3);border-radius:14px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,0.8);z-index:999999;display:none;overscroll-behavior:contain}
 .user-dropdown.open{display:block;animation:fadeIn 0.2s ease}
 .user-dropdown h3{font-size:1rem;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;color:#e2e8f0}
 .user-dropdown h3 button{background:none;border:none;color:#94a3b8;font-size:1.3rem;cursor:pointer;padding:0;line-height:1}
@@ -640,7 +598,8 @@ textarea{resize:vertical;min-height:90px}
 .live-user-meta{font-size:0.72rem;color:var(--text-muted);margin-top:2px}
 .live-user-meta.stale{color:#f59e0b}
 .live-empty{text-align:center;padding:24px 12px;color:var(--text-faint);font-size:0.82rem;line-height:1.5}
-.location-consent{position:fixed;bottom:20px;left:20px;right:20px;max-width:480px;margin:0 auto;background:var(--bg-modal);border:2px solid #22c55e;border-radius:14px;padding:16px;z-index:7000;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;animation:slideUpBanner .5s cubic-bezier(.34,1.56,.64,1)}
+/* ===== FIX BANNIÈRE CONSENTEMENT LOCALISATION ===== */
+.location-consent{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);right:auto;width:calc(100% - 40px);max-width:480px;background:var(--bg-modal);border:2px solid #22c55e;border-radius:14px;padding:16px;z-index:99999;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;animation:slideUpBanner .5s cubic-bezier(.34,1.56,.64,1)}
 .location-consent.show{display:block}
 .location-consent h4{font-size:0.95rem;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .location-consent p{font-size:0.82rem;color:var(--text-secondary);line-height:1.5;margin-bottom:12px}
@@ -1298,6 +1257,9 @@ let pendingGroupEmoji = '🏖️';
 let unsubscribeGroups = null;
 let currentWizardStep = 1;
 
+/* ========== FLAG ANTI-DOUBLON POUR LA BANNIÈRE LOCATION ========== */
+let _locationConsentChecked = false;
+
 let liveLocationEnabled = false;
 let liveLocationInterval = null;
 let liveMarkers = {};
@@ -1313,26 +1275,23 @@ const LIVE_MAX_AGE = 10 * 60 * 1000;
    ========================================================= */
 function updateMapScrollLock() {
   if (!map) return;
-  const settingsOpen = document.getElementById('settingsPanel')?.classList.contains('open');
-  const userMenuOpen = document.getElementById('userDropdown')?.classList.contains('open');
-  const livePanelIsOpen = document.getElementById('livePanel')?.classList.contains('open');
-  const addModalOpen = document.getElementById('modalOverlay')?.classList.contains('open');
-  const friendsOpen = document.getElementById('friendsModalOverlay')?.classList.contains('open');
-  const editProfileOpen = document.getElementById('editProfileModalOverlay')?.classList.contains('open');
-  const viewProfileOpen = document.getElementById('viewProfileModalOverlay')?.classList.contains('open');
-  const groupsOpen = document.getElementById('groupsModalOverlay')?.classList.contains('open');
-  const statsOpen = document.getElementById('statsModal')?.classList.contains('open');
-  const noteDetailOpen = document.getElementById('noteDetailModal')?.classList.contains('open');
-  const shareOpen = document.getElementById('shareMenu')?.classList.contains('open');
-  const qrOpen = document.getElementById('qrModal')?.classList.contains('open');
-  const legalOpen = document.getElementById('legalModal')?.classList.contains('open');
-  const deleteAccOpen = document.getElementById('deleteAccountModal')?.classList.contains('open');
-  const randomOpen = document.getElementById('randomNoteModal')?.classList.contains('open');
-  const lightboxOpen = document.getElementById('lightbox')?.classList.contains('open');
-
-  const anyPanelOpen = settingsOpen || userMenuOpen || livePanelIsOpen || addModalOpen ||
-    friendsOpen || editProfileOpen || viewProfileOpen || groupsOpen || statsOpen ||
-    noteDetailOpen || shareOpen || qrOpen || legalOpen || deleteAccOpen || randomOpen || lightboxOpen;
+  const anyPanelOpen =
+    document.getElementById('settingsPanel')?.classList.contains('open') ||
+    document.getElementById('userDropdown')?.classList.contains('open') ||
+    document.getElementById('livePanel')?.classList.contains('open') ||
+    document.getElementById('modalOverlay')?.classList.contains('open') ||
+    document.getElementById('friendsModalOverlay')?.classList.contains('open') ||
+    document.getElementById('editProfileModalOverlay')?.classList.contains('open') ||
+    document.getElementById('viewProfileModalOverlay')?.classList.contains('open') ||
+    document.getElementById('groupsModalOverlay')?.classList.contains('open') ||
+    document.getElementById('statsModal')?.classList.contains('open') ||
+    document.getElementById('noteDetailModal')?.classList.contains('open') ||
+    document.getElementById('shareMenu')?.classList.contains('open') ||
+    document.getElementById('qrModal')?.classList.contains('open') ||
+    document.getElementById('legalModal')?.classList.contains('open') ||
+    document.getElementById('deleteAccountModal')?.classList.contains('open') ||
+    document.getElementById('randomNoteModal')?.classList.contains('open') ||
+    document.getElementById('lightbox')?.classList.contains('open');
 
   document.body.classList.toggle('panel-open', !!anyPanelOpen);
   if (anyPanelOpen) {
@@ -1385,6 +1344,7 @@ function cleanupListeners() {
   liveMarkers = {};
   liveLocationsData = {};
   liveLocationEnabled = false;
+  _locationConsentChecked = false;
 }
 
 auth.onAuthStateChanged(async (user) => {
@@ -2820,18 +2780,13 @@ async function handlePhotoFile(file) {
 }
 function removePhoto(event) { if (event) event.stopPropagation(); pendingPhoto = null; photoPreview.src = ''; photoPreviewWrapper.classList.remove('visible'); photoUploadZone.style.display = ''; photoInput.value = ''; }
 
-/* ===== MENU PROFIL — FONCTIONS ===== */
 function toggleUserMenu(event) {
-  if (event) {
-    event.stopPropagation();
-    if (event.preventDefault) event.preventDefault();
-  }
+  if (event) { event.stopPropagation(); if (event.preventDefault) event.preventDefault(); }
   const dropdown = document.getElementById('userDropdown');
   if (!dropdown) return;
   const isOpen = dropdown.classList.contains('open');
-  if (isOpen) {
-    dropdown.classList.remove('open');
-  } else {
+  if (isOpen) { dropdown.classList.remove('open'); }
+  else {
     dropdown.classList.add('open');
     const settings = document.getElementById('settingsPanel');
     if (settings && settings.classList.contains('open')) settings.classList.remove('open');
@@ -3118,22 +3073,28 @@ function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').repla
    📡 LIVE LOCATION
    ========================================================= */
 function checkLocationConsent() {
-  if (!currentUser) return;
+  if (!currentUser || _locationConsentChecked) return;
+  _locationConsentChecked = true;
   const consent = localStorage.getItem('worldnotes_location_consent');
   if (consent === 'granted') { enableLiveLocation(true); }
   else if (consent === 'denied') { /* rien */ }
-  else { setTimeout(() => { const banner = document.getElementById('locationConsent'); if (banner) banner.classList.add('show'); }, 3000); }
+  else {
+    setTimeout(() => {
+      const banner = document.getElementById('locationConsent');
+      if (banner && !banner.classList.contains('show')) banner.classList.add('show');
+    }, 3000);
+  }
 }
 function allowLocationConsent() {
   localStorage.setItem('worldnotes_location_consent', 'granted');
   const banner = document.getElementById('locationConsent');
-  if (banner) banner.remove();
+  if (banner) banner.classList.remove('show');
   enableLiveLocation(false);
 }
 function denyLocationConsent() {
   localStorage.setItem('worldnotes_location_consent', 'denied');
   const banner = document.getElementById('locationConsent');
-  if (banner) banner.remove();
+  if (banner) banner.classList.remove('show');
   showToast('📍 Partage de position désactivé. Tu peux l\'activer dans les réglages.', 'info');
 }
 async function enableLiveLocation(silent = false) {
