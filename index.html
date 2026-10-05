@@ -620,7 +620,91 @@ textarea{resize:vertical;min-height:90px}
 }
 body.panel-open #map {
   pointer-events: none !important;
+}/* =========================================================
+   📱 FIX AFFICHAGE PWA iOS (Standalone)
+   ========================================================= */
+
+/* 1. Améliorer le header en mode PWA */
+@media (display-mode: standalone) {
+  header {
+    padding: 0 12px;
+    padding-top: env(safe-area-inset-top, 0);
+    height: calc(60px + env(safe-area-inset-top, 0));
+  }
+  
+  /* 2. Forcer l'affichage du logo texte "WORLD NOTES" */
+  .logo {
+    gap: 6px;
+  }
+  .logo span:not(.globe) {
+    display: inline !important;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    font-weight: 800;
+  }
+  
+  /* 3. Ajuster la map */
+  #map {
+    top: calc(60px + env(safe-area-inset-top, 0)) !important;
+  }
+  
+  /* 4. Éviter l'attribution Leaflet qui chevauche les filtres */
+  .leaflet-control-attribution {
+    margin-bottom: 90px !important;
+    font-size: 0.65rem !important;
+    background: rgba(15, 23, 42, 0.7) !important;
+    color: #94a3b8 !important;
+    border-radius: 6px 0 0 0 !important;
+    padding: 2px 6px !important;
+  }
+  .leaflet-control-attribution a {
+    color: #f97316 !important;
+  }
+  
+  /* 5. Ajuster la position des boutons flottants */
+  .floating-buttons {
+    bottom: calc(200px + env(safe-area-inset-bottom, 0));
+  }
+  
+  /* 6. Ajuster le filtre en bas */
+  .map-filter {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0));
+  }
 }
+
+/* =========================================================
+   🌐 Fix général : attribution Leaflet ne chevauche jamais
+   ========================================================= */
+.leaflet-control-attribution {
+  max-width: 60% !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Sur mobile, remonter l'attribution au-dessus des filtres */
+@media (max-width: 768px) {
+  .leaflet-control-attribution {
+    bottom: auto !important;
+    top: auto !important;
+    margin-bottom: 65px !important;
+    margin-right: 0 !important;
+    font-size: 0.6rem !important;
+  }
+}
+
+/* =========================================================
+   📱 Logo plus compact en PWA
+   ========================================================= */
+@media (display-mode: standalone) and (max-width: 420px) {
+  .logo span:not(.globe) {
+    font-size: 0.75rem;
+  }
+  .logo span.globe {
+    font-size: 1.3rem !important;
+  }
+}
+
 </style>
 </head><body>
 
